@@ -6,6 +6,7 @@ import org.keplerproject.luajava.LuaStateFactory;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.wartricks.utils.PlatformUtils;
 
 public class LoadScript {
     public LuaState luaState;
@@ -22,7 +23,7 @@ public class LoadScript {
         luaState.openLibs();
         // This next part we do because Android cant use LdoFile instead
         // we load the lua file using gdx and convert it into a string and load it
-        final FileHandle handle = Gdx.files.internal(fileName);
+        final FileHandle handle = Gdx.files.internal(PlatformUtils.getPath(fileName));
         final String file = handle.readString();
         luaState.LdoString(file);
         this.fileName = fileName;
