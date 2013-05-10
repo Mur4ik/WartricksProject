@@ -1,5 +1,5 @@
 
-package com.pakoito.wartricks;
+package com.wartricks.lifecycle;
 
 import org.keplerproject.luajava.LuaState;
 import org.keplerproject.luajava.LuaStateFactory;
@@ -59,6 +59,15 @@ public class LoadScript {
         luaState.getGlobal(functionName);
         luaState.pushJavaObject(obj);
         luaState.pushJavaObject(obj2);
+        luaState.call(2, 0);
+    }
+
+    // Same thing as above but with another object
+    public void runUnboundScriptFunction(final String functionName, final Object... obj) {
+        luaState.getGlobal(functionName);
+        for (final Object parameter : obj) {
+            luaState.pushJavaObject(parameter);
+        }
         luaState.call(2, 0);
     }
 
