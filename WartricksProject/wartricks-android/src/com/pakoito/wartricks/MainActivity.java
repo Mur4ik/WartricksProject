@@ -12,7 +12,7 @@ public class MainActivity extends AndroidApplication {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
-        cfg.useGL20 = false;
+        cfg.useGL20 = true;
         this.initialize(new WartricksGame(), cfg);
     }
 }

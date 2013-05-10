@@ -9,7 +9,7 @@ public class Main {
     public static void main(final String[] args) {
         final LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.title = "wartricks";
-        cfg.useGL20 = false;
+        cfg.useGL20 = true;
         cfg.width = 1080;
         cfg.height = 576;
         new LwjglApplication(new WartricksGame(), cfg);

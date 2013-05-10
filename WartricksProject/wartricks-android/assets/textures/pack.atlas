@@ -3,30 +3,51 @@ pack.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-apple
+den
   rotate: false
   xy: 1, 1
+  size: 255, 255
+  orig: 255, 255
+  offset: 0, 0
+  index: -1
+troll
+  rotate: false
+  xy: 258, 206
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+apple
+  rotate: false
+  xy: 258, 172
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 dash
   rotate: false
-  xy: 35, 1
+  xy: 258, 138
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 kirby
   rotate: false
-  xy: 69, 1
+  xy: 258, 104
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+kirby2
+  rotate: false
+  xy: 258, 104
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 pinkie
   rotate: false
-  xy: 103, 1
+  xy: 258, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
