@@ -5,16 +5,15 @@ import com.artemis.World;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.wartricks.systems.EntitySpawningTimerSystem;
 import com.wartricks.systems.ExpiringSystem;
 import com.wartricks.systems.MovementSystem;
 import com.wartricks.systems.PlayerInputSystem;
 import com.wartricks.systems.SpriteRenderSystem;
 import com.wartricks.utils.EntityFactory;
-import com.wartricks.utils.PlatformUtils;
 
 public class BoardScene implements Screen {
     private OrthographicCamera camera;
@@ -29,7 +28,7 @@ public class BoardScene implements Screen {
 
     public BoardScene(final Game game) {
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 1280, 900);
+        camera.setToOrtho(false, 1080, 576);
         this.game = game;
         fpsLogger = new FPSLogger();
         world = new World();
@@ -37,13 +36,10 @@ public class BoardScene implements Screen {
         world.setSystem(new PlayerInputSystem(camera));
         world.setSystem(new MovementSystem());
         world.setSystem(new ExpiringSystem());
+        world.setSystem(new EntitySpawningTimerSystem());
         world.initialize();
-        LoadScript script;
-        final FileHandle scriptFolder = Gdx.files.internal(PlatformUtils.getPath("characters/"));
-        for (final FileHandle file : scriptFolder.list()) {
-            script = new LoadScript(file.path());
-            script.runScriptFunction("create", EntityFactory.class, world);
-        }
+        final LoadScript script = new LoadScript("characters/player.lua");
+        script.runScriptFunction("create", EntityFactory.class, world);
     }
 
     @Override
