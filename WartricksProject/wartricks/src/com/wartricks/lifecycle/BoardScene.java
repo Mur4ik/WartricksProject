@@ -2,7 +2,6 @@
 package com.wartricks.lifecycle;
 
 import com.artemis.World;
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -14,7 +13,8 @@ import com.wartricks.systems.ExpiringSystem;
 import com.wartricks.systems.MovementSystem;
 import com.wartricks.systems.PlayerInputSystem;
 import com.wartricks.systems.SpriteRenderSystem;
-import com.wartricks.tools.EntityFactory;
+import com.wartricks.utils.EntityFactory;
+import com.wartricks.utils.PlatformUtils;
 
 public class BoardScene implements Screen {
     private OrthographicCamera camera;
@@ -39,13 +39,8 @@ public class BoardScene implements Screen {
         world.setSystem(new ExpiringSystem());
         world.initialize();
         LoadScript script;
-        final FileHandle[] files;
-        String path = "characters/";
-        if (Gdx.app.getType() == ApplicationType.Desktop) {
-            path = "./assets/" + path;
-        }
-        files = Gdx.files.internal(path).list();
-        for (final FileHandle file : files) {
+        final FileHandle scriptFolder = Gdx.files.internal(PlatformUtils.getPath("characters/"));
+        for (final FileHandle file : scriptFolder.list()) {
             script = new LoadScript(file.path());
             script.runScriptFunction("create", EntityFactory.class, world);
         }

@@ -1,5 +1,5 @@
 
-package com.wartricks.tools;
+package com.wartricks.utils;
 
 import com.artemis.Entity;
 import com.artemis.World;

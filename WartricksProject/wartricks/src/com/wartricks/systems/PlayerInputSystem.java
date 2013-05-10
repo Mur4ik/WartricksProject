@@ -14,7 +14,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.wartricks.components.Player;
 import com.wartricks.components.Position;
 import com.wartricks.components.Velocity;
-import com.wartricks.tools.EntityFactory;
+import com.wartricks.utils.EntityFactory;
 
 public class PlayerInputSystem extends EntityProcessingSystem implements InputProcessor {
     @Mapper
