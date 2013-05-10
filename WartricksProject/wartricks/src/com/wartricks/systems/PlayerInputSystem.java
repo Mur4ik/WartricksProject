@@ -12,11 +12,16 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.wartricks.components.Player;
+import com.wartricks.components.Position;
 import com.wartricks.components.Velocity;
+import com.wartricks.tools.EntityFactory;
 
 public class PlayerInputSystem extends EntityProcessingSystem implements InputProcessor {
     @Mapper
     ComponentMapper<Velocity> vm;
+
+    @Mapper
+    ComponentMapper<Position> pm;
 
     private OrthographicCamera camera;
 
@@ -24,13 +29,15 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     private int ax, ay;
 
-    private int thruster = 400;
+    private final int thruster = 400;
 
-    private float drag = 0.4f;
+    private final float drag = 0.4f;
+
+    private boolean shoot = false;
 
     @SuppressWarnings("unchecked")
     public PlayerInputSystem(OrthographicCamera camera) {
-        super(Aspect.getAspectForAll(Velocity.class, Player.class));
+        super(Aspect.getAspectForAll(Velocity.class, Player.class, Position.class));
         this.camera = camera;
     }
 
@@ -44,8 +51,13 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
         mouseVector = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mouseVector);
         final Velocity vel = vm.get(e);
+        final Position pos = pm.get(e);
         vel.vx += (ax - (drag * vel.vx)) * world.getDelta();
         vel.vy += (ay - (drag * vel.vy)) * world.getDelta();
+        if (shoot) {
+            EntityFactory.createBullet(world, pos.x + 7, pos.y + 40).addToWorld();
+            EntityFactory.createBullet(world, pos.x + 60, pos.y + 40).addToWorld();
+        }
     }
 
     @Override
@@ -61,6 +73,9 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
         }
         if (keycode == Input.Keys.LEFT) {
             ax = -thruster;
+        }
+        if (keycode == Input.Keys.SPACE) {
+            shoot = true;
         }
         return false;
     }
@@ -78,6 +93,9 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
         }
         if (keycode == Input.Keys.LEFT) {
             ax = 0;
+        }
+        if (keycode == Input.Keys.SPACE) {
+            shoot = false;
         }
         return false;
     }

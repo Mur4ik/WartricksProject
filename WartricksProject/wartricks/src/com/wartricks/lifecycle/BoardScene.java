@@ -10,6 +10,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.wartricks.systems.ExpiringSystem;
 import com.wartricks.systems.MovementSystem;
 import com.wartricks.systems.PlayerInputSystem;
 import com.wartricks.systems.SpriteRenderSystem;
@@ -35,6 +36,7 @@ public class BoardScene implements Screen {
         spriteRenderSystem = world.setSystem(new SpriteRenderSystem(camera), true);
         world.setSystem(new PlayerInputSystem(camera));
         world.setSystem(new MovementSystem());
+        world.setSystem(new ExpiringSystem());
         world.initialize();
         LoadScript script;
         final FileHandle[] files;
