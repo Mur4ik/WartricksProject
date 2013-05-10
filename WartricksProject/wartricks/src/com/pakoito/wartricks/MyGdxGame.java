@@ -51,7 +51,6 @@ public class MyGdxGame implements ApplicationListener {
         script.runScriptFunction("render", Gdx.graphics.getGL10());
         // Update doesnt work "properly" you can edit the script and the app will change
         // But it will crash every once in a while :/
-        script.runScriptFunction("wave", null);
         script.update();
         batch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(),
                 Gdx.graphics.getHeight());
