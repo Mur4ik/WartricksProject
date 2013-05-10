@@ -3,10 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="wartricks/lib"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="wartricks/libs"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="libs/gdx.jar" sourcepath="libs/gdx-sources.jar"/>
-	<classpathentry kind="lib" path="lib/artemis.jar" sourcepath="lib/artemis-src.jar"/>
+	<classpathentry kind="lib" path="libs/artemis.jar" sourcepath="libs/artemis-src.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
