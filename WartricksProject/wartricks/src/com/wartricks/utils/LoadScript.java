@@ -1,12 +1,11 @@
 
-package com.wartricks.lifecycle;
+package com.wartricks.utils;
 
 import org.keplerproject.luajava.LuaState;
 import org.keplerproject.luajava.LuaStateFactory;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.wartricks.utils.PlatformUtils;
 
 public class LoadScript {
     public LuaState luaState;
@@ -63,13 +62,13 @@ public class LoadScript {
         luaState.call(2, 0);
     }
 
-    // Same thing as above but with another object
+    // Same thing as above but with any number of objects
     public void runUnboundScriptFunction(final String functionName, final Object... obj) {
         luaState.getGlobal(functionName);
         for (final Object parameter : obj) {
             luaState.pushJavaObject(parameter);
         }
-        luaState.call(2, 0);
+        luaState.call(obj.length, 0);
     }
 
     public String getGlobalString(final String globalName) {
