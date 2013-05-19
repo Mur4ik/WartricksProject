@@ -7,7 +7,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="libs/gdx.jar" sourcepath="libs/gdx-sources.jar"/>
-	<classpathentry kind="lib" path="libs/artemis.jar" sourcepath="libs/artemis-src.jar"/>
-	<classpathentry kind="lib" path="libs/gdx-tools.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/artemis.jar" sourcepath="libs/artemis-src.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/gdx-tools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
