@@ -1,0 +1,6 @@
+print(1)
+print(2)
+require('mobdebug').start()
+print(3)
+print(debug.getinfo(1,"S").source)
+print(4)
