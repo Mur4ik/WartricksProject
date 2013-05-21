@@ -132,8 +132,9 @@ public class BoardScene implements Screen {
         world.setSystem(new ExpiringSystem());
         world.setSystem(new EntitySpawningTimerSystem());
         world.initialize();
-        final LoadScript script = new LoadScript("characters/player.lua");
-        script.runScriptFunction("create", EntityFactory.class, world);
+        final LoadScript script = new LoadScript("init.lua");
+        final LoadScript playerScript = new LoadScript("characters/player.lua");
+        playerScript.runScriptFunction("create", EntityFactory.class, world);
     }
 
     @Override

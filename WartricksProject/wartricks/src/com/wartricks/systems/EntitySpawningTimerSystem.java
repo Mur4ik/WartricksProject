@@ -6,6 +6,7 @@ import com.artemis.utils.Timer;
 import com.badlogic.gdx.math.MathUtils;
 import com.wartricks.components.Sprite;
 import com.wartricks.utils.EntityFactory;
+import com.wartricks.utils.LoadScript;
 
 public class EntitySpawningTimerSystem extends VoidEntitySystem {
     private Timer timer1;
@@ -18,8 +19,11 @@ public class EntitySpawningTimerSystem extends VoidEntitySystem {
         timer1 = new Timer(2, true) {
             @Override
             public void execute() {
-                EntityFactory.createEnemy(world, "apple", Sprite.Layer.ACTORS_3,
-                        MathUtils.random(0, 1080), 576 + 30, 0, -40).addToWorld();
+                final LoadScript enemyScript = new LoadScript("characters/applejack.lua");
+                enemyScript.runUnboundScriptFunction("create", EntityFactory.class, world,
+                        Sprite.Layer.ACTORS_3);
+                // EntityFactory.createEnemy(world, "apple", Sprite.Layer.ACTORS_3,
+                // MathUtils.random(0, 1080), 576 + 30, 0, -40).addToWorld();
             }
         };
         timer2 = new Timer(6, true) {

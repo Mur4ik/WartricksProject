@@ -8,7 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
 public class LoadScript {
-    public LuaState luaState;
+    public static LuaState luaState;
 
     private final String fileName;
 
@@ -18,7 +18,9 @@ public class LoadScript {
      * @param fileName File name with Lua script.
      */
     public LoadScript(final String fileName) {
-        luaState = LuaStateFactory.newLuaState();
+        if (null == luaState) {
+            luaState = LuaStateFactory.newLuaState();
+        }
         luaState.openLibs();
         // This next part we do because Android cant use LdoFile instead
         // we load the lua file using gdx and convert it into a string and load it

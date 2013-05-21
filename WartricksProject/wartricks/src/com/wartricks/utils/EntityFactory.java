@@ -36,6 +36,7 @@ public class EntityFactory {
         e.addComponent(sprite);
         final Velocity velocity = new Velocity(vx, vy);
         e.addComponent(velocity);
+        e.addComponent(new Expires(20));
         return e;
     }
 
