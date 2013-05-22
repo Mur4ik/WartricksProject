@@ -3,8 +3,11 @@ package com.wartricks.utils;
 
 import com.artemis.Entity;
 import com.artemis.World;
+import com.artemis.managers.GroupManager;
 import com.badlogic.gdx.math.MathUtils;
+import com.wartricks.components.Bounds;
 import com.wartricks.components.Expires;
+import com.wartricks.components.Health;
 import com.wartricks.components.Player;
 import com.wartricks.components.Position;
 import com.wartricks.components.Sprite;
@@ -17,6 +20,9 @@ public class EntityFactory {
         e.addComponent(new Sprite("dash", Sprite.Layer.ACTORS_3));
         e.addComponent(new Velocity());
         e.addComponent(new Player());
+        e.addComponent(new Health(100));
+        e.addComponent(new Bounds(40));
+        world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_SHIP);
         return e;
     }
 
@@ -27,7 +33,7 @@ public class EntityFactory {
         position.x = x;
         position.y = y;
         e.addComponent(position);
-        final Sprite sprite = new Sprite("apple");
+        final Sprite sprite = new Sprite();
         sprite.name = name;
         sprite.r = 255 / 255f;
         sprite.g = 0 / 255f;
@@ -37,6 +43,9 @@ public class EntityFactory {
         final Velocity velocity = new Velocity(vx, vy);
         e.addComponent(velocity);
         e.addComponent(new Expires(20));
+        e.addComponent(new Health(20));
+        e.addComponent(new Bounds(40));
+        world.getManager(GroupManager.class).add(e, Constants.Groups.ENEMY_SHIPS);
         return e;
     }
 
@@ -50,6 +59,8 @@ public class EntityFactory {
         e.addComponent(bulletSprite);
         e.addComponent(new Velocity(0, 800));
         e.addComponent(new Expires(2f));
+        e.addComponent(new Bounds(10));
+        world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_BULLETS);
         return e;
     }
 }

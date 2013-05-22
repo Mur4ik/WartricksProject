@@ -35,6 +35,10 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     private boolean shoot = false;
 
+    private float lastFired = 0;
+
+    private float fireRate = 0.3f;
+
     @SuppressWarnings("unchecked")
     public PlayerInputSystem(OrthographicCamera camera) {
         super(Aspect.getAspectForAll(Velocity.class, Player.class, Position.class));
@@ -54,9 +58,11 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
         final Position pos = pm.get(e);
         vel.vx += (ax - (drag * vel.vx)) * world.getDelta();
         vel.vy += (ay - (drag * vel.vy)) * world.getDelta();
-        if (shoot) {
-            EntityFactory.createBullet(world, pos.x + 7, pos.y + 40).addToWorld();
-            EntityFactory.createBullet(world, pos.x + 60, pos.y + 40).addToWorld();
+        lastFired += world.getDelta();
+        if (shoot && (lastFired > fireRate)) {
+            lastFired = 0;
+            EntityFactory.createBullet(world, pos.x - 10, pos.y + 40).addToWorld();
+            EntityFactory.createBullet(world, pos.x + 40, pos.y + 40).addToWorld();
         }
     }
 
