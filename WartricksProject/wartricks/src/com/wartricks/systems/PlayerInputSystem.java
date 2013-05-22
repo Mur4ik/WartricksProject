@@ -103,6 +103,9 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
         if (keycode == Input.Keys.SPACE) {
             shoot = false;
         }
+        if (keycode == Input.Keys.ESCAPE) {
+            Gdx.app.exit();
+        }
         return false;
     }
 

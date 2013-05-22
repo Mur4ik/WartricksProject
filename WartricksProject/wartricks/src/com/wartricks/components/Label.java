@@ -4,7 +4,7 @@ package com.wartricks.components;
 import com.artemis.Component;
 
 public class Label extends Component {
-    public String text = "";
+    public String text;
 
     public Layer layer;
 
