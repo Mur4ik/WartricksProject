@@ -7,11 +7,14 @@ import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.annotations.Mapper;
 import com.artemis.managers.GroupManager;
+import com.artemis.managers.TagManager;
 import com.artemis.utils.Bag;
 import com.artemis.utils.ImmutableBag;
 import com.artemis.utils.Utils;
+import com.badlogic.gdx.Gdx;
 import com.wartricks.components.Bounds;
 import com.wartricks.components.Health;
+import com.wartricks.components.Label;
 import com.wartricks.components.Position;
 import com.wartricks.utils.Constants;
 import com.wartricks.utils.EntityFactory;
@@ -49,10 +52,34 @@ public class CollisionSystem extends EntitySystem {
                                 EntityFactory.createParticle(world, position.x, position.y, 0.6f)
                                         .addToWorld();
                             }
+                            final Label scoreLabel = world.getManager(TagManager.class)
+                                    .getEntity("score").getComponent(Label.class);
+                            int score = Integer.parseInt(scoreLabel.text);
+                            score += 10;
+                            scoreLabel.text = Integer.toString(score);
                             ship.deleteFromWorld();
                         } else {
                             EntityFactory.createParticle(world, position.x, position.y, 0.3f)
                                     .addToWorld();
+                        }
+                    }
+                }));
+        collisionPairs.add(new CollisionPair(Constants.Groups.PLAYER_SHIP,
+                Constants.Groups.ENEMY_SHIPS, new CollisionHandler() {
+                    @Override
+                    public void handleCollision(Entity player, Entity ship) {
+                        final Health health = hm.get(player);
+                        final Position position = pm.get(player);
+                        health.health -= 10;
+                        final Label lifeLabel = world.getManager(TagManager.class)
+                                .getEntity("life").getComponent(Label.class);
+                        lifeLabel.text = Integer.toString((int)health.health);
+                        ship.deleteFromWorld();
+                        if (health.health <= 0) {
+                            EntityFactory.createParticle(world, position.x, position.y, 0.6f)
+                                    .addToWorld();
+                            player.deleteFromWorld();
+                            Gdx.app.exit();
                         }
                     }
                 }));

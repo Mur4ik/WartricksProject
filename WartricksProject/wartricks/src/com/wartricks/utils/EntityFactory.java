@@ -4,11 +4,13 @@ package com.wartricks.utils;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
+import com.artemis.managers.TagManager;
 import com.badlogic.gdx.math.MathUtils;
 import com.wartricks.components.Bounds;
 import com.wartricks.components.ColorAnimation;
 import com.wartricks.components.Expires;
 import com.wartricks.components.Health;
+import com.wartricks.components.Label;
 import com.wartricks.components.Player;
 import com.wartricks.components.Position;
 import com.wartricks.components.Sprite;
@@ -53,6 +55,7 @@ public class EntityFactory {
         }
         e.addComponent(bounds);
         world.getManager(GroupManager.class).add(e, Constants.Groups.ENEMY_SHIPS);
+        world.getManager(TagManager.class).register("player", e);
         return e;
     }
 
@@ -99,6 +102,16 @@ public class EntityFactory {
         colorAnimation.alphaMax = 1f;
         colorAnimation.repeat = false;
         e.addComponent(colorAnimation);
+        return e;
+    }
+
+    public static Entity createLabel(World world, String name, String text, int x, int y) {
+        final Entity e = world.createEntity();
+        final Label label = new Label(text);
+        final Position position = new Position(x, y);
+        e.addComponent(label);
+        e.addComponent(position);
+        world.getManager(TagManager.class).register(name, e);
         return e;
     }
 }
