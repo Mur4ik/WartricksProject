@@ -24,7 +24,7 @@ import com.wartricks.systems.CollisionSystem;
 import com.wartricks.systems.ColorAnimationSystem;
 import com.wartricks.systems.EntitySpawningTimerSystem;
 import com.wartricks.systems.ExpiringSystem;
-import com.wartricks.systems.LabelRenderSystem;
+import com.wartricks.systems.HudRenderSystem;
 import com.wartricks.systems.MovementSystem;
 import com.wartricks.systems.PlayerInputSystem;
 import com.wartricks.systems.SpriteRenderSystem;
@@ -50,7 +50,7 @@ public class BoardScene implements Screen {
 
     private FPSLogger fpsLogger;
 
-    private LabelRenderSystem labelRenderSystem;
+    private HudRenderSystem labelRenderSystem;
 
     public BoardScene(final Game game) {
         // L = LuaStateFactory.newLuaState();
@@ -134,7 +134,7 @@ public class BoardScene implements Screen {
         world.setSystem(new EntitySpawningTimerSystem());
         world.setSystem(new CollisionSystem());
         world.setSystem(new ColorAnimationSystem());
-        labelRenderSystem = world.setSystem(new LabelRenderSystem(camera));
+        labelRenderSystem = world.setSystem(new HudRenderSystem(camera), true);
         world.setManager(new GroupManager());
         world.setManager(new TagManager());
         world.initialize();
@@ -142,7 +142,7 @@ public class BoardScene implements Screen {
         final LoadScript playerScript = new LoadScript("characters/player.lua");
         playerScript.runScriptFunction("create", EntityFactory.class, world);
         EntityFactory.createLabel(world, "life", "100", 50, 50).addToWorld();
-        EntityFactory.createLabel(world, "score", "0", 800, 50).addToWorld();
+        EntityFactory.createLabel(world, "score", "0", 850, 50).addToWorld();
     }
 
     @Override

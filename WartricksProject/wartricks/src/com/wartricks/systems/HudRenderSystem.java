@@ -20,7 +20,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.wartricks.components.Label;
 import com.wartricks.components.Position;
 
-public class LabelRenderSystem extends EntitySystem {
+public class HudRenderSystem extends EntitySystem {
     @Mapper
     ComponentMapper<Position> pm;
 
@@ -36,7 +36,7 @@ public class LabelRenderSystem extends EntitySystem {
     private BitmapFont bitmapFont;
 
     @SuppressWarnings("unchecked")
-    public LabelRenderSystem(OrthographicCamera camera) {
+    public HudRenderSystem(OrthographicCamera camera) {
         super(Aspect.getAspectForAll(Position.class, Label.class));
         this.camera = camera;
     }
