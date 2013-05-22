@@ -14,6 +14,7 @@ import com.wartricks.components.Bounds;
 import com.wartricks.components.Health;
 import com.wartricks.components.Position;
 import com.wartricks.utils.Constants;
+import com.wartricks.utils.EntityFactory;
 
 public class CollisionSystem extends EntitySystem {
     @Mapper
@@ -40,10 +41,18 @@ public class CollisionSystem extends EntitySystem {
                     @Override
                     public void handleCollision(Entity bullet, Entity ship) {
                         final Health health = hm.get(ship);
+                        final Position position = pm.get(ship);
                         health.health -= 10;
                         bullet.deleteFromWorld();
                         if (health.health <= 0) {
+                            for (int i = 0; i < 50; i++) {
+                                EntityFactory.createParticle(world, position.x, position.y, 0.6f)
+                                        .addToWorld();
+                            }
                             ship.deleteFromWorld();
+                        } else {
+                            EntityFactory.createParticle(world, position.x, position.y, 0.3f)
+                                    .addToWorld();
                         }
                     }
                 }));

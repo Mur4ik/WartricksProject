@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.wartricks.systems.CollisionSystem;
+import com.wartricks.systems.ColorAnimationSystem;
 import com.wartricks.systems.EntitySpawningTimerSystem;
 import com.wartricks.systems.ExpiringSystem;
 import com.wartricks.systems.MovementSystem;
@@ -128,6 +129,7 @@ public class BoardScene implements Screen {
         world.setSystem(new ExpiringSystem());
         world.setSystem(new EntitySpawningTimerSystem());
         world.setSystem(new CollisionSystem());
+        world.setSystem(new ColorAnimationSystem());
         world.setManager(new GroupManager());
         world.initialize();
         final LoadScript script = new LoadScript("init.lua");

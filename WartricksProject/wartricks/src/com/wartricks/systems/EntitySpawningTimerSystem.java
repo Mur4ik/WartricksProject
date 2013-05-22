@@ -36,7 +36,7 @@ public class EntitySpawningTimerSystem extends VoidEntitySystem {
         timer3 = new Timer(12, true) {
             @Override
             public void execute() {
-                EntityFactory.createEnemy(world, "troll", Sprite.Layer.ACTORS_1,
+                EntityFactory.createEnemy(world, "den", Sprite.Layer.ACTORS_1,
                         MathUtils.random(0, 1080), 576 + 120, 0, -20).addToWorld();
             }
         };
