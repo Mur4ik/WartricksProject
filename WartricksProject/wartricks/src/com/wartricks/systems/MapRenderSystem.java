@@ -85,13 +85,7 @@ public class MapRenderSystem extends VoidEntitySystem {
                 reg = textures.get(gameMap.map[col + 1][row]);
                 batch.draw(reg, x, y, 0, 0, reg.getRegionWidth(), reg.getRegionHeight(), 1, 1, 0);
             }
-            // Due to the map generation algorithm I use, there is guaranteed to be an odd number of
-            // columns.
-            // Since I drew 2 columns at once above, the far right one won't be touched. This bit is
-            // a little
-            // silly because it draws the far right column, whether it is in the frustum or not. Oh
-            // well...
-            if (x1 >= gameMap.width) {
+            if ((x1 >= gameMap.width) && ((gameMap.width % 2) == 1)) {
                 final int col = gameMap.width - 1;
                 x = col * MapTools.col_multiple;
                 y = row * MapTools.row_multiple;
