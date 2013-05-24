@@ -14,7 +14,7 @@ public class MidpointDisplacement {
 
     public float smoothness;
 
-    public MidpointDisplacement() {
+    public MidpointDisplacement(int width, int height, int pot) {
         // the thresholds which determine cutoffs for different terrain types
         // deepWaterThreshold = 0.5f;
         // shallowWaterThreshold = 0.55f;
@@ -26,11 +26,11 @@ public class MidpointDisplacement {
         // mountainsThreshold = 0.95f;
         // n partly controls the size of the map, but mostly controls the level of detail available
         // TODO minimap original 7
-        n = 7;
+        n = pot;
         // wmult and hmult are the width and height multipliers. They set how separate regions there
         // are
-        wmult = 10;
-        hmult = 6;
+        wmult = width;
+        hmult = height;
         // Smoothness controls how smooth the resultant terain is. Higher = more smooth
         smoothness = 2f;
     }
