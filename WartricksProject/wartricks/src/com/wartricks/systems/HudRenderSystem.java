@@ -1,98 +1,58 @@
 
 package com.wartricks.systems;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import com.artemis.Aspect;
-import com.artemis.ComponentMapper;
-import com.artemis.Entity;
-import com.artemis.EntitySystem;
-import com.artemis.annotations.Mapper;
-import com.artemis.utils.ImmutableBag;
+import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.wartricks.components.Label;
-import com.wartricks.components.Position;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.wartricks.utils.PlatformUtils;
 
-public class HudRenderSystem extends EntitySystem {
-    @Mapper
-    ComponentMapper<Position> pm;
-
-    @Mapper
-    ComponentMapper<Label> lm;
-
-    private List<Entity> sortedEntities;
-
-    private OrthographicCamera camera;
-
+public class HudRenderSystem extends VoidEntitySystem {
     private SpriteBatch batch;
 
-    private BitmapFont bitmapFont;
+    private BitmapFont font;
 
-    @SuppressWarnings("unchecked")
     public HudRenderSystem(OrthographicCamera camera) {
-        super(Aspect.getAspectForAll(Position.class, Label.class));
-        this.camera = camera;
-    }
-
-    @Override
-    protected void processEntities(ImmutableBag<Entity> entities) {
-        for (final Entity e : sortedEntities) {
-            this.process(e);
-        }
     }
 
     @Override
     protected void initialize() {
-        sortedEntities = new ArrayList<Entity>();
         batch = new SpriteBatch();
-        bitmapFont = new BitmapFont(Gdx.files.internal("resources/fonts/verdana39.fnt"), false);
-        bitmapFont.setColor(Color.RED);
-    }
-
-    private void process(Entity e) {
-        final Position position = pm.get(e);
-        final Label label = lm.get(e);
-        bitmapFont.draw(batch, label.text, position.x, position.y);
+        final Texture fontTexture = new Texture(Gdx.files.internal(PlatformUtils
+                .getPath("resources/fonts/normal_0.png")));
+        fontTexture.setFilter(TextureFilter.Linear, TextureFilter.MipMapLinearLinear);
+        final TextureRegion fontRegion = new TextureRegion(fontTexture);
+        font = new BitmapFont(Gdx.files.internal(PlatformUtils
+                .getPath("resources/fonts/normal.fnt")), fontRegion, false);
+        font.setColor(Color.DARK_GRAY);
+        font.setUseIntegerPositions(false);
     }
 
     @Override
     protected void begin() {
-        batch.setProjectionMatrix(camera.combined);
         batch.begin();
+    }
+
+    @Override
+    protected void processSystem() {
+        batch.setColor(1, 1, 1, 1);
+        final int screenHeight = Gdx.graphics.getHeight();
+        font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, screenHeight - 20);
+        font.draw(batch, "Active entities: " + world.getEntityManager().getActiveEntityCount(), 20,
+                screenHeight - 40);
+        font.draw(batch, "Total created: " + world.getEntityManager().getTotalCreated(), 20,
+                screenHeight - 60);
+        font.draw(batch, "Total deleted: " + world.getEntityManager().getTotalDeleted(), 20,
+                screenHeight - 80);
     }
 
     @Override
     protected void end() {
         batch.end();
-    }
-
-    @Override
-    protected void inserted(Entity e) {
-        sortedEntities.add(e);
-        Collections.sort(sortedEntities, new Comparator<Entity>() {
-            @Override
-            public int compare(Entity e1, Entity e2) {
-                final Label l1 = lm.get(e1);
-                final Label l2 = lm.get(e2);
-                return l1.layer.compareTo(l2.layer);
-            }
-        });
-    }
-
-    @Override
-    protected void removed(Entity e) {
-        sortedEntities.remove(e);
-    }
-
-    @Override
-    protected boolean checkProcessing() {
-        return true;
     }
 }

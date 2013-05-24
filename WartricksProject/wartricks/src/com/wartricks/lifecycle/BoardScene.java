@@ -20,16 +20,15 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.wartricks.boards.GameMap;
 import com.wartricks.systems.CollisionSystem;
 import com.wartricks.systems.ColorAnimationSystem;
-import com.wartricks.systems.EntitySpawningTimerSystem;
 import com.wartricks.systems.ExpiringSystem;
 import com.wartricks.systems.HudRenderSystem;
+import com.wartricks.systems.MapRenderSystem;
 import com.wartricks.systems.MovementSystem;
 import com.wartricks.systems.PlayerInputSystem;
 import com.wartricks.systems.SpriteRenderSystem;
-import com.wartricks.utils.EntityFactory;
-import com.wartricks.utils.LoadScript;
 
 public class BoardScene implements Screen {
     private final static int LISTEN_PORT = 3333;
@@ -51,6 +50,10 @@ public class BoardScene implements Screen {
     private FPSLogger fpsLogger;
 
     private HudRenderSystem labelRenderSystem;
+
+    private GameMap gameMap;
+
+    private MapRenderSystem mapRenderSystem;
 
     public BoardScene(final Game game) {
         // L = LuaStateFactory.newLuaState();
@@ -123,6 +126,7 @@ public class BoardScene implements Screen {
         // serverThread.start();
         // //////////
         camera = new OrthographicCamera();
+        gameMap = new GameMap();
         camera.setToOrtho(false, 1080, 576);
         this.game = game;
         fpsLogger = new FPSLogger();
@@ -131,18 +135,22 @@ public class BoardScene implements Screen {
         world.setSystem(new PlayerInputSystem(camera));
         world.setSystem(new MovementSystem());
         world.setSystem(new ExpiringSystem());
-        world.setSystem(new EntitySpawningTimerSystem());
+        // world.setSystem(new EntitySpawningTimerSystem());
         world.setSystem(new CollisionSystem());
         world.setSystem(new ColorAnimationSystem());
+        mapRenderSystem = world.setSystem(new MapRenderSystem(camera, gameMap), true);
         labelRenderSystem = world.setSystem(new HudRenderSystem(camera), true);
         world.setManager(new GroupManager());
         world.setManager(new TagManager());
         world.initialize();
-        final LoadScript script = new LoadScript("init.lua");
-        final LoadScript playerScript = new LoadScript("characters/player.lua");
-        playerScript.runScriptFunction("create", EntityFactory.class, world);
-        EntityFactory.createLabel(world, "life", "100", 50, 50).addToWorld();
-        EntityFactory.createLabel(world, "score", "0", 850, 50).addToWorld();
+        camera.zoom = 0.6f;
+        camera.position.x = 150 * camera.zoom;
+        camera.position.y = 200 * camera.zoom;
+        // final LoadScript script = new LoadScript("init.lua");
+        // final LoadScript playerScript = new LoadScript("characters/player.lua");
+        // playerScript.runScriptFunction("create", EntityFactory.class, world);
+        // EntityFactory.createLabel(world, "life", "100", 50, 50).addToWorld();
+        // EntityFactory.createLabel(world, "score", "0", 850, 50).addToWorld();
     }
 
     @Override
@@ -172,6 +180,7 @@ public class BoardScene implements Screen {
         camera.update();
         world.setDelta(delta);
         world.process();
+        mapRenderSystem.process();
         spriteRenderSystem.process();
         labelRenderSystem.process();
     }

@@ -7,19 +7,14 @@ import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.wartricks.components.Player;
 import com.wartricks.components.Position;
-import com.wartricks.components.Velocity;
-import com.wartricks.utils.EntityFactory;
+import com.wartricks.utils.MapTools;
 
 public class PlayerInputSystem extends EntityProcessingSystem implements InputProcessor {
-    @Mapper
-    ComponentMapper<Velocity> vm;
-
     @Mapper
     ComponentMapper<Position> pm;
 
@@ -27,21 +22,9 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     private Vector3 mouseVector;
 
-    private int ax, ay;
-
-    private final int thruster = 400;
-
-    private final float drag = 0.4f;
-
-    private boolean shoot = false;
-
-    private float lastFired = 0;
-
-    private float fireRate = 0.3f;
-
     @SuppressWarnings("unchecked")
     public PlayerInputSystem(OrthographicCamera camera) {
-        super(Aspect.getAspectForAll(Velocity.class, Player.class, Position.class));
+        super(Aspect.getAspectForAll(Player.class));
         this.camera = camera;
     }
 
@@ -52,60 +35,18 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     @Override
     protected void process(Entity e) {
+        // TODO never gets called
         mouseVector = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mouseVector);
-        final Velocity vel = vm.get(e);
-        final Position pos = pm.get(e);
-        vel.vx += (ax - (drag * vel.vx)) * world.getDelta();
-        vel.vy += (ay - (drag * vel.vy)) * world.getDelta();
-        lastFired += world.getDelta();
-        if (shoot && (lastFired > fireRate)) {
-            lastFired = 0;
-            EntityFactory.createBullet(world, pos.x - 10, pos.y + 40).addToWorld();
-            EntityFactory.createBullet(world, pos.x + 40, pos.y + 40).addToWorld();
-        }
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.UP) {
-            ay = thruster;
-        }
-        if (keycode == Input.Keys.DOWN) {
-            ay = -thruster;
-        }
-        if (keycode == Input.Keys.RIGHT) {
-            ax = thruster;
-        }
-        if (keycode == Input.Keys.LEFT) {
-            ax = -thruster;
-        }
-        if (keycode == Input.Keys.SPACE) {
-            shoot = true;
-        }
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.UP) {
-            ay = 0;
-        }
-        if (keycode == Input.Keys.DOWN) {
-            ay = 0;
-        }
-        if (keycode == Input.Keys.RIGHT) {
-            ax = 0;
-        }
-        if (keycode == Input.Keys.LEFT) {
-            ax = 0;
-        }
-        if (keycode == Input.Keys.SPACE) {
-            shoot = false;
-        }
-        if (keycode == Input.Keys.ESCAPE) {
-            Gdx.app.exit();
-        }
         return false;
     }
 
@@ -116,6 +57,10 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        mouseVector = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        camera.unproject(mouseVector);
+        final int x = (int)((mouseVector.x - 6f) / MapTools.col_multiple);
+        final int y = (int)((mouseVector.y - (((float)MapTools.row_multiple * (x % 2)) / 2)) / MapTools.row_multiple);
         return false;
     }
 
@@ -126,6 +71,9 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+        // final Vector3 delta = new Vector3(-camera.zoom * Gdx.input.getDeltaX(), camera.zoom
+        // * Gdx.input.getDeltaY(), 0);
+        // camera.translate(delta);
         return false;
     }
 
@@ -136,6 +84,9 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     @Override
     public boolean scrolled(int amount) {
+        if (((camera.zoom > 0.2f) || (amount == 1)) && ((camera.zoom < 8) || (amount == -1))) {
+            camera.zoom += amount * 0.1;
+        }
         return false;
     }
 }

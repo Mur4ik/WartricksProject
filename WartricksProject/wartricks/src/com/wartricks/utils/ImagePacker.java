@@ -11,7 +11,7 @@ public class ImagePacker {
         settings.filterMin = Texture.TextureFilter.Linear;
         settings.filterMag = Texture.TextureFilter.Linear;
         settings.pot = false;
-        TexturePacker2.process(settings, "bin/textures/characters", "bin/resources/textures",
-                "characters");
+        TexturePacker2.process(settings, "bin/textures/maptiles", "bin/resources/textures",
+                "maptiles");
     }
 }
