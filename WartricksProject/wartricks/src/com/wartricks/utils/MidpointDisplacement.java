@@ -24,31 +24,18 @@ public class MidpointDisplacement {
         // forestThreshold = 0.8f;
         // hillsThreshold = 0.88f;
         // mountainsThreshold = 0.95f;
-        deepWaterThreshold = 0f;
-        shallowWaterThreshold = 0f;
-        desertThreshold = 0f;
-        plainsThreshold = 0.9f;
-        grasslandThreshold = 0f;
-        forestThreshold = 0f;
-        hillsThreshold = 0f;
-        mountainsThreshold = 0.7f;
         // n partly controls the size of the map, but mostly controls the level of detail available
         // TODO minimap original 7
-        n = 1;
+        n = 7;
         // wmult and hmult are the width and height multipliers. They set how separate regions there
         // are
-        wmult = 5;
-        hmult = 4;
+        wmult = 10;
+        hmult = 6;
         // Smoothness controls how smooth the resultant terain is. Higher = more smooth
         smoothness = 2f;
     }
 
     public int[][] getMap() {
-        final int[][] returnMap = new int[11][7];
-        return returnMap;
-    }
-
-    public int[][] getMapOld() {
         // get the dimensions of the map
         final int power = MyMath.pow(2, n);
         final int width = (wmult * power) + 1;

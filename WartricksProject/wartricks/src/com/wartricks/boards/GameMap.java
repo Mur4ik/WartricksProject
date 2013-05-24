@@ -4,7 +4,6 @@ package com.wartricks.boards;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.wartricks.utils.HexMapGenerator;
 
 public class GameMap {
     public int[][] map;
@@ -16,8 +15,9 @@ public class GameMap {
     public Texture texture;
 
     public GameMap() {
-        final HexMapGenerator hmg = new HexMapGenerator();
-        map = hmg.getDiamondSquare();
+        // final HexMapGenerator hmg = new HexMapGenerator();
+        // map = hmg.getDiamondSquare();
+        map = new int[11][7];
         width = map.length;
         height = map[0].length;
         pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
