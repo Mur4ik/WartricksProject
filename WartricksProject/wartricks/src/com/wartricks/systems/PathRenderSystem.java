@@ -62,9 +62,12 @@ public class PathRenderSystem extends EntitySystem {
         final Path moves = mm.get(e);
         if (!moves.path.isEmpty()) {
             for (final Movement move : moves.path) {
-                final FloatPair coords = MapTools
-                        .world2window(move.destinationX, move.destinationY);
-                batch.draw(feet, coords.x - (feet.getWidth() / 2), coords.y
+                final FloatPair coordsOrigin = MapTools.world2window(move.originX, move.originY);
+                final FloatPair coordsDestination = MapTools.world2window(move.destinationX,
+                        move.destinationY);
+                batch.draw(feet, coordsOrigin.x - (feet.getWidth() / 2),
+                        coordsOrigin.y - (feet.getHeight() / 2));
+                batch.draw(feet, coordsDestination.x - (feet.getWidth() / 2), coordsDestination.y
                         - (feet.getHeight() / 2));
             }
         }

@@ -136,10 +136,13 @@ public class EntityFactory {
         e.addComponent(expires);
         final ScaleAnimation scaleAnimation = new ScaleAnimation(speed);
         e.addComponent(scaleAnimation);
-        // final ColorAnimation colorAnimation = new ColorAnimation();
-        // colorAnimation.alphaAnimate = true;
-        // colorAnimation.alphaSpeed = -1f;
-        // e.addComponent(colorAnimation);
+        final ColorAnimation colorAnimation = new ColorAnimation();
+        colorAnimation.alphaAnimate = false;
+        colorAnimation.alphaSpeed = -1f;
+        colorAnimation.alphaMin = 0f;
+        colorAnimation.alphaMax = 1f;
+        colorAnimation.repeat = false;
+        e.addComponent(colorAnimation);
         return e;
     }
 }

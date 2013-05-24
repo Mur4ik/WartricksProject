@@ -4,15 +4,15 @@ package com.wartricks.components;
 import com.artemis.Component;
 
 public class Movement extends Component {
-    public int originX;
+    public float originX;
 
-    public int originY;
+    public float originY;
 
-    public int destinationX;
+    public float destinationX;
 
-    public int destinationY;
+    public float destinationY;
 
-    public Movement(int x0, int y0, int tx, int ty) {
+    public Movement(float x0, float y0, float tx, float ty) {
         originX = x0;
         originY = y0;
         destinationX = tx;

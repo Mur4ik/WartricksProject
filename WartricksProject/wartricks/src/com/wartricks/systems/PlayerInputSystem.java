@@ -10,17 +10,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
+import com.wartricks.components.MapPosition;
 import com.wartricks.components.Movement;
 import com.wartricks.components.Path;
 import com.wartricks.components.Player;
-import com.wartricks.components.Position;
 import com.wartricks.custom.Pair;
 import com.wartricks.utils.EntityFactory;
 import com.wartricks.utils.MapTools;
 
 public class PlayerInputSystem extends EntityProcessingSystem implements InputProcessor {
     @Mapper
-    ComponentMapper<Position> pm;
+    ComponentMapper<MapPosition> mpm;
 
     @Mapper
     ComponentMapper<Path> ptm;
@@ -51,8 +51,16 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
         camera.unproject(mouseVector);
         if (moving) {
             moving = false;
-            final Movement movement = new Movement(11, 14, moveTarget.x, moveTarget.y);
-            ptm.get(e).path.add(movement);
+            final Path path = ptm.get(e);
+            MapPosition mapPosition = mpm.get(e);
+            final Movement movement = new Movement(mapPosition.x, mapPosition.y, moveTarget.x,
+                    moveTarget.y);
+            mapPosition = new MapPosition(moveTarget.x, moveTarget.y);
+            // TODO uncomment to reset path on click
+            // path.path.clear();
+            path.path.add(movement);
+            e.removeComponent(MapPosition.class);
+            e.addComponent(mapPosition);
             e.changedInWorld();
         }
     }
