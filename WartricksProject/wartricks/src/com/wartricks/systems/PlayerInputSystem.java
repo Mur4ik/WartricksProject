@@ -10,22 +10,34 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
+import com.wartricks.components.Movement;
+import com.wartricks.components.Path;
 import com.wartricks.components.Player;
 import com.wartricks.components.Position;
+import com.wartricks.custom.Pair;
+import com.wartricks.utils.EntityFactory;
 import com.wartricks.utils.MapTools;
 
 public class PlayerInputSystem extends EntityProcessingSystem implements InputProcessor {
     @Mapper
     ComponentMapper<Position> pm;
 
+    @Mapper
+    ComponentMapper<Path> ptm;
+
     private OrthographicCamera camera;
 
     private Vector3 mouseVector;
+
+    private boolean moving;
+
+    private Pair moveTarget;
 
     @SuppressWarnings("unchecked")
     public PlayerInputSystem(OrthographicCamera camera) {
         super(Aspect.getAspectForAll(Player.class));
         this.camera = camera;
+        moving = false;
     }
 
     @Override
@@ -35,9 +47,14 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     @Override
     protected void process(Entity e) {
-        // TODO never gets called
         mouseVector = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mouseVector);
+        if (moving) {
+            moving = false;
+            final Movement movement = new Movement(11, 14, moveTarget.x, moveTarget.y);
+            ptm.get(e).path.add(movement);
+            e.changedInWorld();
+        }
     }
 
     @Override
@@ -57,15 +74,19 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        mouseVector = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-        camera.unproject(mouseVector);
-        final int x = (int)((mouseVector.x - 6f) / MapTools.col_multiple);
-        final int y = (int)((mouseVector.y - (((float)MapTools.row_multiple * (x % 2)) / 2)) / MapTools.row_multiple);
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        // Get the hex cell being clicked
+        final Pair coords = MapTools.window2world(Gdx.input.getX(), Gdx.input.getY(), camera);
+        moving = true;
+        moveTarget = coords;
+        if (button == 1) {
+            camera.zoom = 1;
+        }
+        EntityFactory.createClick(world, coords.x, coords.y, 0.4f, 4f, 0.15f).addToWorld();
         return false;
     }
 

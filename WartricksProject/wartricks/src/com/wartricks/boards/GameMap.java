@@ -16,8 +16,6 @@ public class GameMap {
     public Texture texture;
 
     public GameMap() {
-        // final HexMapGenerator hmg = new HexMapGenerator();
-        // map = hmg.getDiamondSquare();
         map = BoardGenerator.getMap(10, 7);
         width = map.length;
         height = map[0].length;

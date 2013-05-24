@@ -64,7 +64,7 @@ public class CollisionSystem extends EntitySystem {
                         }
                     }
                 }));
-        collisionPairs.add(new CollisionPair(Constants.Groups.PLAYER_SHIP,
+        collisionPairs.add(new CollisionPair(Constants.Groups.PLAYER,
                 Constants.Groups.ENEMY_SHIPS, new CollisionHandler() {
                     @Override
                     public void handleCollision(Entity player, Entity ship) {

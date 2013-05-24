@@ -2,14 +2,18 @@
 package com.wartricks.lifecycle;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.keplerproject.luajava.JavaFunction;
 import org.keplerproject.luajava.LuaException;
 import org.keplerproject.luajava.LuaState;
+import org.keplerproject.luajava.LuaStateFactory;
 
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
@@ -17,18 +21,22 @@ import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.wartricks.boards.GameMap;
-import com.wartricks.systems.CollisionSystem;
 import com.wartricks.systems.ColorAnimationSystem;
 import com.wartricks.systems.ExpiringSystem;
 import com.wartricks.systems.HudRenderSystem;
 import com.wartricks.systems.MapRenderSystem;
 import com.wartricks.systems.MovementSystem;
+import com.wartricks.systems.PathRenderSystem;
 import com.wartricks.systems.PlayerInputSystem;
+import com.wartricks.systems.ScaleAnimationSystem;
 import com.wartricks.systems.SpriteRenderSystem;
+import com.wartricks.utils.EntityFactory;
+import com.wartricks.utils.PlatformUtils;
 
 public class BoardScene implements Screen {
     private final static int LISTEN_PORT = 3333;
@@ -55,73 +63,13 @@ public class BoardScene implements Screen {
 
     private MapRenderSystem mapRenderSystem;
 
+    private PathRenderSystem pathRenderSystem;
+
+    private PlayerInputSystem playerInputSystem;
+
     public BoardScene(final Game game) {
-        // L = LuaStateFactory.newLuaState();
-        // L.openLibs();
-        // try {
-        // L.pushJavaObject(this);
-        // L.setGlobal("activity");
-        // final JavaFunction print = new JavaFunction(L) {
-        // @Override
-        // public int execute() throws LuaException {
-        // for (int i = 2; i <= L.getTop(); i++) {
-        // final int type = L.type(i);
-        // final String stype = L.typeName(type);
-        // String val = null;
-        // if (stype.equals("userdata")) {
-        // final Object obj = L.toJavaObject(i);
-        // if (obj != null) {
-        // val = obj.toString();
-        // }
-        // } else if (stype.equals("boolean")) {
-        // val = L.toBoolean(i) ? "true" : "false";
-        // } else {
-        // val = L.toString(i);
-        // }
-        // if (val == null) {
-        // val = stype;
-        // }
-        // output.append(val);
-        // output.append("\t");
-        // }
-        // output.append("\n");
-        // return 0;
-        // }
-        // };
-        // print.register("print");
-        // final JavaFunction assetLoader = new JavaFunction(L) {
-        // @Override
-        // public int execute() throws LuaException {
-        // final String name = L.toString(-1);
-        // try {
-        // final FileHandle handle = Gdx.files.internal(PlatformUtils.getPath(name
-        // + ".lua"));
-        // final String file = handle.readString();
-        // L.LdoString(file);
-        // return 1;
-        // } catch (final Exception e) {
-        // final ByteArrayOutputStream os = new ByteArrayOutputStream();
-        // e.printStackTrace(new PrintStream(os));
-        // L.pushString("Cannot load module " + name + ":\n" + os.toString());
-        // return 1;
-        // }
-        // }
-        // };
-        // L.getGlobal("package"); // package
-        // L.getField(-1, "loaders"); // package loaders
-        // final int nLoaders = L.objLen(-1); // package loaders
-        // L.pushJavaFunction(assetLoader); // package loaders loader
-        // L.rawSetI(-2, nLoaders + 1); // package loaders
-        // L.pop(1); // package
-        // L.getField(-1, "path"); // package path
-        // final String customPath = Gdx.files.getLocalStoragePath() + "/?.lua";
-        // L.pushString(";" + customPath); // package path custom
-        // L.concat(2); // package pathCustom
-        // L.setField(-2, "path"); // package
-        // L.pop(1);
-        // } catch (final Exception e) {
-        // }
         // TODO remote server
+        // this.createLuaState();
         // serverThread = new ServerThread();
         // serverThread.start();
         // //////////
@@ -131,14 +79,16 @@ public class BoardScene implements Screen {
         this.game = game;
         fpsLogger = new FPSLogger();
         world = new World();
-        spriteRenderSystem = world.setSystem(new SpriteRenderSystem(camera), true);
-        world.setSystem(new PlayerInputSystem(camera));
+        playerInputSystem = world.setSystem(new PlayerInputSystem(camera), true);
         world.setSystem(new MovementSystem());
         world.setSystem(new ExpiringSystem());
         // world.setSystem(new EntitySpawningTimerSystem());
-        world.setSystem(new CollisionSystem());
+        // world.setSystem(new CollisionSystem());
         world.setSystem(new ColorAnimationSystem());
+        world.setSystem(new ScaleAnimationSystem());
+        spriteRenderSystem = world.setSystem(new SpriteRenderSystem(camera), true);
         mapRenderSystem = world.setSystem(new MapRenderSystem(camera, gameMap), true);
+        pathRenderSystem = world.setSystem(new PathRenderSystem(camera), true);
         labelRenderSystem = world.setSystem(new HudRenderSystem(camera), true);
         world.setManager(new GroupManager());
         world.setManager(new TagManager());
@@ -146,6 +96,7 @@ public class BoardScene implements Screen {
         camera.zoom = 0.6f;
         camera.position.x = 150 * camera.zoom;
         camera.position.y = 200 * camera.zoom;
+        EntityFactory.createPlayer(world, 0, 0).addToWorld();
         // final LoadScript script = new LoadScript("init.lua");
         // final LoadScript playerScript = new LoadScript("characters/player.lua");
         // playerScript.runScriptFunction("create", EntityFactory.class, world);
@@ -179,9 +130,11 @@ public class BoardScene implements Screen {
         fpsLogger.log();
         camera.update();
         world.setDelta(delta);
+        playerInputSystem.process();
         world.process();
         mapRenderSystem.process();
         spriteRenderSystem.process();
+        pathRenderSystem.process();
         labelRenderSystem.process();
     }
 
@@ -294,5 +247,73 @@ public class BoardScene implements Screen {
                 return "Yield error";
         }
         return "Unknown error " + error;
+    }
+
+    private void createLuaState() {
+        L = LuaStateFactory.newLuaState();
+        L.openLibs();
+        try {
+            L.pushJavaObject(this);
+            L.setGlobal("activity");
+            final JavaFunction print = new JavaFunction(L) {
+                @Override
+                public int execute() throws LuaException {
+                    for (int i = 2; i <= L.getTop(); i++) {
+                        final int type = L.type(i);
+                        final String stype = L.typeName(type);
+                        String val = null;
+                        if (stype.equals("userdata")) {
+                            final Object obj = L.toJavaObject(i);
+                            if (obj != null) {
+                                val = obj.toString();
+                            }
+                        } else if (stype.equals("boolean")) {
+                            val = L.toBoolean(i) ? "true" : "false";
+                        } else {
+                            val = L.toString(i);
+                        }
+                        if (val == null) {
+                            val = stype;
+                        }
+                        output.append(val);
+                        output.append("\t");
+                    }
+                    output.append("\n");
+                    return 0;
+                }
+            };
+            print.register("print");
+            final JavaFunction assetLoader = new JavaFunction(L) {
+                @Override
+                public int execute() throws LuaException {
+                    final String name = L.toString(-1);
+                    try {
+                        final FileHandle handle = Gdx.files.internal(PlatformUtils.getPath(name
+                                + ".lua"));
+                        final String file = handle.readString();
+                        L.LdoString(file);
+                        return 1;
+                    } catch (final Exception e) {
+                        final ByteArrayOutputStream os = new ByteArrayOutputStream();
+                        e.printStackTrace(new PrintStream(os));
+                        L.pushString("Cannot load module " + name + ":\n" + os.toString());
+                        return 1;
+                    }
+                }
+            };
+            L.getGlobal("package"); // package
+            L.getField(-1, "loaders"); // package loaders
+            final int nLoaders = L.objLen(-1); // package loaders
+            L.pushJavaFunction(assetLoader); // package loaders loader
+            L.rawSetI(-2, nLoaders + 1); // package loaders
+            L.pop(1); // package
+            L.getField(-1, "path"); // package path
+            final String customPath = Gdx.files.getLocalStoragePath() + "/?.lua";
+            L.pushString(";" + customPath); // package path custom
+            L.concat(2); // package pathCustom
+            L.setField(-2, "path"); // package
+            L.pop(1);
+        } catch (final Exception e) {
+        }
     }
 }

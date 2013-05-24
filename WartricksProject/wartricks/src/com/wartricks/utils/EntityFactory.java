@@ -11,28 +11,32 @@ import com.wartricks.components.ColorAnimation;
 import com.wartricks.components.Expires;
 import com.wartricks.components.Health;
 import com.wartricks.components.Label;
+import com.wartricks.components.MapPosition;
+import com.wartricks.components.Path;
 import com.wartricks.components.Player;
 import com.wartricks.components.Position;
+import com.wartricks.components.ScaleAnimation;
 import com.wartricks.components.Sprite;
 import com.wartricks.components.Velocity;
 
 public class EntityFactory {
     public static Entity createPlayer(World world, float x, float y) {
         final Entity e = world.createEntity();
-        e.addComponent(new Position(x, y));
+        e.addComponent(new MapPosition(x, y));
         e.addComponent(new Sprite("dash", Sprite.Layer.ACTORS_3));
         e.addComponent(new Velocity());
         e.addComponent(new Player());
         e.addComponent(new Health(100));
         e.addComponent(new Bounds(40));
-        world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_SHIP);
+        e.addComponent(new Path());
+        world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER);
         return e;
     }
 
     public static Entity createEnemy(World world, String name, Sprite.Layer layer, float x,
             float y, float vx, float vy) {
         final Entity e = world.createEntity();
-        final Position position = new Position();
+        final MapPosition position = new MapPosition();
         position.x = x;
         position.y = y;
         e.addComponent(position);
@@ -76,7 +80,7 @@ public class EntityFactory {
 
     public static Entity createParticle(World world, float x, float y, float delay) {
         final Entity e = world.createEntity();
-        final Position position = new Position();
+        final MapPosition position = new MapPosition();
         position.x = x;
         position.y = y;
         e.addComponent(position);
@@ -112,6 +116,30 @@ public class EntityFactory {
         e.addComponent(label);
         e.addComponent(position);
         world.getManager(TagManager.class).register(name, e);
+        return e;
+    }
+
+    public static Entity createClick(World world, int x, int y, float startScale, float speed,
+            float expiration) {
+        final Entity e = world.createEntity();
+        e.addComponent(new MapPosition(x, y));
+        final Sprite sprite = new Sprite("kirby", Sprite.Layer.ACTORS_3);
+        sprite.r = 1f;
+        sprite.g = 1f;
+        sprite.b = 1f;
+        sprite.a = 0.5f;
+        sprite.rotation = 0f;
+        sprite.scaleX = startScale;
+        sprite.scaleY = startScale;
+        e.addComponent(sprite);
+        final Expires expires = new Expires(expiration);
+        e.addComponent(expires);
+        final ScaleAnimation scaleAnimation = new ScaleAnimation(speed);
+        e.addComponent(scaleAnimation);
+        // final ColorAnimation colorAnimation = new ColorAnimation();
+        // colorAnimation.alphaAnimate = true;
+        // colorAnimation.alphaSpeed = -1f;
+        // e.addComponent(colorAnimation);
         return e;
     }
 }
