@@ -52,7 +52,7 @@ public class HudRenderSystem extends EntitySystem {
     protected void initialize() {
         sortedEntities = new ArrayList<Entity>();
         batch = new SpriteBatch();
-        bitmapFont = new BitmapFont(Gdx.files.internal("data/verdana39.fnt"), false);
+        bitmapFont = new BitmapFont(Gdx.files.internal("resources/fonts/verdana39.fnt"), false);
         bitmapFont.setColor(Color.RED);
     }
 

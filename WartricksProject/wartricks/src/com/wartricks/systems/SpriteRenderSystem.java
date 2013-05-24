@@ -51,8 +51,9 @@ public class SpriteRenderSystem extends EntitySystem {
     @Override
     protected void initialize() {
         batch = new SpriteBatch();
-        atlas = new TextureAtlas(Gdx.files.internal(PlatformUtils.getPath("textures/pack.atlas")),
-                Gdx.files.internal(PlatformUtils.getPath("textures/")));
+        atlas = new TextureAtlas(Gdx.files.internal(PlatformUtils
+                .getPath("resources/textures/characters.atlas")), Gdx.files.internal(PlatformUtils
+                .getPath("resources/textures/")));
         regions = new HashMap<String, AtlasRegion>();
         for (final AtlasRegion r : atlas.getRegions()) {
             regions.put(r.name, r);

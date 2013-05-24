@@ -17,11 +17,12 @@ public class LoadScript {
      * 
      * @param fileName File name with Lua script.
      */
-    public LoadScript(final String fileName) {
+    public LoadScript(String fileName) {
         if (null == luaState) {
             luaState = LuaStateFactory.newLuaState();
         }
         luaState.openLibs();
+        fileName = "scripts/" + fileName;
         // This next part we do because Android cant use LdoFile instead
         // we load the lua file using gdx and convert it into a string and load it
         final FileHandle handle = Gdx.files.internal(PlatformUtils.getPath(fileName));
