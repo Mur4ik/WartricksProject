@@ -21,8 +21,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
 import com.wartricks.boards.GameMap;
-import com.wartricks.components.Player;
 import com.wartricks.systems.HudRenderSystem;
 import com.wartricks.systems.MapRenderSystem;
 import com.wartricks.systems.MovementSystem;
@@ -78,10 +78,10 @@ public class BoardScene extends AbstractScreen {
         fpsLogger = new FPSLogger();
         gameWorld = world;
         hudCamera = new OrthographicCamera();
-        camera.zoom = 0.6f;
         // world.setSystem(new EntitySpawningTimerSystem());
         // world.setSystem(new CollisionSystem());
-        playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera), true);
+        playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera, gameMap, gameWorld,
+                game), true);
         movementSystem = gameWorld.setSystem(new MovementSystem(), true);
         spriteRenderSystem = gameWorld.setSystem(new SpriteRenderSystem(camera, spriteBatch), true);
         mapRenderSystem = gameWorld.setSystem(new MapRenderSystem(camera, gameMap, spriteBatch),
@@ -90,10 +90,11 @@ public class BoardScene extends AbstractScreen {
         hudRenderSystem = gameWorld.setSystem(new HudRenderSystem(hudCamera, spriteBatch), true);
         gameWorld.initialize();
         Gdx.input.setInputProcessor(playerInputSystem);
-        EntityFactory.createCharacter(world, "dash", 5, 3).addComponent(new Player()).addToWorld();
-        EntityFactory.createCharacter(world, "kirby", 9, 4).addToWorld();
-        EntityFactory.createCharacter(world, "apple", 0, 1).addToWorld();
-        EntityFactory.createCharacter(world, "pinkie", 3, 6).addToWorld();
+        EntityFactory.createCharacter(world, gameMap, "dash", 5, 3).addToWorld();
+        EntityFactory.createCharacter(world, gameMap, "kirby", 9, 4).addToWorld();
+        EntityFactory.createCharacter(world, gameMap, "apple", 0, 1).addToWorld();
+        EntityFactory.createCharacter(world, gameMap, "pinkie", 3, 6).addToWorld();
+        EntityFactory.createCharacter(world, gameMap, "kirby", 9, 5).addToWorld();
         // final LoadScript script = new LoadScript("init.lua");
         // final LoadScript playerScript = new LoadScript("characters/player.lua");
         // playerScript.runScriptFunction("create", EntityFactory.class, world);
@@ -126,6 +127,9 @@ public class BoardScene extends AbstractScreen {
     @Override
     public void resize(final int width, final int height) {
         super.resize(width, height);
+        camera.zoom = 0.6f;
+        final Vector3 origin = new Vector3(-200, -50, 0);
+        camera.translate(origin);
         hudCamera.setToOrtho(false, width, height);
         Gdx.app.debug(this.toString(), "resize");
     }

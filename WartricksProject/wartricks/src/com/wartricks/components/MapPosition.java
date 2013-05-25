@@ -4,9 +4,9 @@ package com.wartricks.components;
 import com.artemis.Component;
 
 public class MapPosition extends Component {
-    public float x, y;
+    public int x, y;
 
-    public MapPosition(float x, float y) {
+    public MapPosition(int x, int y) {
         this.x = x;
         this.y = y;
     }

@@ -6,6 +6,7 @@ import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.math.MathUtils;
+import com.wartricks.boards.GameMap;
 import com.wartricks.components.Bounds;
 import com.wartricks.components.ColorAnimation;
 import com.wartricks.components.Expires;
@@ -19,7 +20,7 @@ import com.wartricks.components.Sprite;
 import com.wartricks.components.Velocity;
 
 public class EntityFactory {
-    public static Entity createCharacter(World world, String sprite, float x, float y) {
+    public static Entity createCharacter(World world, GameMap map, String sprite, int x, int y) {
         final Entity e = world.createEntity();
         e.addComponent(new MapPosition(x, y));
         e.addComponent(new Sprite(sprite, Sprite.Layer.ACTORS_3));
@@ -29,11 +30,12 @@ public class EntityFactory {
         e.addComponent(new Path());
         world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER);
         world.getManager(TagManager.class).register(sprite, e);
+        map.entityLocations[x][y] = e.getId();
         return e;
     }
 
-    public static Entity createEnemy(World world, String name, Sprite.Layer layer, float x,
-            float y, float vx, float vy) {
+    public static Entity createEnemy(World world, String name, Sprite.Layer layer, int x, int y,
+            float vx, float vy) {
         final Entity e = world.createEntity();
         final MapPosition position = new MapPosition();
         position.x = x;
@@ -78,7 +80,7 @@ public class EntityFactory {
 
     public static Entity createParticle(World world, float x, float y, float delay) {
         final Entity e = world.createEntity();
-        final MapPosition position = new MapPosition();
+        final Position position = new Position();
         position.x = x;
         position.y = y;
         e.addComponent(position);

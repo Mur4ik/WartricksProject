@@ -49,8 +49,8 @@ public class CollisionSystem extends EntitySystem {
                         bullet.deleteFromWorld();
                         if (health.health <= 0) {
                             for (int i = 0; i < 50; i++) {
-                                EntityFactory.createParticle(world, position.x, position.y, 0.6f)
-                                        .addToWorld();
+                                EntityFactory.createParticle(world, (int)position.x,
+                                        (int)position.y, 0.6f).addToWorld();
                             }
                             final Label scoreLabel = world.getManager(TagManager.class)
                                     .getEntity("score").getComponent(Label.class);
@@ -64,8 +64,8 @@ public class CollisionSystem extends EntitySystem {
                         }
                     }
                 }));
-        collisionPairs.add(new CollisionPair(Constants.Groups.PLAYER,
-                Constants.Groups.ENEMY_SHIPS, new CollisionHandler() {
+        collisionPairs.add(new CollisionPair(Constants.Groups.PLAYER, Constants.Groups.ENEMY_SHIPS,
+                new CollisionHandler() {
                     @Override
                     public void handleCollision(Entity player, Entity ship) {
                         final Health health = hm.get(player);

@@ -9,6 +9,8 @@ import com.wartricks.utils.BoardGenerator;
 public class GameMap {
     public int[][] map;
 
+    public int[][] entityLocations;
+
     public int width, height;
 
     public Pixmap pixmap;
@@ -19,11 +21,13 @@ public class GameMap {
         map = BoardGenerator.getMap(10, 7);
         width = map.length;
         height = map[0].length;
+        entityLocations = new int[width][height];
         pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 pixmap.setColor(this.getColor(map[i][j]));
                 pixmap.drawPixel(i, j);
+                entityLocations[i][j] = -1;
             }
         }
         texture = new Texture(pixmap);
@@ -54,5 +58,13 @@ public class GameMap {
 
     private static Color myColor(int r, int g, int b) {
         return new Color(r / 255f, g / 255f, b / 255f, 1);
+    }
+
+    public int getEntityAt(int x, int y) {
+        return entityLocations[x][y];
+    }
+
+    public boolean cellOccupied(int x, int y) {
+        return (entityLocations[x][y] > -1);
     }
 }

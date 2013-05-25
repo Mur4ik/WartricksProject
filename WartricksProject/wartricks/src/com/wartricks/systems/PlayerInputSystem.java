@@ -4,17 +4,21 @@ package com.wartricks.systems;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
+import com.artemis.World;
 import com.artemis.annotations.Mapper;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.wartricks.boards.GameMap;
 import com.wartricks.components.MapPosition;
 import com.wartricks.components.Movement;
 import com.wartricks.components.Path;
-import com.wartricks.components.Player;
+import com.wartricks.components.PlayerSelected;
 import com.wartricks.custom.Pair;
+import com.wartricks.lifecycle.WartricksGame;
 import com.wartricks.utils.EntityFactory;
 import com.wartricks.utils.MapTools;
 
@@ -29,31 +33,50 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     private Vector3 mouseVector;
 
-    private boolean moving;
+    private GameMap map;
+
+    private WartricksGame game;
+
+    private State state, lastState;
 
     private Pair moveTarget;
 
+    private int selectedEntity;
+
+    private enum State {
+        DEFAULT, ENTITY_SELECTED, DRAGGING, FIND_PATH,
+    };
+
     @SuppressWarnings("unchecked")
-    public PlayerInputSystem(OrthographicCamera camera) {
-        super(Aspect.getAspectForAll(Player.class));
-        this.camera = camera;
-        moving = false;
+    public PlayerInputSystem(OrthographicCamera screenCamera, GameMap gameMap, World gameWorld,
+            WartricksGame game) {
+        super(Aspect.getAspectForAll(PlayerSelected.class, MapPosition.class));
+        camera = screenCamera;
+        state = State.DEFAULT;
+        lastState = State.DEFAULT;
+        map = gameMap;
+        this.game = game;
+        this.setWorld(gameWorld);
+        selectedEntity = -1;
     }
 
     @Override
     protected void process(Entity e) {
-        mouseVector = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-        camera.unproject(mouseVector);
-        if (moving) {
-            moving = false;
+        if (state == State.FIND_PATH) {
+            state = State.ENTITY_SELECTED;
+            lastState = State.FIND_PATH;
+            // Get the entity's position
             final Path path = ptm.get(e);
-            MapPosition mapPosition = mpm.get(e);
+            MapPosition mapPosition = mpm.getSafe(e);
+            // Add a Movement component to the entity
+            map.entityLocations[mapPosition.x][mapPosition.y] = -1;
+            map.entityLocations[moveTarget.x][moveTarget.y] = e.getId();
             final Movement movement = new Movement(mapPosition.x, mapPosition.y, moveTarget.x,
                     moveTarget.y);
             mapPosition = new MapPosition(moveTarget.x, moveTarget.y);
+            path.path.add(movement);
             // TODO uncomment to reset path on click
             // path.path.clear();
-            path.path.add(movement);
             e.removeComponent(MapPosition.class);
             e.addComponent(mapPosition);
             e.changedInWorld();
@@ -83,25 +106,77 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         // Get the hex cell being clicked
+        // if (button == 0) {
+        // final Pair coords = MapTools.window2world(Gdx.input.getX(), Gdx.input.getY(), camera);
+        // if ((coords.x >= 0) && (coords.x <= 9) && (coords.y >= 0) && (coords.y <= 7)) {
+        // moving = true;
+        // moveTarget = coords;
+        // }
+        // EntityFactory.createClick(world, coords.x, coords.y, 0.4f, 4f, 0.15f).addToWorld();
+        // } else if (button == 1) {
+        // camera.zoom = 0.6f;
+        // }
         if (button == 0) {
-            final Pair coords = MapTools.window2world(Gdx.input.getX(), Gdx.input.getY(), camera);
-            if ((coords.x >= 0) && (coords.x <= 9) && (coords.y >= 0) && (coords.y <= 7)) {
-                moving = true;
-                moveTarget = coords;
+            // Are they releasing from dragging?
+            if (state == State.DRAGGING) {
+                state = lastState;
+                lastState = State.DRAGGING;
+                return true;
             }
-            EntityFactory.createClick(world, coords.x, coords.y, 0.4f, 4f, 0.15f).addToWorld();
+            // Otherwise, get the coordinates they clicked on
+            final Pair coords = MapTools.window2world(Gdx.input.getX(), Gdx.input.getY(), camera);
+            // TODO hardcoded
+            if ((coords.x >= 0) && (coords.x <= 9) && (coords.y >= 0) && (coords.y <= 7)) {
+                // Check the entityID of the cell they click on
+                final int entityId = map.getEntityAt(coords.x, coords.y);
+                // If it's an actual entity (not empty) then "select" it (unless it's already
+                // selected)
+                if ((entityId > -1) && (entityId != selectedEntity)) {
+                    // If there was previously another entity selected, "deselect" it
+                    if (selectedEntity > -1) {
+                        final Entity old = world.getEntity(selectedEntity);
+                        old.removeComponent(PlayerSelected.class);
+                        ptm.getSafe(old).path.clear();
+                        old.changedInWorld();
+                    }
+                    // Now select the current entity
+                    selectedEntity = entityId;
+                    final Entity e = world.getEntity(selectedEntity);
+                    e.addComponent(new PlayerSelected());
+                    e.changedInWorld();
+                    EntityFactory.createClick(world, coords.x, coords.y, 0.4f, 4f, 0.15f)
+                            .addToWorld();
+                    lastState = state;
+                    state = State.ENTITY_SELECTED;
+                    return true;
+                }
+                // Are they clicking to find a new path?
+                else if (state == State.ENTITY_SELECTED) {
+                    lastState = state;
+                    state = State.FIND_PATH;
+                    moveTarget = coords;
+                    return true;
+                }
+            }
         } else if (button == 1) {
+            final Vector3 origin = new Vector3(-200, -50, 0);
             camera.zoom = 0.6f;
+            camera.setToOrtho(false);
+            camera.translate(origin);
         }
         return false;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        // final Vector3 delta = new Vector3(-camera.zoom * Gdx.input.getDeltaX(), camera.zoom
-        // * Gdx.input.getDeltaY(), 0);
-        // camera.translate(delta);
-        return false;
+        if (state != State.DRAGGING) {
+            lastState = state;
+            state = State.DRAGGING;
+        }
+        final Vector2 delta = new Vector2(-camera.zoom * Gdx.input.getDeltaX(), camera.zoom
+                * Gdx.input.getDeltaY());
+        camera.translate(delta);
+        return true;
     }
 
     @Override
