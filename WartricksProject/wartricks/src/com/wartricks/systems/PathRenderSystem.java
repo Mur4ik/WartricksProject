@@ -54,6 +54,7 @@ public class PathRenderSystem extends EntitySystem {
 
     @Override
     protected void begin() {
+        spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
     }
 

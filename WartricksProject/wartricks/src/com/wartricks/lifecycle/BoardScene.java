@@ -19,7 +19,6 @@ import com.artemis.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.wartricks.boards.GameMap;
@@ -79,6 +78,7 @@ public class BoardScene extends AbstractScreen {
         fpsLogger = new FPSLogger();
         gameWorld = world;
         hudCamera = new OrthographicCamera();
+        camera.zoom = 0.6f;
         // world.setSystem(new EntitySpawningTimerSystem());
         // world.setSystem(new CollisionSystem());
         playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera), true);
@@ -90,9 +90,6 @@ public class BoardScene extends AbstractScreen {
         hudRenderSystem = gameWorld.setSystem(new HudRenderSystem(hudCamera, spriteBatch), true);
         gameWorld.initialize();
         Gdx.input.setInputProcessor(playerInputSystem);
-        camera.zoom = 0.6f;
-        camera.position.x = 150 * camera.zoom;
-        camera.position.y = 200 * camera.zoom;
         EntityFactory.createCharacter(world, "dash", 5, 3).addComponent(new Player()).addToWorld();
         EntityFactory.createCharacter(world, "kirby", 9, 4).addToWorld();
         EntityFactory.createCharacter(world, "apple", 0, 1).addToWorld();
@@ -107,8 +104,6 @@ public class BoardScene extends AbstractScreen {
     @Override
     public void render(final float delta) {
         super.render(delta);
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
         fpsLogger.log();
         spriteBatch.setProjectionMatrix(camera.combined);
         playerInputSystem.process();

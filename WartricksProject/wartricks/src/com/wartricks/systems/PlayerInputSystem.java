@@ -91,7 +91,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             }
             EntityFactory.createClick(world, coords.x, coords.y, 0.4f, 4f, 0.15f).addToWorld();
         } else if (button == 1) {
-            camera.zoom = 1;
+            camera.zoom = 0.6f;
         }
         return false;
     }

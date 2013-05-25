@@ -18,11 +18,11 @@ public class HudRenderSystem extends VoidEntitySystem {
 
     private BitmapFont font;
 
-    private OrthographicCamera hudCamera;
+    private OrthographicCamera camera;
 
     public HudRenderSystem(OrthographicCamera camera, SpriteBatch batch) {
         spriteBatch = batch;
-        hudCamera = camera;
+        this.camera = camera;
     }
 
     @Override
@@ -39,6 +39,7 @@ public class HudRenderSystem extends VoidEntitySystem {
 
     @Override
     protected void begin() {
+        spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
     }
 

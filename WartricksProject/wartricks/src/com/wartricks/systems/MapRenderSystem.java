@@ -102,6 +102,7 @@ public class MapRenderSystem extends VoidEntitySystem {
 
     @Override
     protected void begin() {
+        spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
     }
 
