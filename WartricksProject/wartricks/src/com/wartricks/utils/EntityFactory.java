@@ -5,6 +5,7 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.wartricks.boards.GameMap;
 import com.wartricks.components.Bounds;
@@ -27,7 +28,8 @@ public class EntityFactory {
         e.addComponent(new Velocity());
         e.addComponent(new Health(100));
         e.addComponent(new Bounds(40));
-        e.addComponent(new Path());
+        e.addComponent(new Path(new Color((float)Math.random(), (float)Math.random(), (float)Math
+                .random(), 1f)));
         world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER);
         world.getManager(TagManager.class).register(sprite, e);
         map.entityLocations[x][y] = e.getId();

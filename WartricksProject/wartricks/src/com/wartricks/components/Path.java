@@ -1,19 +1,32 @@
 
 package com.wartricks.components;
 
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.LinkedList;
 
 import com.artemis.Component;
+import com.badlogic.gdx.graphics.Color;
 
 public class Path extends Component {
-    public LinkedBlockingDeque<Move> path;
+    public LinkedList<Move> path;
+
+    public Color pathColor;
+
+    public Path(Move move, Color color) {
+        path = new LinkedList<Move>();
+        path.addLast(move);
+        pathColor = color;
+    }
 
     public Path(Move move) {
-        path = new LinkedBlockingDeque<Move>();
-        path.addLast(move);
+        this(move, Color.BLACK);
+    }
+
+    public Path(Color color) {
+        path = new LinkedList<Move>();
+        pathColor = color;
     }
 
     public Path() {
-        path = new LinkedBlockingDeque<Move>();
+        this(Color.BLACK);
     }
 }

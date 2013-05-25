@@ -10,7 +10,6 @@ import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.wartricks.boards.GameMap;
 import com.wartricks.components.MapPosition;
@@ -104,17 +103,6 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        // Get the hex cell being clicked
-        // if (button == 0) {
-        // final Pair coords = MapTools.window2world(Gdx.input.getX(), Gdx.input.getY(), camera);
-        // if ((coords.x >= 0) && (coords.x <= 9) && (coords.y >= 0) && (coords.y <= 7)) {
-        // moving = true;
-        // moveTarget = coords;
-        // }
-        // EntityFactory.createClick(world, coords.x, coords.y, 0.4f, 4f, 0.15f).addToWorld();
-        // } else if (button == 1) {
-        // camera.zoom = 0.6f;
-        // }
         if (button == 0) {
             // Are they releasing from dragging?
             if (state == State.DRAGGING) {
@@ -135,7 +123,8 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
                     if (selectedEntity > -1) {
                         final Entity old = world.getEntity(selectedEntity);
                         old.removeComponent(PlayerSelected.class);
-                        ptm.getSafe(old).path.clear();
+                        // TODO
+                        // ptm.getSafe(old).path.clear();
                         old.changedInWorld();
                     }
                     // Now select the current entity
@@ -168,13 +157,13 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        if (state != State.DRAGGING) {
-            lastState = state;
-            state = State.DRAGGING;
-        }
-        final Vector2 delta = new Vector2(-camera.zoom * Gdx.input.getDeltaX(), camera.zoom
-                * Gdx.input.getDeltaY());
-        camera.translate(delta);
+        // if (state != State.DRAGGING) {
+        // lastState = state;
+        // state = State.DRAGGING;
+        // }
+        // final Vector2 delta = new Vector2(-camera.zoom * Gdx.input.getDeltaX(), camera.zoom
+        // * Gdx.input.getDeltaY());
+        // camera.translate(delta);
         return true;
     }
 
