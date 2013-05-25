@@ -12,6 +12,7 @@ public class Main {
         cfg.useGL20 = true;
         cfg.width = 1080;
         cfg.height = 576;
+        cfg.resizable = false;
         new LwjglApplication(new WartricksGame(cfg.width, cfg.height = 576), cfg);
     }
 }

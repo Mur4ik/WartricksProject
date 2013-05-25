@@ -23,19 +23,19 @@ public class PathRenderSystem extends EntitySystem {
 
     private OrthographicCamera camera;
 
-    private SpriteBatch batch;
+    private SpriteBatch spriteBatch;
 
     private Texture feet;
 
     @SuppressWarnings("unchecked")
-    public PathRenderSystem(OrthographicCamera camera) {
+    public PathRenderSystem(OrthographicCamera camera, SpriteBatch batch) {
         super(Aspect.getAspectForAll(Path.class));
         this.camera = camera;
+        spriteBatch = batch;
     }
 
     @Override
     protected void initialize() {
-        batch = new SpriteBatch();
         feet = new Texture(Gdx.files.internal(PlatformUtils.getPath("textures/effects/feet.png")));
     }
 
@@ -54,8 +54,7 @@ public class PathRenderSystem extends EntitySystem {
 
     @Override
     protected void begin() {
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
+        spriteBatch.begin();
     }
 
     private void process(Entity e) {
@@ -65,16 +64,16 @@ public class PathRenderSystem extends EntitySystem {
                 final FloatPair coordsOrigin = MapTools.world2window(move.originX, move.originY);
                 final FloatPair coordsDestination = MapTools.world2window(move.destinationX,
                         move.destinationY);
-                batch.draw(feet, coordsOrigin.x - (feet.getWidth() / 2),
-                        coordsOrigin.y - (feet.getHeight() / 2));
-                batch.draw(feet, coordsDestination.x - (feet.getWidth() / 2), coordsDestination.y
+                spriteBatch.draw(feet, coordsOrigin.x - (feet.getWidth() / 2), coordsOrigin.y
                         - (feet.getHeight() / 2));
+                spriteBatch.draw(feet, coordsDestination.x - (feet.getWidth() / 2),
+                        coordsDestination.y - (feet.getHeight() / 2));
             }
         }
     }
 
     @Override
     protected void end() {
-        batch.end();
+        spriteBatch.end();
     }
 }

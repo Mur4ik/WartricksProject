@@ -42,7 +42,7 @@ public class BoardScene extends AbstractScreen {
 
     final StringBuilder output = new StringBuilder();
 
-    private OrthographicCamera camera;
+    private OrthographicCamera hudCamera;
 
     private WartricksGame gameWartricks;
 
@@ -52,7 +52,7 @@ public class BoardScene extends AbstractScreen {
 
     private FPSLogger fpsLogger;
 
-    private HudRenderSystem labelRenderSystem;
+    private HudRenderSystem hudRenderSystem;
 
     private GameMap gameMap;
 
@@ -78,22 +78,25 @@ public class BoardScene extends AbstractScreen {
         gameWartricks = game;
         fpsLogger = new FPSLogger();
         gameWorld = world;
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, gameWartricks.WINDOW_WIDTH, gameWartricks.WINDOW_HEIGHT);
+        hudCamera = new OrthographicCamera();
         // world.setSystem(new EntitySpawningTimerSystem());
         // world.setSystem(new CollisionSystem());
         playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera), true);
         movementSystem = gameWorld.setSystem(new MovementSystem(), true);
-        spriteRenderSystem = gameWorld.setSystem(new SpriteRenderSystem(camera), true);
-        mapRenderSystem = gameWorld.setSystem(new MapRenderSystem(camera, gameMap), true);
-        pathRenderSystem = gameWorld.setSystem(new PathRenderSystem(camera), true);
-        labelRenderSystem = gameWorld.setSystem(new HudRenderSystem(camera), true);
+        spriteRenderSystem = gameWorld.setSystem(new SpriteRenderSystem(camera, spriteBatch), true);
+        mapRenderSystem = gameWorld.setSystem(new MapRenderSystem(camera, gameMap, spriteBatch),
+                true);
+        pathRenderSystem = gameWorld.setSystem(new PathRenderSystem(camera, spriteBatch), true);
+        hudRenderSystem = gameWorld.setSystem(new HudRenderSystem(hudCamera, spriteBatch), true);
         gameWorld.initialize();
         Gdx.input.setInputProcessor(playerInputSystem);
         camera.zoom = 0.6f;
         camera.position.x = 150 * camera.zoom;
         camera.position.y = 200 * camera.zoom;
         EntityFactory.createCharacter(world, "dash", 5, 3).addComponent(new Player()).addToWorld();
+        EntityFactory.createCharacter(world, "kirby", 9, 4).addToWorld();
+        EntityFactory.createCharacter(world, "apple", 0, 1).addToWorld();
+        EntityFactory.createCharacter(world, "pinkie", 3, 6).addToWorld();
         // final LoadScript script = new LoadScript("init.lua");
         // final LoadScript playerScript = new LoadScript("characters/player.lua");
         // playerScript.runScriptFunction("create", EntityFactory.class, world);
@@ -102,11 +105,33 @@ public class BoardScene extends AbstractScreen {
     }
 
     @Override
+    public void render(final float delta) {
+        super.render(delta);
+        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+        fpsLogger.log();
+        spriteBatch.setProjectionMatrix(camera.combined);
+        playerInputSystem.process();
+        movementSystem.process();
+        mapRenderSystem.process();
+        spriteRenderSystem.process();
+        pathRenderSystem.process();
+        spriteBatch.setProjectionMatrix(hudCamera.combined);
+        hudRenderSystem.process();
+    }
+
+    @Override
     public void dispose() {
+        game.world.deleteSystem(hudRenderSystem);
+        game.world.deleteSystem(mapRenderSystem);
+        game.world.deleteSystem(pathRenderSystem);
+        game.world.deleteSystem(spriteRenderSystem);
     }
 
     @Override
     public void resize(final int width, final int height) {
+        super.resize(width, height);
+        hudCamera.setToOrtho(false, width, height);
         Gdx.app.debug(this.toString(), "resize");
     }
 
@@ -118,22 +143,6 @@ public class BoardScene extends AbstractScreen {
     @Override
     public void resume() {
         Gdx.app.debug(this.toString(), "resume");
-    }
-
-    @Override
-    public void render(final float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-        fpsLogger.log();
-        camera.update();
-        world.setDelta(delta);
-        playerInputSystem.process();
-        movementSystem.process();
-        world.process();
-        mapRenderSystem.process();
-        spriteRenderSystem.process();
-        pathRenderSystem.process();
-        labelRenderSystem.process();
     }
 
     @Override

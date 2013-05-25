@@ -10,19 +10,23 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.wartricks.lifecycle.WartricksGame;
 import com.wartricks.utils.PlatformUtils;
 
 public class HudRenderSystem extends VoidEntitySystem {
-    private SpriteBatch batch;
+    private SpriteBatch spriteBatch;
 
     private BitmapFont font;
 
-    public HudRenderSystem(OrthographicCamera camera) {
+    private OrthographicCamera hudCamera;
+
+    public HudRenderSystem(OrthographicCamera camera, SpriteBatch batch) {
+        spriteBatch = batch;
+        hudCamera = camera;
     }
 
     @Override
     protected void initialize() {
-        batch = new SpriteBatch();
         final Texture fontTexture = new Texture(Gdx.files.internal(PlatformUtils
                 .getPath("resources/fonts/normal_0.png")));
         fontTexture.setFilter(TextureFilter.Linear, TextureFilter.MipMapLinearLinear);
@@ -35,24 +39,24 @@ public class HudRenderSystem extends VoidEntitySystem {
 
     @Override
     protected void begin() {
-        batch.begin();
+        spriteBatch.begin();
     }
 
     @Override
     protected void processSystem() {
-        batch.setColor(1, 1, 1, 1);
-        final int screenHeight = Gdx.graphics.getHeight();
-        font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, screenHeight - 20);
-        font.draw(batch, "Active entities: " + world.getEntityManager().getActiveEntityCount(), 20,
-                screenHeight - 40);
-        font.draw(batch, "Total created: " + world.getEntityManager().getTotalCreated(), 20,
+        spriteBatch.setColor(1, 1, 1, 1);
+        final float screenHeight = WartricksGame.WINDOW_HEIGHT;
+        font.draw(spriteBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, screenHeight - 20);
+        font.draw(spriteBatch, "Active entities: "
+                + world.getEntityManager().getActiveEntityCount(), 20, screenHeight - 40);
+        font.draw(spriteBatch, "Total created: " + world.getEntityManager().getTotalCreated(), 20,
                 screenHeight - 60);
-        font.draw(batch, "Total deleted: " + world.getEntityManager().getTotalDeleted(), 20,
+        font.draw(spriteBatch, "Total deleted: " + world.getEntityManager().getTotalDeleted(), 20,
                 screenHeight - 80);
     }
 
     @Override
     protected void end() {
-        batch.end();
+        spriteBatch.end();
     }
 }

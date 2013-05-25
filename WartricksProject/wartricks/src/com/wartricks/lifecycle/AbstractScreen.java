@@ -47,8 +47,8 @@ public class AbstractScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        game.WINDOW_WIDTH = width;
-        game.WINDOW_HEIGHT = height;
+        WartricksGame.WINDOW_WIDTH = width;
+        WartricksGame.WINDOW_HEIGHT = height;
         camera.setToOrtho(false, width, height);
     }
 

@@ -15,7 +15,7 @@ import com.wartricks.utils.MapTools;
 import com.wartricks.utils.PlatformUtils;
 
 public class MapRenderSystem extends VoidEntitySystem {
-    private SpriteBatch batch;
+    private SpriteBatch spriteBatch;
 
     private TextureAtlas atlas;
 
@@ -25,14 +25,14 @@ public class MapRenderSystem extends VoidEntitySystem {
 
     private GameMap gameMap;
 
-    public MapRenderSystem(OrthographicCamera camera, GameMap gameMap) {
+    public MapRenderSystem(OrthographicCamera camera, GameMap gameMap, SpriteBatch batch) {
         this.camera = camera;
         this.gameMap = gameMap;
+        spriteBatch = batch;
     }
 
     @Override
     protected void initialize() {
-        batch = new SpriteBatch();
         // Load the map tiles into an Array
         atlas = new TextureAtlas(Gdx.files.internal(PlatformUtils
                 .getPath("resources/textures/maptiles.atlas")), Gdx.files.internal(PlatformUtils
@@ -79,18 +79,21 @@ public class MapRenderSystem extends VoidEntitySystem {
                 x = col * MapTools.col_multiple;
                 y = row * MapTools.row_multiple;
                 reg = textures.get(gameMap.map[col][row]);
-                batch.draw(reg, x, y, 0, 0, reg.getRegionWidth(), reg.getRegionHeight(), 1, 1, 0);
+                spriteBatch.draw(reg, x, y, 0, 0, reg.getRegionWidth(), reg.getRegionHeight(), 1,
+                        1, 0);
                 x += MapTools.col_multiple;
                 y += MapTools.row_multiple / 2;
                 reg = textures.get(gameMap.map[col + 1][row]);
-                batch.draw(reg, x, y, 0, 0, reg.getRegionWidth(), reg.getRegionHeight(), 1, 1, 0);
+                spriteBatch.draw(reg, x, y, 0, 0, reg.getRegionWidth(), reg.getRegionHeight(), 1,
+                        1, 0);
             }
             if ((x1 >= gameMap.width) && ((gameMap.width % 2) == 1)) {
                 final int col = gameMap.width - 1;
                 x = col * MapTools.col_multiple;
                 y = row * MapTools.row_multiple;
                 reg = textures.get(gameMap.map[col][row]);
-                batch.draw(reg, x, y, 0, 0, reg.getRegionWidth(), reg.getRegionHeight(), 1, 1, 0);
+                spriteBatch.draw(reg, x, y, 0, 0, reg.getRegionWidth(), reg.getRegionHeight(), 1,
+                        1, 0);
             }
         }
         // This line can draw a small image of the whole map
@@ -99,12 +102,11 @@ public class MapRenderSystem extends VoidEntitySystem {
 
     @Override
     protected void begin() {
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
+        spriteBatch.begin();
     }
 
     @Override
     protected void end() {
-        batch.end();
+        spriteBatch.end();
     }
 }

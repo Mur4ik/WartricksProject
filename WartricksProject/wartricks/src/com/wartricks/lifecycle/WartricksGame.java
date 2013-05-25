@@ -11,9 +11,9 @@ import com.wartricks.systems.ExpiringSystem;
 import com.wartricks.systems.ScaleAnimationSystem;
 
 public class WartricksGame extends Game {
-    public int WINDOW_WIDTH;
+    public static int WINDOW_WIDTH;
 
-    public int WINDOW_HEIGHT;
+    public static int WINDOW_HEIGHT;
 
     public World world;
 

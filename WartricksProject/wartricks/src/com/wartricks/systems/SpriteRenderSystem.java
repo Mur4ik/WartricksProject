@@ -34,7 +34,7 @@ public class SpriteRenderSystem extends EntitySystem {
 
     private OrthographicCamera camera;
 
-    private SpriteBatch batch;
+    private SpriteBatch spriteBatch;
 
     private TextureAtlas atlas;
 
@@ -45,14 +45,14 @@ public class SpriteRenderSystem extends EntitySystem {
     private List<Entity> sortedEntities;
 
     @SuppressWarnings("unchecked")
-    public SpriteRenderSystem(OrthographicCamera camera) {
+    public SpriteRenderSystem(OrthographicCamera camera, SpriteBatch batch) {
         super(Aspect.getAspectForAll(MapPosition.class, Sprite.class));
         this.camera = camera;
+        spriteBatch = batch;
     }
 
     @Override
     protected void initialize() {
-        batch = new SpriteBatch();
         atlas = new TextureAtlas(Gdx.files.internal(PlatformUtils
                 .getPath("resources/textures/characters.atlas")), Gdx.files.internal(PlatformUtils
                 .getPath("resources/textures/")));
@@ -78,8 +78,7 @@ public class SpriteRenderSystem extends EntitySystem {
 
     @Override
     protected void begin() {
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
+        spriteBatch.begin();
     }
 
     protected void process(Entity e) {
@@ -88,17 +87,17 @@ public class SpriteRenderSystem extends EntitySystem {
             final FloatPair position = MapTools.world2window(mapPosition.x, mapPosition.y);
             final Sprite sprite = sm.get(e);
             final AtlasRegion spriteRegion = regionsByEntity.get(e.getId());
-            batch.setColor(sprite.r, sprite.g, sprite.b, sprite.a);
+            spriteBatch.setColor(sprite.r, sprite.g, sprite.b, sprite.a);
             final float posX = position.x - ((spriteRegion.getRegionWidth() / 2) * sprite.scaleX);
             final float posY = position.y - ((spriteRegion.getRegionHeight() / 2) * sprite.scaleX);
-            batch.draw(spriteRegion, posX, posY, 0, 0, spriteRegion.getRegionWidth(),
+            spriteBatch.draw(spriteRegion, posX, posY, 0, 0, spriteRegion.getRegionWidth(),
                     spriteRegion.getRegionHeight(), sprite.scaleX, sprite.scaleY, sprite.rotation);
         }
     }
 
     @Override
     protected void end() {
-        batch.end();
+        spriteBatch.end();
     }
 
     @Override
