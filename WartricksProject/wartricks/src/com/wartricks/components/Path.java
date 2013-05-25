@@ -6,14 +6,14 @@ import java.util.concurrent.LinkedBlockingDeque;
 import com.artemis.Component;
 
 public class Path extends Component {
-    public LinkedBlockingDeque<Movement> path;
+    public LinkedBlockingDeque<Move> path;
 
-    public Path(Movement move) {
-        path = new LinkedBlockingDeque<Movement>();
+    public Path(Move move) {
+        path = new LinkedBlockingDeque<Move>();
         path.addLast(move);
     }
 
     public Path() {
-        path = new LinkedBlockingDeque<Movement>();
+        path = new LinkedBlockingDeque<Move>();
     }
 }

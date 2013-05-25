@@ -14,7 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.wartricks.boards.GameMap;
 import com.wartricks.components.MapPosition;
-import com.wartricks.components.Movement;
+import com.wartricks.components.Move;
 import com.wartricks.components.Path;
 import com.wartricks.components.PlayerSelected;
 import com.wartricks.custom.Pair;
@@ -71,8 +71,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             // Add a Movement component to the entity
             map.entityLocations[mapPosition.x][mapPosition.y] = -1;
             map.entityLocations[moveTarget.x][moveTarget.y] = e.getId();
-            final Movement movement = new Movement(mapPosition.x, mapPosition.y, moveTarget.x,
-                    moveTarget.y);
+            final Move movement = new Move(mapPosition.x, mapPosition.y, moveTarget.x, moveTarget.y);
             mapPosition = new MapPosition(moveTarget.x, moveTarget.y);
             path.path.add(movement);
             // TODO uncomment to reset path on click

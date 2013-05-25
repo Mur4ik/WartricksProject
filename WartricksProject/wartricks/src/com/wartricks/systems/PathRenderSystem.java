@@ -11,7 +11,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.wartricks.components.Movement;
+import com.wartricks.components.Move;
 import com.wartricks.components.Path;
 import com.wartricks.custom.FloatPair;
 import com.wartricks.utils.MapTools;
@@ -61,10 +61,15 @@ public class PathRenderSystem extends EntitySystem {
     private void process(Entity e) {
         final Path moves = mm.get(e);
         if (!moves.path.isEmpty()) {
-            for (final Movement move : moves.path) {
-                final FloatPair coordsOrigin = MapTools.world2window(move.originX, move.originY);
-                spriteBatch.draw(feet, coordsOrigin.x - (feet.getWidth() / 2), coordsOrigin.y
-                        - (feet.getHeight() / 2));
+            for (final Move move : moves.path) {
+                if (!move.origin.equals(move.destination)) {
+                    final FloatPair coordsOrigin = MapTools.world2window(move.origin.x,
+                            move.origin.y);
+                    spriteBatch.draw(feet, coordsOrigin.x - (feet.getWidth() / 2), coordsOrigin.y
+                            - (feet.getHeight() / 2));
+                } else {
+                    final int a = 0;
+                }
             }
         }
     }
