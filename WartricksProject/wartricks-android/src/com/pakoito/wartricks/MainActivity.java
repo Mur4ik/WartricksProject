@@ -2,6 +2,7 @@
 package com.pakoito.wartricks;
 
 import android.os.Bundle;
+import android.view.Display;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -13,6 +14,7 @@ public class MainActivity extends AndroidApplication {
         super.onCreate(savedInstanceState);
         final AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
         cfg.useGL20 = true;
-        this.initialize(new WartricksGame(), cfg);
+        final Display display = this.getWindowManager().getDefaultDisplay();
+        this.initialize(new WartricksGame(display.getWidth(), display.getHeight()), cfg);
     }
 }

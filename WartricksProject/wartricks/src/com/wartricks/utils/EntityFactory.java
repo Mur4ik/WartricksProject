@@ -13,23 +13,22 @@ import com.wartricks.components.Health;
 import com.wartricks.components.Label;
 import com.wartricks.components.MapPosition;
 import com.wartricks.components.Path;
-import com.wartricks.components.Player;
 import com.wartricks.components.Position;
 import com.wartricks.components.ScaleAnimation;
 import com.wartricks.components.Sprite;
 import com.wartricks.components.Velocity;
 
 public class EntityFactory {
-    public static Entity createPlayer(World world, float x, float y) {
+    public static Entity createCharacter(World world, String sprite, float x, float y) {
         final Entity e = world.createEntity();
         e.addComponent(new MapPosition(x, y));
-        e.addComponent(new Sprite("dash", Sprite.Layer.ACTORS_3));
+        e.addComponent(new Sprite(sprite, Sprite.Layer.ACTORS_3));
         e.addComponent(new Velocity());
-        e.addComponent(new Player());
         e.addComponent(new Health(100));
         e.addComponent(new Bounds(40));
         e.addComponent(new Path());
         world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER);
+        world.getManager(TagManager.class).register(sprite, e);
         return e;
     }
 
@@ -59,7 +58,6 @@ public class EntityFactory {
         }
         e.addComponent(bounds);
         world.getManager(GroupManager.class).add(e, Constants.Groups.ENEMY_SHIPS);
-        world.getManager(TagManager.class).register("player", e);
         return e;
     }
 

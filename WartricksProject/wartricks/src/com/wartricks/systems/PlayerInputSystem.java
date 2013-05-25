@@ -41,11 +41,6 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
     }
 
     @Override
-    protected void initialize() {
-        Gdx.input.setInputProcessor(this);
-    }
-
-    @Override
     protected void process(Entity e) {
         mouseVector = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(mouseVector);
@@ -88,13 +83,16 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         // Get the hex cell being clicked
-        final Pair coords = MapTools.window2world(Gdx.input.getX(), Gdx.input.getY(), camera);
-        moving = true;
-        moveTarget = coords;
-        if (button == 1) {
+        if (button == 0) {
+            final Pair coords = MapTools.window2world(Gdx.input.getX(), Gdx.input.getY(), camera);
+            if ((coords.x >= 0) && (coords.x <= 9) && (coords.y >= 0) && (coords.y <= 7)) {
+                moving = true;
+                moveTarget = coords;
+            }
+            EntityFactory.createClick(world, coords.x, coords.y, 0.4f, 4f, 0.15f).addToWorld();
+        } else if (button == 1) {
             camera.zoom = 1;
         }
-        EntityFactory.createClick(world, coords.x, coords.y, 0.4f, 4f, 0.15f).addToWorld();
         return false;
     }
 

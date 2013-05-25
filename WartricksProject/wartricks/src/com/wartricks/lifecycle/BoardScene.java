@@ -16,29 +16,24 @@ import org.keplerproject.luajava.LuaState;
 import org.keplerproject.luajava.LuaStateFactory;
 
 import com.artemis.World;
-import com.artemis.managers.GroupManager;
-import com.artemis.managers.TagManager;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.wartricks.boards.GameMap;
-import com.wartricks.systems.ColorAnimationSystem;
-import com.wartricks.systems.ExpiringSystem;
+import com.wartricks.components.Player;
 import com.wartricks.systems.HudRenderSystem;
 import com.wartricks.systems.MapRenderSystem;
 import com.wartricks.systems.MovementSystem;
 import com.wartricks.systems.PathRenderSystem;
 import com.wartricks.systems.PlayerInputSystem;
-import com.wartricks.systems.ScaleAnimationSystem;
 import com.wartricks.systems.SpriteRenderSystem;
 import com.wartricks.utils.EntityFactory;
 import com.wartricks.utils.PlatformUtils;
 
-public class BoardScene implements Screen {
+public class BoardScene extends AbstractScreen {
     private final static int LISTEN_PORT = 3333;
 
     ServerThread serverThread;
@@ -49,9 +44,9 @@ public class BoardScene implements Screen {
 
     private OrthographicCamera camera;
 
-    private Game game;
+    private WartricksGame gameWartricks;
 
-    private World world;
+    private World gameWorld;
 
     private SpriteRenderSystem spriteRenderSystem;
 
@@ -67,36 +62,38 @@ public class BoardScene implements Screen {
 
     private PlayerInputSystem playerInputSystem;
 
-    public BoardScene(final Game game) {
+    private SpriteBatch spriteBatch;
+
+    private MovementSystem movementSystem;
+
+    public BoardScene(final WartricksGame game, World world, SpriteBatch batch) {
+        super(game, world);
         // TODO remote server
         // this.createLuaState();
         // serverThread = new ServerThread();
         // serverThread.start();
         // //////////
-        camera = new OrthographicCamera();
+        spriteBatch = batch;
         gameMap = new GameMap();
-        camera.setToOrtho(false, 1080, 576);
-        this.game = game;
+        gameWartricks = game;
         fpsLogger = new FPSLogger();
-        world = new World();
-        playerInputSystem = world.setSystem(new PlayerInputSystem(camera), true);
-        world.setSystem(new MovementSystem());
-        world.setSystem(new ExpiringSystem());
+        gameWorld = world;
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, gameWartricks.WINDOW_WIDTH, gameWartricks.WINDOW_HEIGHT);
         // world.setSystem(new EntitySpawningTimerSystem());
         // world.setSystem(new CollisionSystem());
-        world.setSystem(new ColorAnimationSystem());
-        world.setSystem(new ScaleAnimationSystem());
-        spriteRenderSystem = world.setSystem(new SpriteRenderSystem(camera), true);
-        mapRenderSystem = world.setSystem(new MapRenderSystem(camera, gameMap), true);
-        pathRenderSystem = world.setSystem(new PathRenderSystem(camera), true);
-        labelRenderSystem = world.setSystem(new HudRenderSystem(camera), true);
-        world.setManager(new GroupManager());
-        world.setManager(new TagManager());
-        world.initialize();
+        playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera), true);
+        movementSystem = gameWorld.setSystem(new MovementSystem(), true);
+        spriteRenderSystem = gameWorld.setSystem(new SpriteRenderSystem(camera), true);
+        mapRenderSystem = gameWorld.setSystem(new MapRenderSystem(camera, gameMap), true);
+        pathRenderSystem = gameWorld.setSystem(new PathRenderSystem(camera), true);
+        labelRenderSystem = gameWorld.setSystem(new HudRenderSystem(camera), true);
+        gameWorld.initialize();
+        Gdx.input.setInputProcessor(playerInputSystem);
         camera.zoom = 0.6f;
         camera.position.x = 150 * camera.zoom;
         camera.position.y = 200 * camera.zoom;
-        EntityFactory.createPlayer(world, 0, 0).addToWorld();
+        EntityFactory.createCharacter(world, "dash", 5, 3).addComponent(new Player()).addToWorld();
         // final LoadScript script = new LoadScript("init.lua");
         // final LoadScript playerScript = new LoadScript("characters/player.lua");
         // playerScript.runScriptFunction("create", EntityFactory.class, world);
@@ -131,6 +128,7 @@ public class BoardScene implements Screen {
         camera.update();
         world.setDelta(delta);
         playerInputSystem.process();
+        movementSystem.process();
         world.process();
         mapRenderSystem.process();
         spriteRenderSystem.process();
