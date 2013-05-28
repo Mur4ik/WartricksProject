@@ -36,7 +36,7 @@ import com.wartricks.utils.PlatformUtils;
 public class BoardScene extends AbstractScreen {
     private final static int LISTEN_PORT = 3333;
 
-    ServerThread serverThread;
+    public ServerThread serverThread;
 
     public LuaState L;
 
@@ -80,8 +80,6 @@ public class BoardScene extends AbstractScreen {
         fpsLogger = new FPSLogger();
         gameWorld = world;
         hudCamera = new OrthographicCamera();
-        // world.setSystem(new EntitySpawningTimerSystem());
-        // world.setSystem(new CollisionSystem());
         playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera, gameMap, gameWorld,
                 game), true);
         movementSystem = gameWorld.setSystem(new MovementSystem(), true);
