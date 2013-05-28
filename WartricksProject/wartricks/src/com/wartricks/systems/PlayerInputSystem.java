@@ -18,6 +18,7 @@ import com.wartricks.components.Path;
 import com.wartricks.components.PlayerSelected;
 import com.wartricks.custom.Pair;
 import com.wartricks.lifecycle.WartricksGame;
+import com.wartricks.utils.Constants;
 import com.wartricks.utils.EntityFactory;
 
 public class PlayerInputSystem extends EntityProcessingSystem implements InputProcessor {
@@ -112,8 +113,8 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             // Otherwise, get the coordinates they clicked on
             final Pair coords = gameMap.mapTools.window2world(Gdx.input.getX(), Gdx.input.getY(),
                     camera);
-            // TODO hardcoded
-            if ((coords.x >= 0) && (coords.x <= 9) && (coords.y >= 0) && (coords.y <= 7)) {
+            if ((coords.x >= 0) && (coords.x <= (Constants.HEX_MAP_WIDTH - 1)) && (coords.y >= 0)
+                    && (coords.y <= (Constants.HEX_MAP_HEIGHT - 1))) {
                 // Check the entityID of the cell they click on
                 final int entityId = gameMap.getEntityAt(coords.x, coords.y);
                 // If it's an actual entity (not empty) then "select" it (unless it's already
