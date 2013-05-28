@@ -78,12 +78,12 @@ public class MapRenderSystem extends VoidEntitySystem {
             for (int col = x0; col < (x1 - 1); col += 2) {
                 x = col * MapTools.col_multiple;
                 y = row * MapTools.row_multiple;
-                reg = textures.get(gameMap.map[col][row]);
+                reg = textures.get(gameMap.getPositionAt(col, row));
                 spriteBatch.draw(reg, x, y, 0, 0, reg.getRegionWidth(), reg.getRegionHeight(), 1,
                         1, 0);
                 x += MapTools.col_multiple;
                 y += MapTools.row_multiple / 2;
-                reg = textures.get(gameMap.map[col + 1][row]);
+                reg = textures.get(gameMap.getPositionAt(col + 1, row));
                 spriteBatch.draw(reg, x, y, 0, 0, reg.getRegionWidth(), reg.getRegionHeight(), 1,
                         1, 0);
             }
@@ -91,7 +91,7 @@ public class MapRenderSystem extends VoidEntitySystem {
                 final int col = gameMap.width - 1;
                 x = col * MapTools.col_multiple;
                 y = row * MapTools.row_multiple;
-                reg = textures.get(gameMap.map[col][row]);
+                reg = textures.get(gameMap.getPositionAt(col, row));
                 spriteBatch.draw(reg, x, y, 0, 0, reg.getRegionWidth(), reg.getRegionHeight(), 1,
                         1, 0);
             }

@@ -12,10 +12,10 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.wartricks.boards.GameMap;
+import com.wartricks.components.CreatureSelected;
 import com.wartricks.components.MapPosition;
 import com.wartricks.components.Move;
 import com.wartricks.components.Path;
-import com.wartricks.components.PlayerSelected;
 import com.wartricks.custom.Pair;
 import com.wartricks.lifecycle.WartricksGame;
 import com.wartricks.utils.Constants;
@@ -49,7 +49,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
     @SuppressWarnings("unchecked")
     public PlayerInputSystem(OrthographicCamera screenCamera, GameMap map, World gameWorld,
             WartricksGame game) {
-        super(Aspect.getAspectForAll(PlayerSelected.class, MapPosition.class));
+        super(Aspect.getAspectForAll(CreatureSelected.class, MapPosition.class));
         camera = screenCamera;
         state = State.DEFAULT;
         lastState = State.DEFAULT;
@@ -68,8 +68,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             final Path path = ptm.get(e);
             MapPosition mapPosition = mpm.getSafe(e);
             // Add a Movement component to the entity
-            gameMap.entityLocations[mapPosition.x][mapPosition.y] = -1;
-            gameMap.entityLocations[moveTarget.x][moveTarget.y] = e.getId();
+            gameMap.moveEntity(e.getId(), moveTarget.x, moveTarget.y);
             final Move movement = new Move(mapPosition.x, mapPosition.y, moveTarget.x, moveTarget.y);
             mapPosition = new MapPosition(moveTarget.x, moveTarget.y);
             path.path.add(movement);
@@ -111,7 +110,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
                 return true;
             }
             // Otherwise, get the coordinates they clicked on
-            final Pair coords = gameMap.mapTools.window2world(Gdx.input.getX(), Gdx.input.getY(),
+            final Pair coords = gameMap.tools().window2world(Gdx.input.getX(), Gdx.input.getY(),
                     camera);
             if ((coords.x >= 0) && (coords.x <= (Constants.HEX_MAP_WIDTH - 1)) && (coords.y >= 0)
                     && (coords.y <= (Constants.HEX_MAP_HEIGHT - 1))) {
@@ -123,7 +122,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
                     // If there was previously another entity selected, "deselect" it
                     if (selectedEntity > -1) {
                         final Entity old = world.getEntity(selectedEntity);
-                        old.removeComponent(PlayerSelected.class);
+                        old.removeComponent(CreatureSelected.class);
                         // TODO
                         // ptm.getSafe(old).path.clear();
                         old.changedInWorld();
@@ -131,7 +130,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
                     // Now select the current entity
                     selectedEntity = entityId;
                     final Entity e = world.getEntity(selectedEntity);
-                    e.addComponent(new PlayerSelected());
+                    e.addComponent(new CreatureSelected());
                     e.changedInWorld();
                     EntityFactory.createClick(world, coords.x, coords.y, 0.4f, 4f, 0.15f)
                             .addToWorld();

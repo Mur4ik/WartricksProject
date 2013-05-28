@@ -4,38 +4,47 @@ package com.wartricks.boards;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.wartricks.custom.Pair;
 import com.wartricks.utils.BoardGenerator;
 import com.wartricks.utils.MapTools;
 
 public class GameMap {
-    public int[][] map;
+    private int[][] map;
 
-    public int[][] entityLocations;
+    private int[][] entityByCoord;
 
     public int width, height;
 
-    public Pixmap pixmap;
+    private Pixmap pixmap;
 
-    public Texture texture;
+    private Texture texture;
 
-    public MapTools mapTools;
+    private MapTools mapTools;
+
+    public MapTools tools() {
+        return mapTools;
+    }
+
+    private ObjectMap<Integer, Pair> coordByEntity;
 
     public GameMap(int columnSize, int rowSize, int mapWidth, int mapHeight) {
         map = BoardGenerator.getMap(mapWidth, mapHeight);
         width = map.length;
         height = map[0].length;
-        entityLocations = new int[width][height];
+        entityByCoord = new int[width][height];
         pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 pixmap.setColor(this.getColor(map[i][j]));
                 pixmap.drawPixel(i, j);
-                entityLocations[i][j] = -1;
+                entityByCoord[i][j] = -1;
             }
         }
         texture = new Texture(pixmap);
         pixmap.dispose();
         mapTools = MapTools.initialize(columnSize, rowSize, "hex");
+        coordByEntity = new ObjectMap<Integer, Pair>();
     }
 
     private Color getColor(int color) { // r g b
@@ -65,10 +74,32 @@ public class GameMap {
     }
 
     public int getEntityAt(int x, int y) {
-        return entityLocations[x][y];
+        return entityByCoord[x][y];
     }
 
     public boolean cellOccupied(int x, int y) {
-        return (entityLocations[x][y] > -1);
+        return (entityByCoord[x][y] > -1);
+    }
+
+    public Pair getCoordinatesFor(int entityId) {
+        if (coordByEntity.containsKey(entityId)) {
+            return coordByEntity.get(entityId);
+        }
+        return null;
+    }
+
+    public void addEntity(int id, int x, int y) {
+        entityByCoord[x][y] = id;
+        coordByEntity.put(id, new Pair(x, y));
+    }
+
+    public void moveEntity(int id, int x, int y) {
+        final Pair old = coordByEntity.put(id, new Pair(x, y));
+        entityByCoord[old.x][old.y] = -1;
+        entityByCoord[x][y] = id;
+    }
+
+    public int getPositionAt(int x, int y) {
+        return map[x][y];
     }
 }

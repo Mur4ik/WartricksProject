@@ -32,7 +32,7 @@ public class EntityFactory {
                 .random(), 1f)));
         world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_ONE);
         world.getManager(TagManager.class).register(sprite, e);
-        map.entityLocations[x][y] = e.getId();
+        map.addEntity(e.getId(), x, y);
         return e;
     }
 
