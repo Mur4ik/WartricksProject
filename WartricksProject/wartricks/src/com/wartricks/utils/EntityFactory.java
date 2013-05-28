@@ -30,7 +30,7 @@ public class EntityFactory {
         e.addComponent(new Bounds(40));
         e.addComponent(new Path(new Color((float)Math.random(), (float)Math.random(), (float)Math
                 .random(), 1f)));
-        world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER);
+        world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_ONE);
         world.getManager(TagManager.class).register(sprite, e);
         map.entityLocations[x][y] = e.getId();
         return e;
@@ -61,7 +61,7 @@ public class EntityFactory {
             bounds.radius = 40 * sprite.scaleX;
         }
         e.addComponent(bounds);
-        world.getManager(GroupManager.class).add(e, Constants.Groups.ENEMY_SHIPS);
+        world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_TWO);
         return e;
     }
 
@@ -76,7 +76,7 @@ public class EntityFactory {
         e.addComponent(new Velocity(0, 800));
         e.addComponent(new Expires(2f));
         e.addComponent(new Bounds(10));
-        world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_BULLETS);
+        world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_ONE_PROJECTILE);
         return e;
     }
 

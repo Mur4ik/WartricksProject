@@ -39,8 +39,8 @@ public class CollisionSystem extends EntitySystem {
     @Override
     public void initialize() {
         collisionPairs = new Bag<CollisionPair>();
-        collisionPairs.add(new CollisionPair(Constants.Groups.PLAYER_BULLETS,
-                Constants.Groups.ENEMY_SHIPS, new CollisionHandler() {
+        collisionPairs.add(new CollisionPair(Constants.Groups.PLAYER_TWO_PROJECTILE,
+                Constants.Groups.PLAYER_ONE_PROJECTILE, new CollisionHandler() {
                     @Override
                     public void handleCollision(Entity bullet, Entity ship) {
                         final Health health = hm.get(ship);
@@ -64,8 +64,8 @@ public class CollisionSystem extends EntitySystem {
                         }
                     }
                 }));
-        collisionPairs.add(new CollisionPair(Constants.Groups.PLAYER, Constants.Groups.ENEMY_SHIPS,
-                new CollisionHandler() {
+        collisionPairs.add(new CollisionPair(Constants.Groups.PLAYER_TWO,
+                Constants.Groups.PLAYER_ONE_PROJECTILE, new CollisionHandler() {
                     @Override
                     public void handleCollision(Entity player, Entity ship) {
                         final Health health = hm.get(player);
