@@ -20,8 +20,8 @@ public class GameMap {
 
     public MapTools mapTools;
 
-    public GameMap(int columnSize, int rowSize) {
-        map = BoardGenerator.getMap(10, 7);
+    public GameMap(int columnSize, int rowSize, int mapWidth, int mapHeight) {
+        map = BoardGenerator.getMap(mapWidth, mapHeight);
         width = map.length;
         height = map[0].length;
         entityLocations = new int[width][height];
