@@ -14,10 +14,10 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.wartricks.boards.GameMap;
 import com.wartricks.components.Move;
 import com.wartricks.components.Path;
 import com.wartricks.custom.FloatPair;
-import com.wartricks.utils.MapTools;
 import com.wartricks.utils.PlatformUtils;
 
 public class PathRenderSystem extends EntitySystem {
@@ -31,11 +31,14 @@ public class PathRenderSystem extends EntitySystem {
     // private Texture feet;
     private BitmapFont font;
 
+    private GameMap gameMap;
+
     @SuppressWarnings("unchecked")
-    public PathRenderSystem(OrthographicCamera camera, SpriteBatch batch) {
+    public PathRenderSystem(OrthographicCamera camera, SpriteBatch batch, GameMap map) {
         super(Aspect.getAspectForAll(Path.class));
         this.camera = camera;
         spriteBatch = batch;
+        gameMap = map;
     }
 
     @Override
@@ -79,7 +82,7 @@ public class PathRenderSystem extends EntitySystem {
             for (int i = 0; i < moves.path.size(); i++) {
                 move = moves.path.get(i);
                 if (!move.origin.equals(move.destination)) {
-                    final FloatPair coordsOrigin = MapTools.world2window(move.origin.x,
+                    final FloatPair coordsOrigin = gameMap.mapTools.world2window(move.origin.x,
                             move.origin.y);
                     font.draw(spriteBatch, String.valueOf(i), coordsOrigin.x - 10,
                             coordsOrigin.y - 10);

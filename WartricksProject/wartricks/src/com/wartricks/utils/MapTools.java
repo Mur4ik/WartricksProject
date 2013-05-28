@@ -9,13 +9,35 @@ import com.wartricks.custom.MyMath;
 import com.wartricks.custom.Pair;
 
 public class MapTools {
-    public static final int col_multiple = 34;
+    public static int col_multiple = 0;
 
-    public static final int row_multiple = 38;
+    public static int row_multiple = 0;
 
-    public static final String name = "hex";
+    public static String name = "hex";
 
-    public static Array<Pair> getNeighbors(int x, int y, int range, int[][] map) {
+    private static MapTools mapTools;
+
+    public static MapTools initialize(int columnSize, int rowSize) {
+        return initialize(columnSize, rowSize, name);
+    }
+
+    public static MapTools initialize(int columnSize, int rowSize, String regionName) {
+        if ((columnSize <= 0) || (rowSize <= 0)) {
+            throw new ExceptionInInitializerError("Value of row and column must be positive.");
+        }
+        if ((null == mapTools) || (col_multiple != columnSize) || (row_multiple != rowSize)) {
+            mapTools = new MapTools(columnSize, rowSize, regionName);
+        }
+        return mapTools;
+    }
+
+    private MapTools(int columnSize, int rowSize, String regionName) {
+        col_multiple = columnSize;
+        row_multiple = rowSize;
+        name = regionName;
+    }
+
+    public Array<Pair> getNeighbors(int x, int y, int range, int[][] map) {
         final Array<Pair> coordinates = new Array<Pair>();
         int min;
         int myrow;
@@ -41,11 +63,11 @@ public class MapTools {
         return coordinates;
     }
 
-    public static Array<Pair> getNeighbors(int x, int y, int[][] map) {
-        return getNeighbors(x, y, 1, map);
+    public Array<Pair> getNeighbors(int x, int y, int[][] map) {
+        return this.getNeighbors(x, y, 1, map);
     }
 
-    public static int distance(int x0, int y0, int x1, int y1) {
+    public int distance(int x0, int y0, int x1, int y1) {
         final int dx = Math.abs(x1 - x0);
         final int dy = Math.abs(y1 - y0);
         // The distance can be tricky, because of how the columns are shifted.
@@ -63,7 +85,7 @@ public class MapTools {
         return MyMath.max(dx, ((dx + 1) / 2) + dy);
     }
 
-    public static Pair window2world(float x, float y, OrthographicCamera camera) {
+    public Pair window2world(float x, float y, OrthographicCamera camera) {
         final Vector3 pos = new Vector3(x, y, 0);
         camera.unproject(pos);
         final int posx = (int)((pos.x - 6f) / col_multiple);
@@ -71,14 +93,14 @@ public class MapTools {
         return new Pair(posx, posy);
     }
 
-    public static Pair libgdx2world(float x, float y) {
+    public Pair libgdx2world(float x, float y) {
         final Vector3 pos = new Vector3(x, y, 0);
         final int posx = (int)((pos.x - 6f) / col_multiple);
         final int posy = (int)((pos.y - (((float)row_multiple * (posx % 2)) / 2)) / row_multiple);
         return new Pair(posx, posy);
     }
 
-    public static FloatPair world2window(float x, float y) {
+    public FloatPair world2window(float x, float y) {
         final int x0 = (int)x;
         final float dx = x - x0; // purely the decimal part
         final float posX = 5.5f + ((x + 0.5f) * col_multiple);
@@ -87,9 +109,9 @@ public class MapTools {
         return new FloatPair(posX, posY);
     }
 
-    public static FloatPair getDirectionVector(int x1, int y1, int x2, int y2) {
-        final FloatPair cell1 = world2window(x1, y1);
-        final FloatPair cell2 = world2window(x2, y2);
+    public FloatPair getDirectionVector(int x1, int y1, int x2, int y2) {
+        final FloatPair cell1 = this.world2window(x1, y1);
+        final FloatPair cell2 = this.world2window(x2, y2);
         return new FloatPair(cell2.x - cell1.x, cell2.y - cell1.y);
     }
 }

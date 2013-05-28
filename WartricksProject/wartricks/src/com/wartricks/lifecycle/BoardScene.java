@@ -73,7 +73,7 @@ public class BoardScene extends AbstractScreen {
         // serverThread.start();
         // //////////
         spriteBatch = batch;
-        gameMap = new GameMap();
+        gameMap = new GameMap(34, 38);
         gameWartricks = game;
         fpsLogger = new FPSLogger();
         gameWorld = world;
@@ -83,10 +83,12 @@ public class BoardScene extends AbstractScreen {
         playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera, gameMap, gameWorld,
                 game), true);
         movementSystem = gameWorld.setSystem(new MovementSystem(), true);
-        spriteRenderSystem = gameWorld.setSystem(new SpriteRenderSystem(camera, spriteBatch), true);
+        spriteRenderSystem = gameWorld.setSystem(new SpriteRenderSystem(camera, spriteBatch,
+                gameMap), true);
         mapRenderSystem = gameWorld.setSystem(new MapRenderSystem(camera, gameMap, spriteBatch),
                 true);
-        pathRenderSystem = gameWorld.setSystem(new PathRenderSystem(camera, spriteBatch), true);
+        pathRenderSystem = gameWorld.setSystem(new PathRenderSystem(camera, spriteBatch, gameMap),
+                true);
         hudRenderSystem = gameWorld.setSystem(new HudRenderSystem(hudCamera, spriteBatch), true);
         gameWorld.initialize();
         Gdx.input.setInputProcessor(playerInputSystem);

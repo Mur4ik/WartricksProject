@@ -19,7 +19,6 @@ import com.wartricks.components.PlayerSelected;
 import com.wartricks.custom.Pair;
 import com.wartricks.lifecycle.WartricksGame;
 import com.wartricks.utils.EntityFactory;
-import com.wartricks.utils.MapTools;
 
 public class PlayerInputSystem extends EntityProcessingSystem implements InputProcessor {
     @Mapper
@@ -32,7 +31,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     private Vector3 mouseVector;
 
-    private GameMap map;
+    private GameMap gameMap;
 
     private WartricksGame game;
 
@@ -47,13 +46,13 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
     };
 
     @SuppressWarnings("unchecked")
-    public PlayerInputSystem(OrthographicCamera screenCamera, GameMap gameMap, World gameWorld,
+    public PlayerInputSystem(OrthographicCamera screenCamera, GameMap map, World gameWorld,
             WartricksGame game) {
         super(Aspect.getAspectForAll(PlayerSelected.class, MapPosition.class));
         camera = screenCamera;
         state = State.DEFAULT;
         lastState = State.DEFAULT;
-        map = gameMap;
+        gameMap = map;
         this.game = game;
         this.setWorld(gameWorld);
         selectedEntity = -1;
@@ -68,8 +67,8 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             final Path path = ptm.get(e);
             MapPosition mapPosition = mpm.getSafe(e);
             // Add a Movement component to the entity
-            map.entityLocations[mapPosition.x][mapPosition.y] = -1;
-            map.entityLocations[moveTarget.x][moveTarget.y] = e.getId();
+            gameMap.entityLocations[mapPosition.x][mapPosition.y] = -1;
+            gameMap.entityLocations[moveTarget.x][moveTarget.y] = e.getId();
             final Move movement = new Move(mapPosition.x, mapPosition.y, moveTarget.x, moveTarget.y);
             mapPosition = new MapPosition(moveTarget.x, moveTarget.y);
             path.path.add(movement);
@@ -111,11 +110,12 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
                 return true;
             }
             // Otherwise, get the coordinates they clicked on
-            final Pair coords = MapTools.window2world(Gdx.input.getX(), Gdx.input.getY(), camera);
+            final Pair coords = gameMap.mapTools.window2world(Gdx.input.getX(), Gdx.input.getY(),
+                    camera);
             // TODO hardcoded
             if ((coords.x >= 0) && (coords.x <= 9) && (coords.y >= 0) && (coords.y <= 7)) {
                 // Check the entityID of the cell they click on
-                final int entityId = map.getEntityAt(coords.x, coords.y);
+                final int entityId = gameMap.getEntityAt(coords.x, coords.y);
                 // If it's an actual entity (not empty) then "select" it (unless it's already
                 // selected)
                 if ((entityId > -1) && (entityId != selectedEntity)) {

@@ -19,10 +19,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.wartricks.boards.GameMap;
 import com.wartricks.components.MapPosition;
 import com.wartricks.components.Sprite;
 import com.wartricks.custom.FloatPair;
-import com.wartricks.utils.MapTools;
 import com.wartricks.utils.PlatformUtils;
 
 public class SpriteRenderSystem extends EntitySystem {
@@ -44,11 +44,14 @@ public class SpriteRenderSystem extends EntitySystem {
 
     private List<Entity> sortedEntities;
 
+    private GameMap gameMap;
+
     @SuppressWarnings("unchecked")
-    public SpriteRenderSystem(OrthographicCamera camera, SpriteBatch batch) {
+    public SpriteRenderSystem(OrthographicCamera camera, SpriteBatch batch, GameMap map) {
         super(Aspect.getAspectForAll(MapPosition.class, Sprite.class));
         this.camera = camera;
         spriteBatch = batch;
+        gameMap = map;
     }
 
     @Override
@@ -85,7 +88,7 @@ public class SpriteRenderSystem extends EntitySystem {
     protected void process(Entity e) {
         if (pm.has(e)) {
             final MapPosition mapPosition = pm.getSafe(e);
-            final FloatPair position = MapTools.world2window(mapPosition.x, mapPosition.y);
+            final FloatPair position = gameMap.mapTools.world2window(mapPosition.x, mapPosition.y);
             final Sprite sprite = sm.get(e);
             final AtlasRegion spriteRegion = regionsByEntity.get(e.getId());
             spriteBatch.setColor(sprite.r, sprite.g, sprite.b, sprite.a);

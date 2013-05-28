@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.wartricks.utils.BoardGenerator;
+import com.wartricks.utils.MapTools;
 
 public class GameMap {
     public int[][] map;
@@ -17,7 +18,9 @@ public class GameMap {
 
     public Texture texture;
 
-    public GameMap() {
+    public MapTools mapTools;
+
+    public GameMap(int columnSize, int rowSize) {
         map = BoardGenerator.getMap(10, 7);
         width = map.length;
         height = map[0].length;
@@ -32,6 +35,7 @@ public class GameMap {
         }
         texture = new Texture(pixmap);
         pixmap.dispose();
+        mapTools = MapTools.initialize(columnSize, rowSize, "hex");
     }
 
     private Color getColor(int color) { // r g b
