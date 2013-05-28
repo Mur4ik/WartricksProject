@@ -29,6 +29,7 @@ import com.wartricks.systems.MovementSystem;
 import com.wartricks.systems.PathRenderSystem;
 import com.wartricks.systems.PlayerInputSystem;
 import com.wartricks.systems.SpriteRenderSystem;
+import com.wartricks.utils.Constants;
 import com.wartricks.utils.EntityFactory;
 import com.wartricks.utils.PlatformUtils;
 
@@ -73,7 +74,8 @@ public class BoardScene extends AbstractScreen {
         // serverThread.start();
         // //////////
         spriteBatch = batch;
-        gameMap = new GameMap(34, 38);
+        gameMap = new GameMap(Constants.HEX_ROW_SIZE, Constants.HEX_COL_SIZE,
+                Constants.HEX_MAP_WIDTH, Constants.HEX_MAP_HEIGHT);
         gameWartricks = game;
         fpsLogger = new FPSLogger();
         gameWorld = world;
