@@ -17,6 +17,7 @@ import org.keplerproject.luajava.LuaStateFactory;
 
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -66,6 +67,8 @@ public class BoardScene extends AbstractScreen {
 
     private MovementSystem movementSystem;
 
+    public InputMultiplexer inputSystem;
+
     public BoardScene(final WartricksGame game, World world, SpriteBatch batch) {
         super(game, world);
         // TODO remote server
@@ -91,7 +94,8 @@ public class BoardScene extends AbstractScreen {
                 true);
         hudRenderSystem = gameWorld.setSystem(new HudRenderSystem(hudCamera, spriteBatch), true);
         gameWorld.initialize();
-        Gdx.input.setInputProcessor(playerInputSystem);
+        inputSystem = new InputMultiplexer(playerInputSystem);
+        Gdx.input.setInputProcessor(inputSystem);
         EntityFactory.createCharacter(world, gameMap, "dash", 5, 3).addToWorld();
         EntityFactory.createCharacter(world, gameMap, "kirby", 9, 4).addToWorld();
         EntityFactory.createCharacter(world, gameMap, "apple", 0, 1).addToWorld();

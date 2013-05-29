@@ -16,22 +16,22 @@ public class GameMap {
 
     public int width, height;
 
+    public int colSize, rowSize;
+
     private Pixmap pixmap;
 
     private Texture texture;
 
-    private MapTools mapTools;
-
-    public MapTools tools() {
-        return mapTools;
-    }
+    public MapTools tools;
 
     private ObjectMap<Integer, Pair> coordByEntity;
 
-    public GameMap(int columnSize, int rowSize, int mapWidth, int mapHeight) {
+    public GameMap(int columnSize, int rwSize, int mapWidth, int mapHeight) {
         map = BoardGenerator.getMap(mapWidth, mapHeight);
         width = map.length;
         height = map[0].length;
+        colSize = columnSize;
+        rowSize = rwSize;
         entityByCoord = new int[width][height];
         pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
         for (int i = 0; i < width; i++) {
@@ -43,7 +43,7 @@ public class GameMap {
         }
         texture = new Texture(pixmap);
         pixmap.dispose();
-        mapTools = MapTools.initialize(columnSize, rowSize, "hex");
+        tools = new MapTools("hex", this);
         coordByEntity = new ObjectMap<Integer, Pair>();
     }
 

@@ -4,47 +4,29 @@ package com.wartricks.utils;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.wartricks.boards.GameMap;
 import com.wartricks.custom.FloatPair;
 import com.wartricks.custom.MyMath;
 import com.wartricks.custom.Pair;
 
 public class MapTools {
-    public static int col_multiple = 0;
+    public String name;
 
-    public static int row_multiple = 0;
+    private GameMap gameMap;
 
-    public static String name = "hex";
-
-    private static MapTools mapTools;
-
-    public static MapTools initialize(int columnSize, int rowSize) {
-        return initialize(columnSize, rowSize, name);
-    }
-
-    public static MapTools initialize(int columnSize, int rowSize, String regionName) {
-        if ((columnSize <= 0) || (rowSize <= 0)) {
-            throw new ExceptionInInitializerError("Value of row and column must be positive.");
-        }
-        if ((null == mapTools) || (col_multiple != columnSize) || (row_multiple != rowSize)) {
-            mapTools = new MapTools(columnSize, rowSize, regionName);
-        }
-        return mapTools;
-    }
-
-    private MapTools(int columnSize, int rowSize, String regionName) {
-        col_multiple = columnSize;
-        row_multiple = rowSize;
+    public MapTools(String regionName, GameMap map) {
         name = regionName;
+        gameMap = map;
     }
 
-    public Array<Pair> getNeighbors(int x, int y, int range, int[][] map) {
+    public Array<Pair> getNeighbors(int x, int y, int range) {
         final Array<Pair> coordinates = new Array<Pair>();
         int min;
         int myrow;
         for (int row = y - range; row < (y + range + 1); row++) {
             min = MyMath.min(2 * ((row - y) + range), range, (-2 * (row - y - range)) + 1);
             for (int col = x - min; col < (x + min + 1); col++) {
-                if ((col < 0) || (col >= map.length)) {
+                if ((col < 0) || (col >= gameMap.width)) {
                     continue;
                 }
                 if ((x == col) && (y == row)) {
@@ -54,7 +36,7 @@ public class MapTools {
                 } else {
                     myrow = row;
                 }
-                if ((myrow < 0) || (myrow >= map[0].length)) {
+                if ((myrow < 0) || (myrow >= gameMap.height)) {
                     continue;
                 }
                 coordinates.add(new Pair(col, myrow));
@@ -63,8 +45,8 @@ public class MapTools {
         return coordinates;
     }
 
-    public Array<Pair> getNeighbors(int x, int y, int[][] map) {
-        return this.getNeighbors(x, y, 1, map);
+    public Array<Pair> getNeighbors(int x, int y) {
+        return this.getNeighbors(x, y, 1);
     }
 
     public int distance(int x0, int y0, int x1, int y1) {
@@ -88,23 +70,23 @@ public class MapTools {
     public Pair window2world(float x, float y, OrthographicCamera camera) {
         final Vector3 pos = new Vector3(x, y, 0);
         camera.unproject(pos);
-        final int posx = (int)((pos.x - 6f) / col_multiple);
-        final int posy = (int)((pos.y - (((float)row_multiple * (posx % 2)) / 2)) / row_multiple);
+        final int posx = (int)((pos.x - 6f) / gameMap.colSize);
+        final int posy = (int)((pos.y - (((float)gameMap.rowSize * (posx % 2)) / 2)) / gameMap.rowSize);
         return new Pair(posx, posy);
     }
 
     public Pair libgdx2world(float x, float y) {
         final Vector3 pos = new Vector3(x, y, 0);
-        final int posx = (int)((pos.x - 6f) / col_multiple);
-        final int posy = (int)((pos.y - (((float)row_multiple * (posx % 2)) / 2)) / row_multiple);
+        final int posx = (int)((pos.x - 6f) / gameMap.colSize);
+        final int posy = (int)((pos.y - (((float)gameMap.rowSize * (posx % 2)) / 2)) / gameMap.rowSize);
         return new Pair(posx, posy);
     }
 
     public FloatPair world2window(float x, float y) {
         final int x0 = (int)x;
         final float dx = x - x0; // purely the decimal part
-        final float posX = 5.5f + ((x + 0.5f) * col_multiple);
-        final float posY = row_multiple
+        final float posX = 5.5f + ((x + 0.5f) * gameMap.colSize);
+        final float posY = gameMap.rowSize
                 * (y + 0.5f + ((x0 % 2) * (0.5f - (dx / 2f))) + ((((x0 + 1) % 2) * dx) / 2f));
         return new FloatPair(posX, posY);
     }

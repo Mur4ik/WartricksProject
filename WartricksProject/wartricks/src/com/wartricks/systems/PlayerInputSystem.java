@@ -110,7 +110,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
                 return true;
             }
             // Otherwise, get the coordinates they clicked on
-            final Pair coords = gameMap.tools().window2world(Gdx.input.getX(), Gdx.input.getY(),
+            final Pair coords = gameMap.tools.window2world(Gdx.input.getX(), Gdx.input.getY(),
                     camera);
             if ((coords.x >= 0) && (coords.x <= (Constants.HEX_MAP_WIDTH - 1)) && (coords.y >= 0)
                     && (coords.y <= (Constants.HEX_MAP_HEIGHT - 1))) {
