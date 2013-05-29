@@ -70,16 +70,30 @@ public class MapTools {
     public Pair window2world(float x, float y, OrthographicCamera camera) {
         final Vector3 pos = new Vector3(x, y, 0);
         camera.unproject(pos);
-        final int posx = (int)((pos.x - 6f) / gameMap.colSize);
-        final int posy = (int)((pos.y - (((float)gameMap.rowSize * (posx % 2)) / 2)) / gameMap.rowSize);
-        return new Pair(posx, posy);
+        float posx = ((pos.x - 6f) / gameMap.colSize);
+        float posy = ((pos.y - ((gameMap.rowSize * (posx % 2)) / 2)) / gameMap.rowSize);
+        // Avoids bug in range (0, -1) where it would round to 0
+        if ((posx < 0) && (posx > -1)) {
+            posx = -1;
+        }
+        if ((posy < 0) && (posy > -1)) {
+            posy = -1;
+        }
+        return new Pair((int)posx, (int)posy);
     }
 
     public Pair libgdx2world(float x, float y) {
         final Vector3 pos = new Vector3(x, y, 0);
-        final int posx = (int)((pos.x - 6f) / gameMap.colSize);
-        final int posy = (int)((pos.y - (((float)gameMap.rowSize * (posx % 2)) / 2)) / gameMap.rowSize);
-        return new Pair(posx, posy);
+        float posx = ((pos.x - 6f) / gameMap.colSize);
+        float posy = ((pos.y - ((gameMap.rowSize * (posx % 2)) / 2)) / gameMap.rowSize);
+        // Avoids bug in range (0, -1) where it would round to 0
+        if ((posx < 0) && (posx > -1)) {
+            posx = -1;
+        }
+        if ((posy < 0) && (posy > -1)) {
+            posy = -1;
+        }
+        return new Pair((int)posx, (int)posy);
     }
 
     public FloatPair world2window(float x, float y) {
