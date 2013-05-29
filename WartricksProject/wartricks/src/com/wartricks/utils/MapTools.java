@@ -73,11 +73,11 @@ public class MapTools {
         float posx = ((pos.x - 6f) / gameMap.colSize);
         float posy = ((pos.y - ((gameMap.rowSize * (posx % 2)) / 2)) / gameMap.rowSize);
         // Avoids bug in range (0, -1) where it would round to 0
-        if ((posx < 0) && (posx > -1)) {
-            posx = -1;
+        if (posx < 0) {
+            posx -= 1;
         }
-        if ((posy < 0) && (posy > -1)) {
-            posy = -1;
+        if ((posy < 0)) {
+            posy -= 1;
         }
         return new Pair((int)posx, (int)posy);
     }
@@ -87,11 +87,11 @@ public class MapTools {
         float posx = ((pos.x - 6f) / gameMap.colSize);
         float posy = ((pos.y - ((gameMap.rowSize * (posx % 2)) / 2)) / gameMap.rowSize);
         // Avoids bug in range (0, -1) where it would round to 0
-        if ((posx < 0) && (posx > -1)) {
-            posx = -1;
+        if (posx < 0) {
+            posx -= 1;
         }
-        if ((posy < 0) && (posy > -1)) {
-            posy = -1;
+        if ((posy < 0)) {
+            posy -= 1;
         }
         return new Pair((int)posx, (int)posy);
     }
