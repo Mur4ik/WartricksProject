@@ -131,7 +131,6 @@ public class MapTools {
             }
         }
         final Array<Pair> highlights = new Array<Pair>();
-        visited.removeValue(start, false);
         for (final Pair cell : visited) {
             final int distance = this.distance(x, y, cell.x, cell.y);
             if (distance >= minRange) {
