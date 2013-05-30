@@ -16,6 +16,7 @@ import com.wartricks.components.CreatureSelected;
 import com.wartricks.components.MapPosition;
 import com.wartricks.components.Move;
 import com.wartricks.components.Path;
+import com.wartricks.components.Range;
 import com.wartricks.custom.Pair;
 import com.wartricks.lifecycle.WartricksGame;
 import com.wartricks.utils.Constants;
@@ -27,6 +28,9 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     @Mapper
     ComponentMapper<Path> ptm;
+
+    @Mapper
+    ComponentMapper<Range> rm;
 
     private OrthographicCamera camera;
 
@@ -74,6 +78,10 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             path.path.add(movement);
             // TODO uncomment to reset path on click
             // path.path.clear();
+            final Range range = rm.getSafe(e);
+            gameMap.clearHighlights();
+            gameMap.addHighlights(gameMap.tools.getReachableCells(mapPosition.x, mapPosition.y,
+                    range.minRange, range.maxRange));
             e.removeComponent(MapPosition.class);
             e.addComponent(mapPosition);
             e.changedInWorld();
@@ -134,6 +142,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
                     e.changedInWorld();
                     EntityFactory.createClick(world, coords.x, coords.y, 0.4f, 4f, 0.15f)
                             .addToWorld();
+                    gameMap.clearHighlights();
                     lastState = state;
                     state = State.ENTITY_SELECTED;
                     return true;

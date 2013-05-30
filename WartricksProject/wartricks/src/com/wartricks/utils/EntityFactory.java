@@ -16,12 +16,14 @@ import com.wartricks.components.Label;
 import com.wartricks.components.MapPosition;
 import com.wartricks.components.Path;
 import com.wartricks.components.Position;
+import com.wartricks.components.Range;
 import com.wartricks.components.ScaleAnimation;
 import com.wartricks.components.Sprite;
 import com.wartricks.components.Velocity;
 
 public class EntityFactory {
-    public static Entity createCharacter(World world, GameMap map, String sprite, int x, int y) {
+    public static Entity createCharacter(World world, GameMap map, String sprite, int x, int y,
+            int rangeMin, int rangeMax) {
         final Entity e = world.createEntity();
         e.addComponent(new MapPosition(x, y));
         e.addComponent(new Sprite(sprite, Sprite.Layer.ACTORS_3));
@@ -30,6 +32,7 @@ public class EntityFactory {
         e.addComponent(new Bounds(40));
         e.addComponent(new Path(new Color((float)Math.random(), (float)Math.random(), (float)Math
                 .random(), 1f)));
+        e.addComponent(new Range(rangeMin, rangeMax));
         world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_ONE);
         world.getManager(TagManager.class).register(sprite, e);
         map.addEntity(e.getId(), x, y);

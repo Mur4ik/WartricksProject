@@ -25,6 +25,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.wartricks.boards.GameMap;
 import com.wartricks.systems.HudRenderSystem;
+import com.wartricks.systems.MapHighlightRenderSystem;
 import com.wartricks.systems.MapRenderSystem;
 import com.wartricks.systems.MovementSystem;
 import com.wartricks.systems.PathRenderSystem;
@@ -69,6 +70,8 @@ public class BoardScene extends AbstractScreen {
 
     public InputMultiplexer inputSystem;
 
+    private MapHighlightRenderSystem mapHighlightRenderSystem;
+
     public BoardScene(final WartricksGame game, World world, SpriteBatch batch) {
         super(game, world);
         // TODO remote server
@@ -93,14 +96,16 @@ public class BoardScene extends AbstractScreen {
         pathRenderSystem = gameWorld.setSystem(new PathRenderSystem(camera, spriteBatch, gameMap),
                 true);
         hudRenderSystem = gameWorld.setSystem(new HudRenderSystem(hudCamera, spriteBatch), true);
+        mapHighlightRenderSystem = gameWorld.setSystem(new MapHighlightRenderSystem(camera,
+                gameMap, spriteBatch), true);
         gameWorld.initialize();
         inputSystem = new InputMultiplexer(playerInputSystem);
         Gdx.input.setInputProcessor(inputSystem);
-        EntityFactory.createCharacter(world, gameMap, "dash", 5, 3).addToWorld();
-        EntityFactory.createCharacter(world, gameMap, "kirby", 9, 4).addToWorld();
-        EntityFactory.createCharacter(world, gameMap, "apple", 0, 1).addToWorld();
-        EntityFactory.createCharacter(world, gameMap, "pinkie", 3, 6).addToWorld();
-        EntityFactory.createCharacter(world, gameMap, "kirby", 9, 5).addToWorld();
+        EntityFactory.createCharacter(world, gameMap, "dash", 5, 3, 3, 3).addToWorld();
+        EntityFactory.createCharacter(world, gameMap, "kirby", 9, 4, 2, 4).addToWorld();
+        EntityFactory.createCharacter(world, gameMap, "apple", 0, 1, 0, 2).addToWorld();
+        EntityFactory.createCharacter(world, gameMap, "pinkie", 3, 6, 1, 1).addToWorld();
+        EntityFactory.createCharacter(world, gameMap, "kirby", 9, 5, 1, 2).addToWorld();
         // final LoadScript script = new LoadScript("init.lua");
         // final LoadScript playerScript = new LoadScript("characters/player.lua");
         // playerScript.runScriptFunction("create", EntityFactory.class, world);
@@ -116,8 +121,9 @@ public class BoardScene extends AbstractScreen {
         playerInputSystem.process();
         movementSystem.process();
         mapRenderSystem.process();
+        mapHighlightRenderSystem.process();
         spriteRenderSystem.process();
-        pathRenderSystem.process();
+        // pathRenderSystem.process();
         spriteBatch.setProjectionMatrix(hudCamera.combined);
         hudRenderSystem.process();
     }

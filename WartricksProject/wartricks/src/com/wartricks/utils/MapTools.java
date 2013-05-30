@@ -71,7 +71,7 @@ public class MapTools {
         final Vector3 pos = new Vector3(x, y, 0);
         camera.unproject(pos);
         float posx = ((pos.x - 6f) / gameMap.colSize);
-        float posy = ((pos.y - ((gameMap.rowSize * (posx % 2)) / 2)) / gameMap.rowSize);
+        float posy = (((pos.y + 8f) - ((gameMap.rowSize * (posx % 2)) / 2)) / gameMap.rowSize);
         // Avoids bug in range (0, -1) where it would round to 0
         if (posx < 0) {
             posx -= 1;
@@ -85,7 +85,7 @@ public class MapTools {
     public Pair libgdx2world(float x, float y) {
         final Vector3 pos = new Vector3(x, y, 0);
         float posx = ((pos.x - 6f) / gameMap.colSize);
-        float posy = ((pos.y - ((gameMap.rowSize * (posx % 2)) / 2)) / gameMap.rowSize);
+        float posy = (((pos.y) - ((gameMap.rowSize * (posx % 2)) / 2)) / gameMap.rowSize);
         // Avoids bug in range (0, -1) where it would round to 0
         if (posx < 0) {
             posx -= 1;
@@ -109,5 +109,35 @@ public class MapTools {
         final FloatPair cell1 = this.world2window(x1, y1);
         final FloatPair cell2 = this.world2window(x2, y2);
         return new FloatPair(cell2.x - cell1.x, cell2.y - cell1.y);
+    }
+
+    public Array<Pair> getReachableCells(int x, int y, int minRange, int maxRange) {
+        final Array<Pair> unvisited = new Array<Pair>();
+        final Array<Pair> visited = new Array<Pair>();
+        final Pair start = new Pair(x, y);
+        unvisited.add(start);
+        while (unvisited.size > 0) {
+            final Pair current = unvisited.pop();
+            for (final Pair neighbor : this.getNeighbors(current.x, current.y)) {
+                final int distance = this.distance(x, y, neighbor.x, neighbor.y);
+                if (distance <= maxRange) {
+                    if (!visited.contains(neighbor, false)) {
+                        visited.add(neighbor);
+                        if (!unvisited.contains(neighbor, false)) {
+                            unvisited.add(neighbor);
+                        }
+                    }
+                }
+            }
+        }
+        final Array<Pair> highlights = new Array<Pair>();
+        visited.removeValue(start, false);
+        for (final Pair cell : visited) {
+            final int distance = this.distance(x, y, cell.x, cell.y);
+            if (distance >= minRange) {
+                highlights.add(cell);
+            }
+        }
+        return highlights;
     }
 }

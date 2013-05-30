@@ -4,6 +4,7 @@ package com.wartricks.boards;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.wartricks.custom.Pair;
 import com.wartricks.utils.BoardGenerator;
@@ -26,6 +27,8 @@ public class GameMap {
 
     private ObjectMap<Integer, Pair> coordByEntity;
 
+    public final Array<Pair> highlighted;
+
     public GameMap(int columnSize, int rwSize, int mapWidth, int mapHeight) {
         map = BoardGenerator.getMap(mapWidth, mapHeight);
         width = map.length;
@@ -45,6 +48,7 @@ public class GameMap {
         pixmap.dispose();
         tools = new MapTools("hex", this);
         coordByEntity = new ObjectMap<Integer, Pair>();
+        highlighted = new Array<Pair>();
     }
 
     private Color getColor(int color) { // r g b
@@ -101,5 +105,39 @@ public class GameMap {
 
     public int getPositionAt(int x, int y) {
         return map[x][y];
+    }
+
+    public void addHighlights(Pair... pairs) {
+        if (pairs.length > 0) {
+            for (final Pair pair : pairs) {
+                if (!highlighted.contains(pair, false)) {
+                    highlighted.add(pair);
+                }
+            }
+        }
+    }
+
+    public void addHighlights(Array<Pair> pairs) {
+        if (pairs.size > 0) {
+            for (final Pair pair : pairs) {
+                if (!highlighted.contains(pair, false)) {
+                    highlighted.add(pair);
+                }
+            }
+        }
+    }
+
+    public void removeHighlights(Pair... pairs) {
+        if (pairs.length > 0) {
+            for (final Pair pair : pairs) {
+                if (!highlighted.contains(pair, false)) {
+                    highlighted.removeValue(pair, false);
+                }
+            }
+        }
+    }
+
+    public void clearHighlights() {
+        highlighted.clear();
     }
 }

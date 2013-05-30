@@ -8,4 +8,15 @@ public class Pair {
     }
 
     public int x, y;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() == Pair.class) {
+            final Pair pair = (Pair)obj;
+            if ((pair.x == x) && (pair.y == y)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
