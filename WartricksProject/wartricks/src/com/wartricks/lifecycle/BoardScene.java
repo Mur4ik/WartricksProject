@@ -81,7 +81,7 @@ public class BoardScene extends AbstractScreen {
         // //////////
         spriteBatch = batch;
         gameMap = new GameMap(Constants.HEX_ROW_SIZE, Constants.HEX_COL_SIZE,
-                Constants.HEX_MAP_WIDTH, Constants.HEX_MAP_HEIGHT);
+                Constants.HEX_MAP_WIDTH, Constants.HEX_MAP_HEIGHT, camera);
         gameWartricks = game;
         fpsLogger = new FPSLogger();
         gameWorld = world;

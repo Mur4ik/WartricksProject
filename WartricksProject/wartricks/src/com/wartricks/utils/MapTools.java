@@ -14,9 +14,12 @@ public class MapTools {
 
     private GameMap gameMap;
 
-    public MapTools(String regionName, GameMap map) {
+    private OrthographicCamera gameCamera;
+
+    public MapTools(String regionName, GameMap map, OrthographicCamera camera) {
         name = regionName;
         gameMap = map;
+        gameCamera = camera;
     }
 
     public Array<Pair> getNeighbors(int x, int y, int range) {
@@ -67,9 +70,9 @@ public class MapTools {
         return MyMath.max(dx, ((dx + 1) / 2) + dy);
     }
 
-    public Pair window2world(float x, float y, OrthographicCamera camera) {
+    public Pair window2world(float x, float y) {
         final Vector3 pos = new Vector3(x, y, 0);
-        camera.unproject(pos);
+        gameCamera.unproject(pos);
         float posx = ((pos.x - 6f) / gameMap.colSize);
         float posy = (((pos.y + 8f) - ((gameMap.rowSize * (posx % 2)) / 2)) / gameMap.rowSize);
         // Avoids bug in range (0, -1) where it would round to 0
@@ -146,6 +149,30 @@ public class MapTools {
 
     public Array<Pair> getLOSCellsPlanC(int x1, int y1, int x2, int y2) {
         final Array<Pair> highlights = new Array<Pair>();
+        final int dx = x2 - x1;
+        final int dy = y2 - y1;
+        final FloatPair origin = this.world2window(x1, y1);
+        final FloatPair destination = this.world2window(x2, y2);
+        final float dpx = destination.x - origin.x;
+        final float dpy = destination.y - origin.y;
+        final float distance = 2 * Math.max(Math.abs(dx), Math.abs(dy));
+        if (distance > 0) {
+            for (int i = 0; i <= distance; i++) {
+                final float currentX = ((origin.x + ((dpx * i) / distance)));
+                final float currentY = ((origin.y + ((dpy * i) / distance)));
+                float posx = ((currentX) / gameMap.colSize);
+                float posy = (((currentY) - ((gameMap.rowSize * (posx % 2)) / 2)) / gameMap.rowSize);
+                // Avoids bug in range (0, -1) where it would round to 0
+                if (posx < 0) {
+                    posx -= 1;
+                }
+                if ((posy < 0)) {
+                    posy -= 1;
+                }
+                final Pair targetHex = new Pair((int)posx, (int)posy);
+                highlights.add(targetHex);
+            }
+        }
         return highlights;
     }
 

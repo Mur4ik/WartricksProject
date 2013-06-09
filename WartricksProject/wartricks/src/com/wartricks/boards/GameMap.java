@@ -2,6 +2,7 @@
 package com.wartricks.boards;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
@@ -29,7 +30,10 @@ public class GameMap {
 
     public final Array<Pair> highlighted;
 
-    public GameMap(int columnSize, int rwSize, int mapWidth, int mapHeight) {
+    private OrthographicCamera gameCamera;
+
+    public GameMap(int columnSize, int rwSize, int mapWidth, int mapHeight,
+            OrthographicCamera camera) {
         map = BoardGenerator.getMap(mapWidth, mapHeight);
         width = map.length;
         height = map[0].length;
@@ -46,7 +50,8 @@ public class GameMap {
         }
         texture = new Texture(pixmap);
         pixmap.dispose();
-        tools = new MapTools("hex", this);
+        gameCamera = camera;
+        tools = new MapTools("hex", this, gameCamera);
         coordByEntity = new ObjectMap<Integer, Pair>();
         highlighted = new Array<Pair>();
     }

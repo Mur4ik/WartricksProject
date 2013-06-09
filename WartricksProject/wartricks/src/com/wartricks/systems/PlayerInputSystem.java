@@ -79,7 +79,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             gameMap.clearHighlights();
             // gameMap.addHighlights(gameMap.tools.getReachableCells(mapPosition.x, mapPosition.y,
             // range.minRange, range.maxRange));
-            gameMap.addHighlights(gameMap.tools.getLOSCellsPlanB((int)movement.origin.x,
+            gameMap.addHighlights(gameMap.tools.getLOSCellsPlanC((int)movement.origin.x,
                     (int)movement.origin.y, (int)movement.destination.x,
                     (int)movement.destination.y));
             e.removeComponent(MapPosition.class);
@@ -118,8 +118,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
                 return true;
             }
             // Otherwise, get the coordinates they clicked on
-            final Pair coords = gameMap.tools.window2world(Gdx.input.getX(), Gdx.input.getY(),
-                    camera);
+            final Pair coords = gameMap.tools.window2world(Gdx.input.getX(), Gdx.input.getY());
             if ((coords.x >= 0) && (coords.x <= (Constants.HEX_MAP_WIDTH - 1)) && (coords.y >= 0)
                     && (coords.y <= (Constants.HEX_MAP_HEIGHT - 1))) {
                 // Check the entityID of the cell they click on
