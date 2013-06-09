@@ -82,8 +82,12 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             // gameMap.addHighlights(gameMap.tools.getLinearRange((int)movement.origin.x,
             // (int)movement.origin.y, (int)movement.destination.x,
             // (int)movement.destination.y));
-            gameMap.addHighlights(gameMap.tools.getReverseFlowerRange(mapPosition.x, mapPosition.y,
-                    10));
+            // gameMap.addHighlights(gameMap.tools.getReverseFlowerRange(mapPosition.x,
+            // mapPosition.y,
+            // 10));
+            gameMap.addHighlights(gameMap.tools.getArcRange((int)movement.origin.x,
+                    (int)movement.origin.y, (int)movement.destination.x,
+                    (int)movement.destination.y));
             e.removeComponent(MapPosition.class);
             e.addComponent(mapPosition);
             e.changedInWorld();

@@ -187,6 +187,42 @@ public class MapTools {
         return highlights;
     }
 
+    public Array<Pair> getArcRange(int originx, int originy, int targetx, int targety) {
+        final FloatPair direction = this.getDirectionVector(originx, originy, targetx, targety);
+        final Array<Pair> highlights = new Array<Pair>();
+        highlights.add(new Pair(targetx, targety));
+        int offset = 0;
+        if ((targetx % 2) == 0) {
+            offset = 1;
+        }
+        if (direction.x > 0) {
+            if (direction.y >= 0) {
+                highlights.add(new Pair(targetx - 1, (targety + 1) - offset));
+                highlights.add(new Pair(targetx, targety - 1));
+            } else {
+                highlights.add(new Pair(targetx, targety + 1));
+                highlights.add(new Pair(targetx - 1, targety - offset));
+            }
+        } else if (direction.x < 0) {
+            if (direction.y >= 0) {
+                highlights.add(new Pair(targetx + 1, (targety + 1) - offset));
+                highlights.add(new Pair(targetx, targety - 1));
+            } else {
+                highlights.add(new Pair(targetx + 1, targety - offset));
+                highlights.add(new Pair(targetx, targety + 1));
+            }
+        } else {
+            if (direction.y > 0) {
+                highlights.add(new Pair(targetx + 1, targety - offset));
+                highlights.add(new Pair(targetx - 1, targety - offset));
+            } else if (direction.y < 0) {
+                highlights.add(new Pair(targetx + 1, (targety + 1) - offset));
+                highlights.add(new Pair(targetx - 1, (targety + 1) - offset));
+            }
+        }
+        return highlights;
+    }
+
     public Array<Pair> getFlowerRange(int x, int y, int range) {
         if (range > gameMap.width) {
             range = gameMap.width;
