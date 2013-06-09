@@ -8,6 +8,7 @@ import com.wartricks.boards.GameMap;
 import com.wartricks.custom.FloatPair;
 import com.wartricks.custom.MyMath;
 import com.wartricks.custom.Pair;
+import com.wartricks.custom.Vec3;
 
 public class MapTools {
     public String name;
@@ -266,7 +267,6 @@ public class MapTools {
         float distance = Math.max(Math.abs(dx - dy), Math.abs(dy - dz));
         distance = Math.max(distance, Math.abs(dz - dx));
         if (distance > 0) {
-            int[] previousCoord = new int[3];
             for (float i = 0; i <= distance; i++) {
                 final float currentX = (cubeCoordsOrigin[0] * (i / distance))
                         + (cubeCoordsDestination[0] * (1 - (i / distance)));
@@ -274,12 +274,21 @@ public class MapTools {
                         + (cubeCoordsDestination[1] * (1 - (i / distance)));
                 final float currentZ = (cubeCoordsOrigin[2] * (i / distance))
                         + (cubeCoordsDestination[2] * (1 - (i / distance)));
-                final int[] currentCoord = roundCubeCoord(currentX, currentY, currentZ);
-                if (!currentCoord.equals(previousCoord)) {
-                    final int[] offsetCoord = MapTools.coordCube2Offset(currentCoord[0],
-                            currentCoord[1], currentCoord[2]);
-                    highlights.add(new Pair(offsetCoord[0], offsetCoord[1]));
-                    previousCoord = currentCoord;
+                final Vec3 currentRoundUp = new Vec3(roundCubeCoord(currentX + 0.05f,
+                        currentY + 0.07f, currentZ));
+                final Vec3 currentRoundDown = new Vec3(roundCubeCoord(currentX - 0.05f,
+                        currentY - 0.07f, currentZ));
+                Pair offsetCoord = new Pair(MapTools.coordCube2Offset(currentRoundUp.x,
+                        currentRoundUp.y, currentRoundUp.z));
+                if (offsetCoord.y >= 0) {
+                    highlights.add(new Pair(offsetCoord.x, offsetCoord.y));
+                }
+                if (!currentRoundUp.equals(currentRoundDown)) {
+                    offsetCoord = new Pair(MapTools.coordCube2Offset(currentRoundDown.x,
+                            currentRoundDown.y, currentRoundDown.z));
+                    if (offsetCoord.y >= 0) {
+                        highlights.add(new Pair(offsetCoord.x, offsetCoord.y));
+                    }
                 }
             }
         }
@@ -289,7 +298,7 @@ public class MapTools {
     public static int[] coordOffset2Cube(int x, int y) {
         final int[] coord = new int[3];
         coord[0] = x;
-        coord[2] = y - ((x + (x % 2)) / 2);
+        coord[2] = y - ((x - (x % 2)) / 2);
         coord[1] = -x - coord[2];
         return coord;
     }
@@ -297,7 +306,7 @@ public class MapTools {
     public static int[] coordCube2Offset(int x, int y, int z) {
         final int[] coord = new int[2];
         coord[0] = x;
-        coord[1] = (z + ((x + (x % 2)) / 2));
+        coord[1] = (z + ((x - (x % 2)) / 2));
         return coord;
     }
 
@@ -310,10 +319,19 @@ public class MapTools {
             final float x_err = (float)Math.abs(rx - x);
             final float y_err = (float)Math.abs(ry - y);
             final float z_err = (float)Math.abs(rz - z);
-            if ((x_err > y_err) && (x_err > z_err)) {
+            if ((x_err >= y_err) && (x_err >= z_err)) {
                 rx -= s;
+                if (x_err == y_err) {
+                    ry -= s;
+                }
+                if (x_err == z_err) {
+                    rz -= s;
+                }
             } else if (y_err > z_err) {
                 ry -= s;
+                if (y_err == z_err) {
+                    rz -= s;
+                }
             } else {
                 rz -= s;
             }
