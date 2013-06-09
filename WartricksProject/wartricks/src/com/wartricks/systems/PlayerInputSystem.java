@@ -79,8 +79,9 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             gameMap.clearHighlights();
             // gameMap.addHighlights(gameMap.tools.getReachableCells(mapPosition.x, mapPosition.y,
             // range.minRange, range.maxRange));
-            gameMap.addHighlights(gameMap.tools.getLOSCells(movement.origin.x, movement.origin.y,
-                    movement.destination.x, movement.destination.y));
+            gameMap.addHighlights(gameMap.tools.getLOSCellsPlanB((int)movement.origin.x,
+                    (int)movement.origin.y, (int)movement.destination.x,
+                    (int)movement.destination.y));
             e.removeComponent(MapPosition.class);
             e.addComponent(mapPosition);
             e.changedInWorld();
