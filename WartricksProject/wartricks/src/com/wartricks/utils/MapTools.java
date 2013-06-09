@@ -191,38 +191,53 @@ public class MapTools {
     }
 
     public Array<Pair> getFlowerRange(int x, int y, int range) {
+        if (range > gameMap.width) {
+            range = gameMap.width;
+        }
         final Array<Pair> highlights = new Array<Pair>();
         highlights.add(new Pair(x, y));
         if (range > 0) {
-            int error = 1;
+            int movey = 0;
             for (int currentRange = 1; currentRange <= range; currentRange++) {
-                error = Math.round(currentRange / 3) + 1;
                 if ((y + currentRange) < gameMap.height) {
                     highlights.add(new Pair(x, y + currentRange));
                 }
-                if ((x % 2) == 1) {
-                    if ((x + 1) < gameMap.width) {
-                        highlights.add(new Pair(x + 1, y));
-                    }
-                    if ((x - 1) >= 0) {
-                        highlights.add(new Pair(x - 1, y));
+                if ((currentRange % 2) == 0) {
+                    if (((y - currentRange) + movey) >= 0) {
+                        if ((x + currentRange) < gameMap.width) {
+                            highlights.add(new Pair(x + currentRange, (y - currentRange) + movey));
+                        }
+                        if ((x - currentRange) >= 0) {
+                            highlights.add(new Pair(x - currentRange, (y - currentRange) + movey));
+                        }
                     }
                 } else {
-                    if ((y - 1) >= 0) {
-                        if ((x + 1) < gameMap.width) {
-                            highlights.add(new Pair(x + 1, y - 1));
+                    if ((x % 2) == 1) {
+                        if ((y - movey) >= 0) {
+                            if ((x + currentRange) < gameMap.width) {
+                                highlights.add(new Pair(x + currentRange, y - movey));
+                            }
+                            if ((x - currentRange) >= 0) {
+                                highlights.add(new Pair(x - currentRange, y - movey));
+                            }
                         }
-                        if ((x - 1) >= 0) {
-                            highlights.add(new Pair(x - 1, y - 1));
+                    } else {
+                        if ((y - movey - 1) >= 0) {
+                            if ((x + currentRange) < gameMap.width) {
+                                highlights.add(new Pair(x + currentRange, y - movey - 1));
+                            }
+                            if ((x - currentRange) >= 0) {
+                                highlights.add(new Pair(x - currentRange, y - movey - 1));
+                            }
                         }
                     }
+                    movey++;
                 }
             }
         }
         return highlights;
     }
 
-    // TODO FAILS FOR RANGES 5 OR ABOVE
     public Array<Pair> getReverseFlowerRange(int x, int y, int range) {
         final Array<Pair> highlights = new Array<Pair>();
         highlights.add(new Pair(x, y));
