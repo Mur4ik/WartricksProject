@@ -279,47 +279,6 @@ public class MapTools {
                     movey++;
                 }
             }
-            // int error = 1;
-            // for (int currentRange = 1; currentRange <= range; currentRange++) {
-            // error = Math.round((currentRange / (error + 2))) + 1;
-            // if ((y - currentRange) >= 0) {
-            // highlights.add(new Pair(x, y - currentRange));
-            // }
-            // if ((x % 2) == 0) {
-            // if (((y + currentRange) - error) < gameMap.height) {
-            // if ((x + currentRange) < gameMap.width) {
-            // highlights.add(new Pair(x + currentRange, (y + currentRange) - error));
-            // }
-            // if ((x - currentRange) >= 0) {
-            // highlights.add(new Pair(x - currentRange, (y + currentRange) - error));
-            // }
-            // }
-            // } else {
-            // if ((currentRange % 2) == 0) {
-            // if (((y + currentRange) - 1) < gameMap.height) {
-            // if (((x + currentRange)) < gameMap.width) {
-            // highlights.add(new Pair((x + currentRange), (y + currentRange)
-            // - error));
-            // }
-            // if ((x - currentRange) >= 0) {
-            // highlights.add(new Pair(x - currentRange, (y + currentRange)
-            // - error));
-            // }
-            // }
-            // } else {
-            // if ((((y + currentRange) - error) + 1) < gameMap.height) {
-            // if (((x + currentRange)) < gameMap.width) {
-            // highlights.add(new Pair((x + currentRange),
-            // ((y + currentRange) - error) + 1));
-            // }
-            // if ((x - currentRange) >= 0) {
-            // highlights.add(new Pair(x - currentRange,
-            // ((y + currentRange) - error) + 1));
-            // }
-            // }
-            // }
-            // }
-            // }
         }
         return highlights;
     }
