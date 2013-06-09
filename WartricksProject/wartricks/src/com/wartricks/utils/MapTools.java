@@ -242,47 +242,84 @@ public class MapTools {
         final Array<Pair> highlights = new Array<Pair>();
         highlights.add(new Pair(x, y));
         if (range > 0) {
-            int error = 1;
+            int movey = 0;
             for (int currentRange = 1; currentRange <= range; currentRange++) {
-                error = Math.round((currentRange / (error + 2))) + 1;
-                if ((y - currentRange) >= 0) {
-                    highlights.add(new Pair(x, y - currentRange));
+                if ((y + currentRange) < gameMap.height) {
+                    highlights.add(new Pair(x, y + currentRange));
                 }
-                if ((x % 2) == 0) {
-                    if (((y + currentRange) - error) < gameMap.height) {
-                        if ((x + currentRange) < gameMap.width) {
-                            highlights.add(new Pair(x + currentRange, (y + currentRange) - error));
-                        }
+                if ((currentRange % 2) == 0) {
+                    if ((y - movey) >= 0) {
                         if ((x - currentRange) >= 0) {
-                            highlights.add(new Pair(x - currentRange, (y + currentRange) - error));
+                            highlights.add(new Pair(x - currentRange, y - movey));
+                        }
+                        if ((x + currentRange) < gameMap.width) {
+                            highlights.add(new Pair(x + currentRange, y - movey));
                         }
                     }
                 } else {
-                    if ((currentRange % 2) == 0) {
-                        if (((y + currentRange) - 1) < gameMap.height) {
-                            if (((x + currentRange)) < gameMap.width) {
-                                highlights.add(new Pair((x + currentRange), (y + currentRange)
-                                        - error));
-                            }
+                    if ((x % 2) == 0) {
+                        if ((y - movey - 1) >= 0) {
                             if ((x - currentRange) >= 0) {
-                                highlights.add(new Pair(x - currentRange, (y + currentRange)
-                                        - error));
+                                highlights.add(new Pair(x - currentRange, y - movey - 1));
+                            }
+                            if ((x + currentRange) < gameMap.width) {
+                                highlights.add(new Pair(x + currentRange, y - movey - 1));
                             }
                         }
                     } else {
-                        if ((((y + currentRange) - error) + 1) < gameMap.height) {
-                            if (((x + currentRange)) < gameMap.width) {
-                                highlights.add(new Pair((x + currentRange),
-                                        ((y + currentRange) - error) + 1));
-                            }
+                        if ((y - movey) >= 0) {
                             if ((x - currentRange) >= 0) {
-                                highlights.add(new Pair(x - currentRange,
-                                        ((y + currentRange) - error) + 1));
+                                highlights.add(new Pair(x - currentRange, (y - movey)));
+                            }
+                            if ((x + currentRange) < gameMap.width) {
+                                highlights.add(new Pair(x + currentRange, (y - movey)));
                             }
                         }
                     }
+                    movey++;
                 }
             }
+            // int error = 1;
+            // for (int currentRange = 1; currentRange <= range; currentRange++) {
+            // error = Math.round((currentRange / (error + 2))) + 1;
+            // if ((y - currentRange) >= 0) {
+            // highlights.add(new Pair(x, y - currentRange));
+            // }
+            // if ((x % 2) == 0) {
+            // if (((y + currentRange) - error) < gameMap.height) {
+            // if ((x + currentRange) < gameMap.width) {
+            // highlights.add(new Pair(x + currentRange, (y + currentRange) - error));
+            // }
+            // if ((x - currentRange) >= 0) {
+            // highlights.add(new Pair(x - currentRange, (y + currentRange) - error));
+            // }
+            // }
+            // } else {
+            // if ((currentRange % 2) == 0) {
+            // if (((y + currentRange) - 1) < gameMap.height) {
+            // if (((x + currentRange)) < gameMap.width) {
+            // highlights.add(new Pair((x + currentRange), (y + currentRange)
+            // - error));
+            // }
+            // if ((x - currentRange) >= 0) {
+            // highlights.add(new Pair(x - currentRange, (y + currentRange)
+            // - error));
+            // }
+            // }
+            // } else {
+            // if ((((y + currentRange) - error) + 1) < gameMap.height) {
+            // if (((x + currentRange)) < gameMap.width) {
+            // highlights.add(new Pair((x + currentRange),
+            // ((y + currentRange) - error) + 1));
+            // }
+            // if ((x - currentRange) >= 0) {
+            // highlights.add(new Pair(x - currentRange,
+            // ((y + currentRange) - error) + 1));
+            // }
+            // }
+            // }
+            // }
+            // }
         }
         return highlights;
     }
