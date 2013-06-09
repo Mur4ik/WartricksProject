@@ -115,7 +115,7 @@ public class MapTools {
         return new FloatPair(cell2.x - cell1.x, cell2.y - cell1.y);
     }
 
-    public Array<Pair> getReachableCells(int x, int y, int minRange, int maxRange) {
+    public Array<Pair> getCircularRange(int x, int y, int minRange, int maxRange) {
         final Array<Pair> unvisited = new Array<Pair>();
         final Array<Pair> visited = new Array<Pair>();
         final Pair start = new Pair(x, y);
@@ -144,11 +144,11 @@ public class MapTools {
         return highlights;
     }
 
-    public Array<Pair> getLOSCells(float x, float y, float x0, float y0) {
-        return this.getLOSCells((int)x, (int)y, (int)x0, (int)y0);
+    public Array<Pair> getLinearRange(float x, float y, float x0, float y0) {
+        return this.getLinearRange((int)x, (int)y, (int)x0, (int)y0);
     }
 
-    public Array<Pair> getLOSCells(int x, int y, int x0, int y0) {
+    public Array<Pair> getLinearRange(int x, int y, int x0, int y0) {
         final Array<Pair> highlights = new Array<Pair>();
         // PROBLEM! my offset system has 0,0 on the bottom left and is flat-top
         // coord2Offset gives valid results, but they don't translate well
@@ -183,6 +183,88 @@ public class MapTools {
                             currentRoundDown.y, currentRoundDown.z));
                     if (offsetCoord.y >= 0) {
                         highlights.add(new Pair(offsetCoord.x, offsetCoord.y));
+                    }
+                }
+            }
+        }
+        return highlights;
+    }
+
+    public Array<Pair> getFlowerRange(int x, int y, int range) {
+        final Array<Pair> highlights = new Array<Pair>();
+        highlights.add(new Pair(x, y));
+        if (range > 0) {
+            int error = 1;
+            for (int currentRange = 1; currentRange <= range; currentRange++) {
+                error = Math.round(currentRange / 3) + 1;
+                if ((y + currentRange) < gameMap.height) {
+                    highlights.add(new Pair(x, y + currentRange));
+                }
+                if ((x % 2) == 1) {
+                    if ((x + 1) < gameMap.width) {
+                        highlights.add(new Pair(x + 1, y));
+                    }
+                    if ((x - 1) >= 0) {
+                        highlights.add(new Pair(x - 1, y));
+                    }
+                } else {
+                    if ((y - 1) >= 0) {
+                        if ((x + 1) < gameMap.width) {
+                            highlights.add(new Pair(x + 1, y - 1));
+                        }
+                        if ((x - 1) >= 0) {
+                            highlights.add(new Pair(x - 1, y - 1));
+                        }
+                    }
+                }
+            }
+        }
+        return highlights;
+    }
+
+    // TODO FAILS FOR RANGES 5 OR ABOVE
+    public Array<Pair> getReverseFlowerRange(int x, int y, int range) {
+        final Array<Pair> highlights = new Array<Pair>();
+        highlights.add(new Pair(x, y));
+        if (range > 0) {
+            int error = 1;
+            for (int currentRange = 1; currentRange <= range; currentRange++) {
+                error = Math.round((currentRange / (error + 2))) + 1;
+                if ((y - currentRange) >= 0) {
+                    highlights.add(new Pair(x, y - currentRange));
+                }
+                if ((x % 2) == 0) {
+                    if (((y + currentRange) - error) < gameMap.height) {
+                        if ((x + currentRange) < gameMap.width) {
+                            highlights.add(new Pair(x + currentRange, (y + currentRange) - error));
+                        }
+                        if ((x - currentRange) >= 0) {
+                            highlights.add(new Pair(x - currentRange, (y + currentRange) - error));
+                        }
+                    }
+                } else {
+                    if ((currentRange % 2) == 0) {
+                        if (((y + currentRange) - 1) < gameMap.height) {
+                            if (((x + currentRange)) < gameMap.width) {
+                                highlights.add(new Pair((x + currentRange), (y + currentRange)
+                                        - error));
+                            }
+                            if ((x - currentRange) >= 0) {
+                                highlights.add(new Pair(x - currentRange, (y + currentRange)
+                                        - error));
+                            }
+                        }
+                    } else {
+                        if ((((y + currentRange) - error) + 1) < gameMap.height) {
+                            if (((x + currentRange)) < gameMap.width) {
+                                highlights.add(new Pair((x + currentRange),
+                                        ((y + currentRange) - error) + 1));
+                            }
+                            if ((x - currentRange) >= 0) {
+                                highlights.add(new Pair(x - currentRange,
+                                        ((y + currentRange) - error) + 1));
+                            }
+                        }
                     }
                 }
             }
