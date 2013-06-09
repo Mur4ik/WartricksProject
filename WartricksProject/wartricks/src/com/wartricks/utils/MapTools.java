@@ -150,10 +150,7 @@ public class MapTools {
 
     public Array<Pair> getLinearRange(int x, int y, int x0, int y0) {
         final Array<Pair> highlights = new Array<Pair>();
-        // PROBLEM! my offset system has 0,0 on the bottom left and is flat-top
-        // coord2Offset gives valid results, but they don't translate well
-        // for example my 0,1 should be 0,1,-1 but gets 0,-1,1 instead
-        // this causes problems with rounding that make the line break
+        highlights.add(new Pair(x, y));
         final int[] cubeCoordsOrigin = MapTools.coordOffset2Cube(x, y);
         final int[] cubeCoordsDestination = MapTools.coordOffset2Cube(x0, y0);
         final int dx = cubeCoordsOrigin[0] - cubeCoordsDestination[0];
