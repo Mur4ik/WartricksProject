@@ -3,11 +3,11 @@ package com.wartricks.utils;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.wartricks.boards.GameMap;
 import com.wartricks.custom.FloatPair;
 import com.wartricks.custom.MyMath;
 import com.wartricks.custom.Pair;
+import com.wartricks.custom.PositionArray;
 import com.wartricks.custom.Vec3;
 
 public class MapTools {
@@ -23,8 +23,8 @@ public class MapTools {
         gameCamera = camera;
     }
 
-    public Array<Pair> getNeighbors(int x, int y, int range) {
-        final Array<Pair> coordinates = new Array<Pair>();
+    public PositionArray getNeighbors(int x, int y, int range) {
+        final PositionArray coordinates = new PositionArray(gameMap);
         int min;
         int myrow;
         for (int row = y - range; row < (y + range + 1); row++) {
@@ -49,7 +49,7 @@ public class MapTools {
         return coordinates;
     }
 
-    public Array<Pair> getNeighbors(int x, int y) {
+    public PositionArray getNeighbors(int x, int y) {
         return this.getNeighbors(x, y, 1);
     }
 
@@ -115,9 +115,9 @@ public class MapTools {
         return new FloatPair(cell2.x - cell1.x, cell2.y - cell1.y);
     }
 
-    public Array<Pair> getCircularRange(int x, int y, int minRange, int maxRange) {
-        final Array<Pair> unvisited = new Array<Pair>();
-        final Array<Pair> visited = new Array<Pair>();
+    public PositionArray getCircularRange(int x, int y, int minRange, int maxRange) {
+        final PositionArray unvisited = new PositionArray(gameMap);
+        final PositionArray visited = new PositionArray(gameMap);
         final Pair start = new Pair(x, y);
         unvisited.add(start);
         while (unvisited.size > 0) {
@@ -134,7 +134,7 @@ public class MapTools {
                 }
             }
         }
-        final Array<Pair> highlights = new Array<Pair>();
+        final PositionArray highlights = new PositionArray(gameMap);
         for (final Pair cell : visited) {
             final int distance = this.distance(x, y, cell.x, cell.y);
             if (distance >= minRange) {
@@ -144,12 +144,12 @@ public class MapTools {
         return highlights;
     }
 
-    public Array<Pair> getLinearRange(float x, float y, float x0, float y0) {
+    public PositionArray getLinearRange(float x, float y, float x0, float y0) {
         return this.getLinearRange((int)x, (int)y, (int)x0, (int)y0);
     }
 
-    public Array<Pair> getLinearRange(int x, int y, int x0, int y0) {
-        final Array<Pair> highlights = new Array<Pair>();
+    public PositionArray getLinearRange(int x, int y, int x0, int y0) {
+        final PositionArray highlights = new PositionArray(gameMap);
         highlights.add(new Pair(x, y));
         final int[] cubeCoordsOrigin = MapTools.coordOffset2Cube(x, y);
         final int[] cubeCoordsDestination = MapTools.coordOffset2Cube(x0, y0);
@@ -187,9 +187,9 @@ public class MapTools {
         return highlights;
     }
 
-    public Array<Pair> getArcRange(int originx, int originy, int targetx, int targety) {
+    public PositionArray getArcRange(int originx, int originy, int targetx, int targety) {
         final FloatPair direction = this.getDirectionVector(originx, originy, targetx, targety);
-        final Array<Pair> highlights = new Array<Pair>();
+        final PositionArray highlights = new PositionArray(gameMap);
         highlights.add(new Pair(targetx, targety));
         int offset = 0;
         if ((targetx % 2) == 0) {
@@ -223,46 +223,26 @@ public class MapTools {
         return highlights;
     }
 
-    public Array<Pair> getFlowerRange(int x, int y, int range) {
+    public PositionArray getFlowerRange(int x, int y, int range) {
         if (range > gameMap.width) {
             range = gameMap.width;
         }
-        final Array<Pair> highlights = new Array<Pair>();
+        final PositionArray highlights = new PositionArray(gameMap);
         highlights.add(new Pair(x, y));
         if (range > 0) {
             int movey = 0;
             for (int currentRange = 1; currentRange <= range; currentRange++) {
-                if ((y + currentRange) < gameMap.height) {
-                    highlights.add(new Pair(x, y + currentRange));
-                }
+                highlights.add(new Pair(x, y + currentRange));
                 if ((currentRange % 2) == 0) {
-                    if (((y - currentRange) + movey) >= 0) {
-                        if ((x + currentRange) < gameMap.width) {
-                            highlights.add(new Pair(x + currentRange, (y - currentRange) + movey));
-                        }
-                        if ((x - currentRange) >= 0) {
-                            highlights.add(new Pair(x - currentRange, (y - currentRange) + movey));
-                        }
-                    }
+                    highlights.add(new Pair(x + currentRange, (y - currentRange) + movey));
+                    highlights.add(new Pair(x - currentRange, (y - currentRange) + movey));
                 } else {
                     if ((x % 2) == 1) {
-                        if ((y - movey) >= 0) {
-                            if ((x + currentRange) < gameMap.width) {
-                                highlights.add(new Pair(x + currentRange, y - movey));
-                            }
-                            if ((x - currentRange) >= 0) {
-                                highlights.add(new Pair(x - currentRange, y - movey));
-                            }
-                        }
+                        highlights.add(new Pair(x + currentRange, y - movey));
+                        highlights.add(new Pair(x - currentRange, y - movey));
                     } else {
-                        if ((y - movey - 1) >= 0) {
-                            if ((x + currentRange) < gameMap.width) {
-                                highlights.add(new Pair(x + currentRange, y - movey - 1));
-                            }
-                            if ((x - currentRange) >= 0) {
-                                highlights.add(new Pair(x - currentRange, y - movey - 1));
-                            }
-                        }
+                        highlights.add(new Pair(x + currentRange, y - movey - 1));
+                        highlights.add(new Pair(x - currentRange, y - movey - 1));
                     }
                     movey++;
                 }
@@ -271,43 +251,23 @@ public class MapTools {
         return highlights;
     }
 
-    public Array<Pair> getReverseFlowerRange(int x, int y, int range) {
-        final Array<Pair> highlights = new Array<Pair>();
+    public PositionArray getReverseFlowerRange(int x, int y, int range) {
+        final PositionArray highlights = new PositionArray(gameMap);
         highlights.add(new Pair(x, y));
         if (range > 0) {
             int movey = 0;
             for (int currentRange = 1; currentRange <= range; currentRange++) {
-                if ((y + currentRange) < gameMap.height) {
-                    highlights.add(new Pair(x, y + currentRange));
-                }
+                highlights.add(new Pair(x, y + currentRange));
                 if ((currentRange % 2) == 0) {
-                    if ((y - movey) >= 0) {
-                        if ((x - currentRange) >= 0) {
-                            highlights.add(new Pair(x - currentRange, y - movey));
-                        }
-                        if ((x + currentRange) < gameMap.width) {
-                            highlights.add(new Pair(x + currentRange, y - movey));
-                        }
-                    }
+                    highlights.add(new Pair(x - currentRange, y - movey));
+                    highlights.add(new Pair(x + currentRange, y - movey));
                 } else {
                     if ((x % 2) == 0) {
-                        if ((y - movey - 1) >= 0) {
-                            if ((x - currentRange) >= 0) {
-                                highlights.add(new Pair(x - currentRange, y - movey - 1));
-                            }
-                            if ((x + currentRange) < gameMap.width) {
-                                highlights.add(new Pair(x + currentRange, y - movey - 1));
-                            }
-                        }
+                        highlights.add(new Pair(x - currentRange, y - movey - 1));
+                        highlights.add(new Pair(x + currentRange, y - movey - 1));
                     } else {
-                        if ((y - movey) >= 0) {
-                            if ((x - currentRange) >= 0) {
-                                highlights.add(new Pair(x - currentRange, (y - movey)));
-                            }
-                            if ((x + currentRange) < gameMap.width) {
-                                highlights.add(new Pair(x + currentRange, (y - movey)));
-                            }
-                        }
+                        highlights.add(new Pair(x - currentRange, (y - movey)));
+                        highlights.add(new Pair(x + currentRange, (y - movey)));
                     }
                     movey++;
                 }

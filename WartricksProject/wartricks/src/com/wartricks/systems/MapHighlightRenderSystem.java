@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.Array;
 import com.wartricks.boards.GameMap;
 import com.wartricks.custom.FloatPair;
 import com.wartricks.custom.Pair;
+import com.wartricks.custom.PositionArray;
 import com.wartricks.utils.PlatformUtils;
 
 public class MapHighlightRenderSystem extends VoidEntitySystem {
@@ -44,7 +44,7 @@ public class MapHighlightRenderSystem extends VoidEntitySystem {
 
     @Override
     protected void processSystem() {
-        final Array<Pair> highlighted = gameMap.highlighted;
+        final PositionArray highlighted = gameMap.highlighted;
         if ((highlighted == null) || (highlighted.size < 1)) {
             return;
         }

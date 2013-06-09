@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.wartricks.custom.Pair;
+import com.wartricks.custom.PositionArray;
 import com.wartricks.utils.BoardGenerator;
 import com.wartricks.utils.MapTools;
 
@@ -28,7 +28,7 @@ public class GameMap {
 
     private ObjectMap<Integer, Pair> coordByEntity;
 
-    public final Array<Pair> highlighted;
+    public final PositionArray highlighted;
 
     private OrthographicCamera gameCamera;
 
@@ -53,7 +53,7 @@ public class GameMap {
         gameCamera = camera;
         tools = new MapTools("hex", this, gameCamera);
         coordByEntity = new ObjectMap<Integer, Pair>();
-        highlighted = new Array<Pair>();
+        highlighted = new PositionArray(this);
     }
 
     private Color getColor(int color) { // r g b
@@ -122,7 +122,7 @@ public class GameMap {
         }
     }
 
-    public void addHighlights(Array<Pair> pairs) {
+    public void addHighlights(PositionArray pairs) {
         if (pairs.size > 0) {
             for (final Pair pair : pairs) {
                 if (!highlighted.contains(pair, false)) {
