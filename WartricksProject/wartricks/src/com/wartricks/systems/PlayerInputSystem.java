@@ -34,8 +34,6 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     private OrthographicCamera camera;
 
-    private Vector3 mouseVector;
-
     private GameMap gameMap;
 
     private WartricksGame game;
@@ -71,7 +69,6 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             // Get the entity's position
             final Path path = ptm.get(e);
             MapPosition mapPosition = mpm.getSafe(e);
-            // Add a Movement component to the entity
             gameMap.moveEntity(e.getId(), moveTarget.x, moveTarget.y);
             final Move movement = new Move(mapPosition.x, mapPosition.y, moveTarget.x, moveTarget.y);
             mapPosition = new MapPosition(moveTarget.x, moveTarget.y);
@@ -80,8 +77,10 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             // path.path.clear();
             final Range range = rm.getSafe(e);
             gameMap.clearHighlights();
-            gameMap.addHighlights(gameMap.tools.getReachableCells(mapPosition.x, mapPosition.y,
-                    range.minRange, range.maxRange));
+            // gameMap.addHighlights(gameMap.tools.getReachableCells(mapPosition.x, mapPosition.y,
+            // range.minRange, range.maxRange));
+            gameMap.addHighlights(gameMap.tools.getLOSCells(movement.origin.x, movement.origin.y,
+                    movement.destination.x, movement.destination.y));
             e.removeComponent(MapPosition.class);
             e.addComponent(mapPosition);
             e.changedInWorld();

@@ -139,4 +139,75 @@ public class MapTools {
         }
         return highlights;
     }
+
+    public Array<Pair> getLOSCells(float x, float y, float x0, float y0) {
+        return this.getLOSCells((int)x, (int)y, (int)x0, (int)y0);
+    }
+
+    public Array<Pair> getLOSCells(int x, int y, int x0, int y0) {
+        final Array<Pair> highlights = new Array<Pair>();
+        final int[] cubeCoordsOrigin = MapTools.coordOffset2Cube(x, y);
+        final int[] cubeCoordsDestination = MapTools.coordOffset2Cube(x0, y0);
+        final int dx = cubeCoordsOrigin[0] - cubeCoordsDestination[0];
+        final int dy = cubeCoordsOrigin[1] - cubeCoordsDestination[1];
+        final int dz = cubeCoordsOrigin[2] - cubeCoordsDestination[2];
+        float distance = Math.max(Math.abs(dx - dy), Math.abs(dy - dz));
+        distance = Math.max(distance, Math.abs(dz - dx));
+        if (distance > 0) {
+            int[] previousCoord = new int[3];
+            for (float i = 0; i <= distance; i++) {
+                final float currentX = (cubeCoordsOrigin[0] * (i / distance))
+                        + (cubeCoordsDestination[0] * (1 - (i / distance)));
+                final float currentY = (cubeCoordsOrigin[1] * (i / distance))
+                        + (cubeCoordsDestination[1] * (1 - (i / distance)));
+                final float currentZ = (cubeCoordsOrigin[2] * (i / distance))
+                        + (cubeCoordsDestination[2] * (1 - (i / distance)));
+                final int[] currentCoord = roundCubeCoord(currentX, currentY, currentZ);
+                if (!currentCoord.equals(previousCoord)) {
+                    final int[] offsetCoord = MapTools.coordCube2Offset(currentCoord[0],
+                            currentCoord[1], currentCoord[2]);
+                    highlights.add(new Pair(offsetCoord[0], offsetCoord[1]));
+                    previousCoord = currentCoord;
+                }
+            }
+        }
+        return highlights;
+    }
+
+    public static int[] coordOffset2Cube(int x, int y) {
+        final int[] coord = new int[3];
+        coord[0] = x;
+        coord[2] = y - ((x + (x % 2)) / 2);
+        coord[1] = -x - coord[2];
+        return coord;
+    }
+
+    public static int[] coordCube2Offset(int x, int y, int z) {
+        final int[] coord = new int[2];
+        coord[0] = x;
+        coord[1] = (z + ((x + (x % 2)) / 2));
+        return coord;
+    }
+
+    public static int[] roundCubeCoord(double x, double y, double z) {
+        float rx = Math.round(x - 0.0001f);
+        float ry = Math.round(y - 0.0001f);
+        float rz = Math.round(z - 0.0001f);
+        final int s = (int)(rx + ry + rz);
+        if (s != 0) {
+            final float x_err = (float)Math.abs(rx - x) + 0.001f;
+            final float y_err = (float)Math.abs(ry - y);
+            final float z_err = (float)Math.abs(rz - z);
+            if ((x_err > y_err) && (x_err > z_err)) {
+                rx -= s;
+            } else if (y_err > z_err) {
+                ry -= s;
+            } else {
+                rz -= s;
+            }
+        }
+        return new int[] {
+                (int)rx, (int)ry, (int)rz
+        };
+    }
 }
