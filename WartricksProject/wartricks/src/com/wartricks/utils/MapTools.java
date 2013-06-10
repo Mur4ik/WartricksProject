@@ -252,22 +252,25 @@ public class MapTools {
     }
 
     public PositionArray getReverseFlowerRange(int x, int y, int range) {
+        if (range > gameMap.width) {
+            range = gameMap.width;
+        }
         final PositionArray highlights = new PositionArray(gameMap);
         highlights.add(new Pair(x, y));
         if (range > 0) {
             int movey = 0;
             for (int currentRange = 1; currentRange <= range; currentRange++) {
-                highlights.add(new Pair(x, y + currentRange));
+                highlights.add(new Pair(x, y - currentRange));
                 if ((currentRange % 2) == 0) {
-                    highlights.add(new Pair(x - currentRange, y - movey));
-                    highlights.add(new Pair(x + currentRange, y - movey));
+                    highlights.add(new Pair(x - currentRange, (y + movey)));
+                    highlights.add(new Pair(x + currentRange, (y + movey)));
                 } else {
                     if ((x % 2) == 0) {
-                        highlights.add(new Pair(x - currentRange, y - movey - 1));
-                        highlights.add(new Pair(x + currentRange, y - movey - 1));
+                        highlights.add(new Pair(x - currentRange, (y + movey)));
+                        highlights.add(new Pair(x + currentRange, (y + movey)));
                     } else {
-                        highlights.add(new Pair(x - currentRange, (y - movey)));
-                        highlights.add(new Pair(x + currentRange, (y - movey)));
+                        highlights.add(new Pair(x - currentRange, (y + movey) + 1));
+                        highlights.add(new Pair(x + currentRange, (y + movey) + 1));
                     }
                     movey++;
                 }
