@@ -47,7 +47,7 @@ public class MapTools {
                 if ((myrow < 0) || (myrow >= gameMap.height)) {
                     continue;
                 }
-                coordinates.add(new Pair(col, myrow));
+                coordinates.add(col, myrow);
             }
         }
         return coordinates;
@@ -162,7 +162,7 @@ public class MapTools {
 
     public PositionArray getLinearRange(int x, int y, int x0, int y0) {
         final PositionArray highlights = new PositionArray(gameMap);
-        highlights.add(new Pair(x, y));
+        highlights.add(x, y);
         final int[] cubeCoordsOrigin = MapTools.coordOffset2Cube(x, y);
         final int[] cubeCoordsDestination = MapTools.coordOffset2Cube(x0, y0);
         final int dx = cubeCoordsOrigin[0] - cubeCoordsDestination[0];
@@ -185,13 +185,13 @@ public class MapTools {
                 Pair offsetCoord = new Pair(MapTools.coordCube2Offset(currentRoundUp.x,
                         currentRoundUp.y, currentRoundUp.z));
                 if (offsetCoord.y >= 0) {
-                    highlights.add(new Pair(offsetCoord.x, offsetCoord.y));
+                    highlights.add(offsetCoord.x, offsetCoord.y);
                 }
                 if (!currentRoundUp.equals(currentRoundDown)) {
                     offsetCoord = new Pair(MapTools.coordCube2Offset(currentRoundDown.x,
                             currentRoundDown.y, currentRoundDown.z));
                     if (offsetCoord.y >= 0) {
-                        highlights.add(new Pair(offsetCoord.x, offsetCoord.y));
+                        highlights.add(offsetCoord.x, offsetCoord.y);
                     }
                 }
             }
@@ -231,27 +231,27 @@ public class MapTools {
         }
         if (direction.x > 0) {
             if (direction.y >= 0) {
-                highlights.add(new Pair(target.x - 1, (target.y + 1) - offset));
-                highlights.add(new Pair(target.x, target.y - 1));
+                highlights.add(target.x - 1, (target.y + 1) - offset);
+                highlights.add(target.x, target.y - 1);
             } else {
-                highlights.add(new Pair(target.x, target.y + 1));
-                highlights.add(new Pair(target.x - 1, target.y - offset));
+                highlights.add(target.x, target.y + 1);
+                highlights.add(target.x - 1, target.y - offset);
             }
         } else if (direction.x < 0) {
             if (direction.y >= 0) {
-                highlights.add(new Pair(target.x + 1, (target.y + 1) - offset));
-                highlights.add(new Pair(target.x, target.y - 1));
+                highlights.add(target.x + 1, (target.y + 1) - offset);
+                highlights.add(target.x, target.y - 1);
             } else {
-                highlights.add(new Pair(target.x + 1, target.y - offset));
-                highlights.add(new Pair(target.x, target.y + 1));
+                highlights.add(target.x + 1, target.y - offset);
+                highlights.add(target.x, target.y + 1);
             }
         } else {
             if (direction.y > 0) {
-                highlights.add(new Pair(target.x + 1, target.y - offset));
-                highlights.add(new Pair(target.x - 1, target.y - offset));
+                highlights.add(target.x + 1, target.y - offset);
+                highlights.add(target.x - 1, target.y - offset);
             } else if (direction.y < 0) {
-                highlights.add(new Pair(target.x + 1, (target.y + 1) - offset));
-                highlights.add(new Pair(target.x - 1, (target.y + 1) - offset));
+                highlights.add(target.x + 1, (target.y + 1) - offset);
+                highlights.add(target.x - 1, (target.y + 1) - offset);
             }
         }
         return highlights;
@@ -266,21 +266,21 @@ public class MapTools {
             range = gameMap.width;
         }
         final PositionArray highlights = new PositionArray(gameMap);
-        highlights.add(new Pair(x, y));
+        highlights.add(x, y);
         if (range > 0) {
             int movey = 0;
             for (int currentRange = 1; currentRange <= range; currentRange++) {
-                highlights.add(new Pair(x, y + currentRange));
+                highlights.add(x, y + currentRange);
                 if ((currentRange % 2) == 0) {
-                    highlights.add(new Pair(x + currentRange, (y - currentRange) + movey));
-                    highlights.add(new Pair(x - currentRange, (y - currentRange) + movey));
+                    highlights.add(x + currentRange, (y - currentRange) + movey);
+                    highlights.add(x - currentRange, (y - currentRange) + movey);
                 } else {
                     if ((x % 2) == 1) {
-                        highlights.add(new Pair(x + currentRange, y - movey));
-                        highlights.add(new Pair(x - currentRange, y - movey));
+                        highlights.add(x + currentRange, y - movey);
+                        highlights.add(x - currentRange, y - movey);
                     } else {
-                        highlights.add(new Pair(x + currentRange, y - movey - 1));
-                        highlights.add(new Pair(x - currentRange, y - movey - 1));
+                        highlights.add(x + currentRange, y - movey - 1);
+                        highlights.add(x - currentRange, y - movey - 1);
                     }
                     movey++;
                 }
@@ -298,21 +298,21 @@ public class MapTools {
             range = gameMap.width;
         }
         final PositionArray highlights = new PositionArray(gameMap);
-        highlights.add(new Pair(x, y));
+        highlights.add(x, y);
         if (range > 0) {
             int movey = 0;
             for (int currentRange = 1; currentRange <= range; currentRange++) {
-                highlights.add(new Pair(x, y - currentRange));
+                highlights.add(x, y - currentRange);
                 if ((currentRange % 2) == 0) {
-                    highlights.add(new Pair(x - currentRange, (y + movey)));
-                    highlights.add(new Pair(x + currentRange, (y + movey)));
+                    highlights.add(x - currentRange, (y + movey));
+                    highlights.add(x + currentRange, (y + movey));
                 } else {
                     if ((x % 2) == 0) {
-                        highlights.add(new Pair(x - currentRange, (y + movey)));
-                        highlights.add(new Pair(x + currentRange, (y + movey)));
+                        highlights.add(x - currentRange, (y + movey));
+                        highlights.add(x + currentRange, (y + movey));
                     } else {
-                        highlights.add(new Pair(x - currentRange, (y + movey) + 1));
-                        highlights.add(new Pair(x + currentRange, (y + movey) + 1));
+                        highlights.add(x - currentRange, (y + movey) + 1);
+                        highlights.add(x + currentRange, (y + movey) + 1);
                     }
                     movey++;
                 }

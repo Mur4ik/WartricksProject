@@ -18,6 +18,10 @@ public class PositionArray extends Array<Pair> {
         this.add(value);
     }
 
+    public void add(int x, int y) {
+        this.add(new Pair(x, y));
+    }
+
     @Override
     public void add(Pair value) {
         if ((value.x >= 0) && (value.y >= 0) && (value.x < board.width) && (value.y < board.height)
