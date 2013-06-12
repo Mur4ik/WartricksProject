@@ -23,6 +23,10 @@ public class MapTools {
         gameCamera = camera;
     }
 
+    public PositionArray getNeighbors(Pair origin, int range) {
+        return this.getNeighbors(origin.x, origin.y, range);
+    }
+
     public PositionArray getNeighbors(int x, int y, int range) {
         final PositionArray coordinates = new PositionArray(gameMap);
         int min;
@@ -109,10 +113,18 @@ public class MapTools {
         return new FloatPair(posX, posY);
     }
 
+    public FloatPair getDirectionVector(Pair origin, Pair destination) {
+        return this.getDirectionVector(origin.x, origin.y, destination.x, destination.y);
+    }
+
     public FloatPair getDirectionVector(int originx, int originy, int destinationx, int destinationy) {
         final FloatPair cell1 = this.world2window(destinationx, destinationy);
         final FloatPair cell2 = this.world2window(originx, originy);
         return new FloatPair(cell2.x - cell1.x, cell2.y - cell1.y);
+    }
+
+    public PositionArray getCircularRange(Pair origin, int minRange, int maxRange) {
+        return this.getCircularRange(origin.x, origin.y, minRange, maxRange);
     }
 
     public PositionArray getCircularRange(int x, int y, int minRange, int maxRange) {
@@ -144,8 +156,8 @@ public class MapTools {
         return highlights;
     }
 
-    public PositionArray getLinearRange(float x, float y, float x0, float y0) {
-        return this.getLinearRange((int)x, (int)y, (int)x0, (int)y0);
+    public PositionArray getLinearRange(Pair origin, Pair destination) {
+        return this.getLinearRange(origin.x, origin.y, destination.x, destination.y);
     }
 
     public PositionArray getLinearRange(int x, int y, int x0, int y0) {
@@ -198,7 +210,7 @@ public class MapTools {
         }
         final PositionArray open = new PositionArray(gameMap);
         final PositionArray closed = new PositionArray(gameMap);
-        closed.add(new Pair(origin.x, origin.y));
+        closed.add(origin);
         while (closed.size > 0) {
             final Pair position = closed.removeIndex(0);
             if (!open.contains(position, false)
@@ -245,6 +257,10 @@ public class MapTools {
         return highlights;
     }
 
+    public PositionArray getFlowerRange(Pair origin, int range) {
+        return this.getFlowerRange(origin.x, origin.y, range);
+    }
+
     public PositionArray getFlowerRange(int x, int y, int range) {
         if (range > gameMap.width) {
             range = gameMap.width;
@@ -271,6 +287,10 @@ public class MapTools {
             }
         }
         return highlights;
+    }
+
+    public PositionArray getReverseFlowerRange(Pair origin, int range) {
+        return this.getReverseFlowerRange(origin.x, origin.y, range);
     }
 
     public PositionArray getReverseFlowerRange(int x, int y, int range) {
