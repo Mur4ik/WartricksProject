@@ -188,8 +188,8 @@ public class MapTools {
     }
 
     public PositionArray getArcRange(int originx, int originy, int targetx, int targety, int range) {
-        if (range < 0) {
-            range = 0;
+        if (range > gameMap.width) {
+            range = gameMap.width;
         }
         final PositionArray open = new PositionArray(gameMap);
         final PositionArray closed = new PositionArray(gameMap);
