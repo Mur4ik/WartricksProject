@@ -53,7 +53,7 @@ public class MapTools {
         return this.getNeighbors(x, y, 1);
     }
 
-    public int distance(int x0, int y0, int x1, int y1) {
+    public int getDistance(int x0, int y0, int x1, int y1) {
         final int dx = Math.abs(x1 - x0);
         final int dy = Math.abs(y1 - y0);
         // The distance can be tricky, because of how the columns are shifted.
@@ -123,7 +123,7 @@ public class MapTools {
         while (unvisited.size > 0) {
             final Pair current = unvisited.pop();
             for (final Pair neighbor : this.getNeighbors(current.x, current.y)) {
-                final int distance = this.distance(x, y, neighbor.x, neighbor.y);
+                final int distance = this.getDistance(x, y, neighbor.x, neighbor.y);
                 if (distance <= maxRange) {
                     if (!visited.contains(neighbor, false)) {
                         visited.add(neighbor);
@@ -136,7 +136,7 @@ public class MapTools {
         }
         final PositionArray highlights = new PositionArray(gameMap);
         for (final Pair cell : visited) {
-            final int distance = this.distance(x, y, cell.x, cell.y);
+            final int distance = this.getDistance(x, y, cell.x, cell.y);
             if (distance >= minRange) {
                 highlights.add(cell);
             }
@@ -187,37 +187,55 @@ public class MapTools {
         return highlights;
     }
 
-    public PositionArray getArcRange(int originx, int originy, int targetx, int targety) {
-        final FloatPair direction = this.getDirectionVector(originx, originy, targetx, targety);
+    public PositionArray getArcRange(int originx, int originy, int targetx, int targety, int range) {
+        if (range < 0) {
+            range = 0;
+        }
+        final PositionArray open = new PositionArray(gameMap);
+        final PositionArray closed = new PositionArray(gameMap);
+        final FloatPair direction = this.getDirectionVector(targetx, targety, originx, originy);
+        closed.add(new Pair(targetx, targety));
+        while (closed.size > 0) {
+            final Pair position = closed.removeIndex(0);
+            if (!open.contains(position, false)
+                    && (this.getDistance(targetx, targety, position.x, position.y) <= range)) {
+                closed.addAll(this.getArcAdjacents(position, direction));
+                open.add(position);
+            }
+        }
+        open.removeIndex(0);
+        return open;
+    }
+
+    private PositionArray getArcAdjacents(Pair target, FloatPair direction) {
         final PositionArray highlights = new PositionArray(gameMap);
-        highlights.add(new Pair(targetx, targety));
         int offset = 0;
-        if ((targetx % 2) == 0) {
+        if ((target.x % 2) == 0) {
             offset = 1;
         }
         if (direction.x > 0) {
             if (direction.y >= 0) {
-                highlights.add(new Pair(targetx - 1, (targety + 1) - offset));
-                highlights.add(new Pair(targetx, targety - 1));
+                highlights.add(new Pair(target.x - 1, (target.y + 1) - offset));
+                highlights.add(new Pair(target.x, target.y - 1));
             } else {
-                highlights.add(new Pair(targetx, targety + 1));
-                highlights.add(new Pair(targetx - 1, targety - offset));
+                highlights.add(new Pair(target.x, target.y + 1));
+                highlights.add(new Pair(target.x - 1, target.y - offset));
             }
         } else if (direction.x < 0) {
             if (direction.y >= 0) {
-                highlights.add(new Pair(targetx + 1, (targety + 1) - offset));
-                highlights.add(new Pair(targetx, targety - 1));
+                highlights.add(new Pair(target.x + 1, (target.y + 1) - offset));
+                highlights.add(new Pair(target.x, target.y - 1));
             } else {
-                highlights.add(new Pair(targetx + 1, targety - offset));
-                highlights.add(new Pair(targetx, targety + 1));
+                highlights.add(new Pair(target.x + 1, target.y - offset));
+                highlights.add(new Pair(target.x, target.y + 1));
             }
         } else {
             if (direction.y > 0) {
-                highlights.add(new Pair(targetx + 1, targety - offset));
-                highlights.add(new Pair(targetx - 1, targety - offset));
+                highlights.add(new Pair(target.x + 1, target.y - offset));
+                highlights.add(new Pair(target.x - 1, target.y - offset));
             } else if (direction.y < 0) {
-                highlights.add(new Pair(targetx + 1, (targety + 1) - offset));
-                highlights.add(new Pair(targetx - 1, (targety + 1) - offset));
+                highlights.add(new Pair(target.x + 1, (target.y + 1) - offset));
+                highlights.add(new Pair(target.x - 1, (target.y + 1) - offset));
             }
         }
         return highlights;
