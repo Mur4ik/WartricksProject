@@ -77,15 +77,17 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             // path.path.clear();
             final Range range = rm.getSafe(e);
             gameMap.clearHighlights();
-            // gameMap.addHighlights(gameMap.tools.getReachableCells(mapPosition.x, mapPosition.y,
+            // gameMap.addHighlights(gameMap.tools.getCircularRange(mapPosition.x, mapPosition.y,
             // range.minRange, range.maxRange));
             // gameMap.addHighlights(gameMap.tools.getLinearRange((int)movement.origin.x,
             // (int)movement.origin.y, (int)movement.destination.x,
             // (int)movement.destination.y));
-            gameMap.addHighlights(gameMap.tools.getFlowerRange(mapPosition.x, mapPosition.y, 10));
-            // gameMap.addHighlights(gameMap.tools.getArcRange((int)movement.origin.x,
-            // (int)movement.origin.y, (int)movement.destination.x,
-            // (int)movement.destination.y));
+            // gameMap.addHighlights(gameMap.tools.getReverseFlowerRange(mapPosition.x,
+            // mapPosition.y,
+            // 5));
+            gameMap.addHighlights(gameMap.tools.getArcRange((int)movement.origin.x,
+                    (int)movement.origin.y, (int)movement.destination.x,
+                    (int)movement.destination.y, 4));
             e.removeComponent(MapPosition.class);
             e.addComponent(mapPosition);
             e.changedInWorld();

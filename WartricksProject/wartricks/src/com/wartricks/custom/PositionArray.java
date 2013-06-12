@@ -20,7 +20,8 @@ public class PositionArray extends Array<Pair> {
 
     @Override
     public void add(Pair value) {
-        if ((value.x >= 0) && (value.y >= 0) && (value.x < board.width) && (value.y < board.height)) {
+        if ((value.x >= 0) && (value.y >= 0) && (value.x < board.width) && (value.y < board.height)
+                && !this.contains(value, false)) {
             super.add(value);
         }
     }
