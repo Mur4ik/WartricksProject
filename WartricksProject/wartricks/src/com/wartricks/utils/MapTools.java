@@ -188,17 +188,21 @@ public class MapTools {
     }
 
     public PositionArray getArcRange(int originx, int originy, int targetx, int targety, int range) {
+        return this.getArcRange(new Pair(targetx, targety),
+                this.getDirectionVector(targetx, targety, originx, originy), range);
+    }
+
+    public PositionArray getArcRange(Pair origin, FloatPair direction, int range) {
         if (range > gameMap.width) {
             range = gameMap.width;
         }
         final PositionArray open = new PositionArray(gameMap);
         final PositionArray closed = new PositionArray(gameMap);
-        final FloatPair direction = this.getDirectionVector(targetx, targety, originx, originy);
-        closed.add(new Pair(targetx, targety));
+        closed.add(new Pair(origin.x, origin.y));
         while (closed.size > 0) {
             final Pair position = closed.removeIndex(0);
             if (!open.contains(position, false)
-                    && (this.getDistance(targetx, targety, position.x, position.y) <= range)) {
+                    && (this.getDistance(origin.x, origin.y, position.x, position.y) <= range)) {
                 closed.addAll(this.getArcAdjacents(position, direction));
                 open.add(position);
             }
