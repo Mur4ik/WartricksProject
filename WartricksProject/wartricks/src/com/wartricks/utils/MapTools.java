@@ -113,6 +113,12 @@ public class MapTools {
         return new FloatPair(posX, posY);
     }
 
+    public Pair getAtRelativePosition(Pair origin, Pair amount) {
+        origin.x += amount.x;
+        origin.y += amount.y;
+        return origin;
+    }
+
     public Pair getAtRelativePosition(Pair origin, FloatPair direction, int distance) {
         final Vec3 cubeCoord = coordOffset2Cube(origin.x, origin.y);
         if (direction.x > 0) {
