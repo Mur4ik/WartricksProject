@@ -24,6 +24,11 @@ public class Pair {
         }
     }
 
+    public Pair(Pair pair) {
+        x = pair.x;
+        y = pair.y;
+    }
+
     public int x, y;
 
     @Override

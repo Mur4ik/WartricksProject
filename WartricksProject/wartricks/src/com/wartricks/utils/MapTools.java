@@ -113,6 +113,32 @@ public class MapTools {
         return new FloatPair(posX, posY);
     }
 
+    public Pair getAtRelativePosition(Pair origin, FloatPair direction, int distance) {
+        final Vec3 cubeCoord = coordOffset2Cube(origin.x, origin.y);
+        if (direction.x > 0) {
+            if (direction.y >= 0) {
+                cubeCoord.x += distance;
+            } else {
+                cubeCoord.x += distance;
+                cubeCoord.z -= distance;
+            }
+        } else if (direction.x < 0) {
+            if (direction.y >= 0) {
+                cubeCoord.x -= distance;
+                cubeCoord.z += distance;
+            } else {
+                cubeCoord.x -= distance;
+            }
+        } else {
+            if (direction.y > 0) {
+                cubeCoord.z += distance;
+            } else if (direction.y < 0) {
+                cubeCoord.z -= distance;
+            }
+        }
+        return coordCube2Offset(cubeCoord.x, cubeCoord.y, cubeCoord.z);
+    }
+
     public FloatPair getDirectionVector(Pair origin, Pair destination) {
         return this.getDirectionVector(origin.x, origin.y, destination.x, destination.y);
     }
@@ -163,21 +189,21 @@ public class MapTools {
     public PositionArray getLinearRange(int x, int y, int x0, int y0) {
         final PositionArray highlights = new PositionArray(gameMap);
         highlights.add(x, y);
-        final int[] cubeCoordsOrigin = MapTools.coordOffset2Cube(x, y);
-        final int[] cubeCoordsDestination = MapTools.coordOffset2Cube(x0, y0);
-        final int dx = cubeCoordsOrigin[0] - cubeCoordsDestination[0];
-        final int dy = cubeCoordsOrigin[1] - cubeCoordsDestination[1];
-        final int dz = cubeCoordsOrigin[2] - cubeCoordsDestination[2];
+        final Vec3 cubeCoordsOrigin = MapTools.coordOffset2Cube(x, y);
+        final Vec3 cubeCoordsDestination = MapTools.coordOffset2Cube(x0, y0);
+        final int dx = cubeCoordsOrigin.x - cubeCoordsDestination.x;
+        final int dy = cubeCoordsOrigin.y - cubeCoordsDestination.y;
+        final int dz = cubeCoordsOrigin.z - cubeCoordsDestination.z;
         float distance = Math.max(Math.abs(dx - dy), Math.abs(dy - dz));
         distance = Math.max(distance, Math.abs(dz - dx));
         if (distance > 0) {
             for (float i = 0; i <= distance; i++) {
-                final float currentX = (cubeCoordsOrigin[0] * (i / distance))
-                        + (cubeCoordsDestination[0] * (1 - (i / distance)));
-                final float currentY = (cubeCoordsOrigin[1] * (i / distance))
-                        + (cubeCoordsDestination[1] * (1 - (i / distance)));
-                final float currentZ = (cubeCoordsOrigin[2] * (i / distance))
-                        + (cubeCoordsDestination[2] * (1 - (i / distance)));
+                final float currentX = (cubeCoordsOrigin.x * (i / distance))
+                        + (cubeCoordsDestination.x * (1 - (i / distance)));
+                final float currentY = (cubeCoordsOrigin.y * (i / distance))
+                        + (cubeCoordsDestination.y * (1 - (i / distance)));
+                final float currentZ = (cubeCoordsOrigin.z * (i / distance))
+                        + (cubeCoordsDestination.z * (1 - (i / distance)));
                 final Vec3 currentRoundUp = new Vec3(roundCubeCoord(currentX + 0.05f,
                         currentY + 0.07f, currentZ));
                 final Vec3 currentRoundDown = new Vec3(roundCubeCoord(currentX - 0.05f,
@@ -188,8 +214,8 @@ public class MapTools {
                     highlights.add(offsetCoord.x, offsetCoord.y);
                 }
                 if (!currentRoundUp.equals(currentRoundDown)) {
-                    offsetCoord = new Pair(MapTools.coordCube2Offset(currentRoundDown.x,
-                            currentRoundDown.y, currentRoundDown.z));
+                    offsetCoord = MapTools.coordCube2Offset(currentRoundDown.x, currentRoundDown.y,
+                            currentRoundDown.z);
                     if (offsetCoord.y >= 0) {
                         highlights.add(offsetCoord.x, offsetCoord.y);
                     }
@@ -321,18 +347,18 @@ public class MapTools {
         return highlights;
     }
 
-    public static int[] coordOffset2Cube(int x, int y) {
-        final int[] coord = new int[3];
-        coord[0] = x;
-        coord[2] = y - ((x - (x % 2)) / 2);
-        coord[1] = -x - coord[2];
+    public static Vec3 coordOffset2Cube(int x, int y) {
+        final Vec3 coord = new Vec3();
+        coord.x = x;
+        coord.z = y - ((x - (x % 2)) / 2);
+        coord.y = -x - coord.z;
         return coord;
     }
 
-    public static int[] coordCube2Offset(int x, int y, int z) {
-        final int[] coord = new int[2];
-        coord[0] = x;
-        coord[1] = (z + ((x - (x % 2)) / 2));
+    public static Pair coordCube2Offset(int x, int y, int z) {
+        final Pair coord = new Pair();
+        coord.x = x;
+        coord.y = (z + ((x - (x % 2)) / 2));
         return coord;
     }
 
