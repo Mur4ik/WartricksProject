@@ -109,9 +109,9 @@ public class MapTools {
         return new FloatPair(posX, posY);
     }
 
-    public FloatPair getDirectionVector(int x1, int y1, int x2, int y2) {
-        final FloatPair cell1 = this.world2window(x1, y1);
-        final FloatPair cell2 = this.world2window(x2, y2);
+    public FloatPair getDirectionVector(int originx, int originy, int destinationx, int destinationy) {
+        final FloatPair cell1 = this.world2window(destinationx, destinationy);
+        final FloatPair cell2 = this.world2window(originx, originy);
         return new FloatPair(cell2.x - cell1.x, cell2.y - cell1.y);
     }
 
@@ -189,7 +189,7 @@ public class MapTools {
 
     public PositionArray getArcRange(int originx, int originy, int targetx, int targety, int range) {
         return this.getArcRange(new Pair(targetx, targety),
-                this.getDirectionVector(targetx, targety, originx, originy), range);
+                this.getDirectionVector(originx, originy, targetx, targety), range);
     }
 
     public PositionArray getArcRange(Pair origin, FloatPair direction, int range) {

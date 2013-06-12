@@ -17,6 +17,7 @@ import com.wartricks.components.MapPosition;
 import com.wartricks.components.Move;
 import com.wartricks.components.Path;
 import com.wartricks.components.Range;
+import com.wartricks.custom.FloatPair;
 import com.wartricks.custom.Pair;
 import com.wartricks.lifecycle.WartricksGame;
 import com.wartricks.utils.Constants;
@@ -85,9 +86,11 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             // gameMap.addHighlights(gameMap.tools.getReverseFlowerRange(mapPosition.x,
             // mapPosition.y,
             // 5));
-            gameMap.addHighlights(gameMap.tools.getArcRange((int)movement.origin.x,
+            final FloatPair destination = gameMap.tools.getDirectionVector((int)movement.origin.x,
                     (int)movement.origin.y, (int)movement.destination.x,
-                    (int)movement.destination.y, 4));
+                    (int)movement.destination.y);
+            gameMap.addHighlights(gameMap.tools.getArcRange(new Pair((int)movement.destination.x,
+                    (int)movement.destination.y), destination, 4));
             e.removeComponent(MapPosition.class);
             e.addComponent(mapPosition);
             e.changedInWorld();
