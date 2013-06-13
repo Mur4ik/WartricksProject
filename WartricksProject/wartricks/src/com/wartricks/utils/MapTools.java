@@ -150,8 +150,8 @@ public class MapTools {
     }
 
     public FloatPair getDirectionVector(int originx, int originy, int destinationx, int destinationy) {
-        final FloatPair cell1 = this.world2window(destinationx, destinationy);
-        final FloatPair cell2 = this.world2window(originx, originy);
+        final FloatPair cell2 = this.world2window(destinationx, destinationy);
+        final FloatPair cell1 = this.world2window(originx, originy);
         return new FloatPair(cell2.x - cell1.x, cell2.y - cell1.y);
     }
 
@@ -231,6 +231,18 @@ public class MapTools {
         return highlights;
     }
 
+    public PositionArray getWaveRange(int originx, int originy, int targetx, int targety) {
+        final FloatPair direction = this.getDirectionVector(originx, originy, targetx, targety);
+        return this.getWaveRange(new Pair(targetx, targety), direction);
+    }
+
+    public PositionArray getWaveRange(Pair origin, FloatPair direction) {
+        final PositionArray highlights = new PositionArray(gameMap);
+        highlights.add(origin);
+        highlights.addAll(this.getArcAdjacents(origin, direction));
+        return highlights;
+    }
+
     public PositionArray getArcRange(int originx, int originy, int targetx, int targety, int range) {
         return this.getArcRange(new Pair(targetx, targety),
                 this.getDirectionVector(originx, originy, targetx, targety), range);
@@ -263,27 +275,27 @@ public class MapTools {
         }
         if (direction.x > 0) {
             if (direction.y >= 0) {
-                highlights.add(target.x - 1, (target.y + 1) - offset);
-                highlights.add(target.x, target.y - 1);
-            } else {
+                highlights.add(target.x + 1, target.y - offset);
                 highlights.add(target.x, target.y + 1);
-                highlights.add(target.x - 1, target.y - offset);
+            } else {
+                highlights.add(target.x + 1, (target.y + 1) - offset);
+                highlights.add(target.x, target.y - 1);
             }
         } else if (direction.x < 0) {
             if (direction.y >= 0) {
-                highlights.add(target.x + 1, (target.y + 1) - offset);
-                highlights.add(target.x, target.y - 1);
-            } else {
-                highlights.add(target.x + 1, target.y - offset);
                 highlights.add(target.x, target.y + 1);
+                highlights.add(target.x - 1, target.y - offset);
+            } else {
+                highlights.add(target.x - 1, (target.y + 1) - offset);
+                highlights.add(target.x, target.y - 1);
             }
         } else {
             if (direction.y > 0) {
-                highlights.add(target.x + 1, target.y - offset);
-                highlights.add(target.x - 1, target.y - offset);
-            } else if (direction.y < 0) {
                 highlights.add(target.x + 1, (target.y + 1) - offset);
                 highlights.add(target.x - 1, (target.y + 1) - offset);
+            } else if (direction.y < 0) {
+                highlights.add(target.x + 1, target.y - offset);
+                highlights.add(target.x - 1, target.y - offset);
             }
         }
         return highlights;
