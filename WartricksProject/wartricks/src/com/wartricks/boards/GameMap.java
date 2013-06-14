@@ -22,7 +22,7 @@ public class GameMap {
 
     private Pixmap pixmap;
 
-    private Texture texture;
+    public Texture texture;
 
     public MapTools tools;
 
