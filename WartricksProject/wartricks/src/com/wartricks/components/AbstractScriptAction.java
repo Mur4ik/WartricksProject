@@ -5,9 +5,9 @@ import com.artemis.Component;
 import com.wartricks.utils.LoadScript;
 
 public abstract class AbstractScriptAction extends Component {
-    String path;
+    public String path;
 
-    String method;
+    public String method;
 
     public AbstractScriptAction(String scriptName, String methodName) {
         path = scriptName;

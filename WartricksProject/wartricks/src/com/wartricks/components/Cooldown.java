@@ -4,7 +4,7 @@ package com.wartricks.components;
 import com.artemis.Component;
 
 public class Cooldown extends Component {
-    int maxCooldown, currentCooldown, modifierMaxCooldown, modifierRegenCooldown;
+    public int maxCooldown, currentCooldown, modifierMaxCooldown, modifierRegenCooldown;
 
     public Cooldown(int maxCooldown) {
         super();
