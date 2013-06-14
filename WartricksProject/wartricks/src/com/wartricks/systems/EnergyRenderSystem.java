@@ -67,8 +67,7 @@ public class EnergyRenderSystem extends EntityProcessingSystem {
         spriteBatch.setColor(1, 1, 1, 1);
         final EnergyBar energy = em.get(e);
         final Owner owner = om.get(e);
-        if (null != energy) {
-            spriteBatch.setColor(1, 1, 1, 1);
+        if ((null != energy) && (null != owner)) {
             int margin = 20;
             if (owner.owner.equals(Players.ONE)) {
                 margin *= 3;

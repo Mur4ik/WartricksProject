@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.wartricks.logic.GameMap;
 import com.wartricks.logic.VersusGame;
 import com.wartricks.systems.EnergyRenderSystem;
@@ -31,6 +32,7 @@ import com.wartricks.systems.MapHighlightRenderSystem;
 import com.wartricks.systems.MapRenderSystem;
 import com.wartricks.systems.MovementSystem;
 import com.wartricks.systems.PathRenderSystem;
+import com.wartricks.systems.SkillRenderSystem;
 import com.wartricks.systems.SpriteRenderSystem;
 import com.wartricks.utils.Constants;
 import com.wartricks.utils.Constants.Players;
@@ -70,6 +72,8 @@ public class BoardScene extends AbstractScreen {
 
     private EnergyRenderSystem energyRenderSystem;
 
+    private SkillRenderSystem skillRenderSystem;
+
     private VersusGame versusGame;
 
     public BoardScene(final BoardGame game, World world, SpriteBatch batch) {
@@ -96,23 +100,42 @@ public class BoardScene extends AbstractScreen {
         hudRenderSystem = gameWorld.setSystem(new HudRenderSystem(hudCamera, spriteBatch), true);
         energyRenderSystem = gameWorld.setSystem(new EnergyRenderSystem(hudCamera, spriteBatch),
                 true);
+        skillRenderSystem = gameWorld
+                .setSystem(new SkillRenderSystem(hudCamera, spriteBatch), true);
         versusGame = new VersusGame(gameMap, gameWorld, camera);
         gameWorld.initialize();
+        // TODO creating skills
+        EntityFactory.createSkill(gameWorld, "move", 2, 600, 1, 1, 5, "", "").addToWorld();
+        EntityFactory.createSkill(gameWorld, "attack", 2, 600, 1, 1, 5, "", "").addToWorld();
+        EntityFactory.createSkill(gameWorld, "jump", 2, 600, 1, 1, 5, "", "").addToWorld();
+        EntityFactory.createSkill(gameWorld, "impactrueno", 2, 600, 1, 1, 5, "", "").addToWorld();
+        EntityFactory.createSkill(gameWorld, "gorro del amor", 2, 600, 1, 1, 5, "", "")
+                .addToWorld();
+        EntityFactory.createSkill(gameWorld, "piruloNOjutsu", 2, 600, 1, 1, 5, "", "").addToWorld();
+        // TODO creating creatures
         EntityFactory.createCreature(world, gameMap, "dash", Players.ONE,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 5,
-                3, 100, 5).addToWorld();
+                3, 100, 5, new Array<String>(new String[] {
+                        "move", "piruloNOjutsu"
+                })).addToWorld();
         EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,
-                4, 100, 5).addToWorld();
+                4, 100, 5, new Array<String>(new String[] {})).addToWorld();
         EntityFactory.createCreature(world, gameMap, "apple", Players.ONE,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 0,
-                1, 100, 5).addToWorld();
+                1, 100, 5, new Array<String>(new String[] {
+                        "move", "impactrueno"
+                })).addToWorld();
         EntityFactory.createCreature(world, gameMap, "pinkie", Players.ONE,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 3,
-                6, 100, 5).addToWorld();
+                6, 100, 5, new Array<String>(new String[] {
+                        "move", "gorro del amor", "error"
+                })).addToWorld();
         EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,
-                5, 100, 5).addToWorld();
+                5, 100, 5, new Array<String>(new String[] {
+                        "move", "impactrueno", "gorro del amor", "piruloNOjutsu"
+                })).addToWorld();
         EntityFactory.createPlayer(world, gameMap, Players.ONE, 10).addToWorld();
         EntityFactory.createPlayer(world, gameMap, Players.TWO, 10).addToWorld();
         versusGame.startLogic();
@@ -135,6 +158,7 @@ public class BoardScene extends AbstractScreen {
         spriteRenderSystem.process();
         // pathRenderSystem.process();
         energyRenderSystem.process();
+        skillRenderSystem.process();
         spriteBatch.setProjectionMatrix(hudCamera.combined);
         hudRenderSystem.process();
     }

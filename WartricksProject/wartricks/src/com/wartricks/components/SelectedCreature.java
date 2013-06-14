@@ -2,5 +2,5 @@ package com.wartricks.components;
 
 import com.artemis.Component;
 
-public class CreatureSelected extends Component {
+public class SelectedCreature extends Component {
 }

@@ -29,8 +29,7 @@ public class VersusGame implements Observer {
         this.gameMap = gameMap;
         this.gameWorld = gameWorld;
         this.camera = camera;
-        playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera, gameMap, gameWorld),
-                false);
+        playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera, gameMap), false);
         inputSystem = new InputMultiplexer(playerInputSystem);
         state = new StateMachine();
     }

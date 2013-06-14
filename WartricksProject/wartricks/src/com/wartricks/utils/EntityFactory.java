@@ -7,6 +7,7 @@ import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
 import com.wartricks.components.ColorAnimation;
@@ -24,6 +25,7 @@ import com.wartricks.components.Owner;
 import com.wartricks.components.Position;
 import com.wartricks.components.Range;
 import com.wartricks.components.ScaleAnimation;
+import com.wartricks.components.SkillSet;
 import com.wartricks.components.Sprite;
 import com.wartricks.components.Velocity;
 import com.wartricks.custom.Pair;
@@ -41,13 +43,14 @@ public class EntityFactory {
     }
 
     public static Entity createCreature(World world, GameMap map, String sprite, Players owner,
-            Color uiColor, int x, int y, float maxHealth, int energyRegen) {
+            Color uiColor, int x, int y, float maxHealth, int energyRegen, Array<String> skillSet) {
         final Entity e = world.createEntity();
         e.addComponent(new MapPosition(x, y));
         e.addComponent(new Sprite(sprite, Sprite.Layer.ACTORS_3));
         e.addComponent(new Health(maxHealth));
         e.addComponent(new EnergyRegen(energyRegen));
         e.addComponent(new ActionSequence(uiColor));
+        e.addComponent(new SkillSet(skillSet));
         world.getManager(TagManager.class).register(sprite, e);
         switch (owner) {
             case ONE:

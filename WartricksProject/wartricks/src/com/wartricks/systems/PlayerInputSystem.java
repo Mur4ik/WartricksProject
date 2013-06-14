@@ -4,7 +4,6 @@ package com.wartricks.systems;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
-import com.artemis.World;
 import com.artemis.annotations.Mapper;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.Gdx;
@@ -13,8 +12,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
-import com.wartricks.components.CreatureSelected;
 import com.wartricks.components.MapPosition;
+import com.wartricks.components.SelectedCreature;
 import com.wartricks.custom.Pair;
 import com.wartricks.lifecycle.BoardGame;
 import com.wartricks.logic.GameMap;
@@ -45,13 +44,12 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
     };
 
     @SuppressWarnings("unchecked")
-    public PlayerInputSystem(OrthographicCamera screenCamera, GameMap map, World gameWorld) {
-        super(Aspect.getAspectForAll(CreatureSelected.class, MapPosition.class));
+    public PlayerInputSystem(OrthographicCamera screenCamera, GameMap map) {
+        super(Aspect.getAspectForAll(SelectedCreature.class, MapPosition.class));
         camera = screenCamera;
         state = State.DEFAULT;
         lastState = State.DEFAULT;
         gameMap = map;
-        this.setWorld(gameWorld);
         selectedEntity = -1;
     }
 
@@ -131,7 +129,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
                     // If there was previously another entity selected, "deselect" it
                     if (selectedEntity > -1) {
                         final Entity old = world.getEntity(selectedEntity);
-                        old.removeComponent(CreatureSelected.class);
+                        old.removeComponent(SelectedCreature.class);
                         // TODO
                         // ptm.getSafe(old).path.clear();
                         old.changedInWorld();
@@ -139,7 +137,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
                     // Now select the current entity
                     selectedEntity = entityId;
                     final Entity e = world.getEntity(selectedEntity);
-                    e.addComponent(new CreatureSelected());
+                    e.addComponent(new SelectedCreature());
                     e.changedInWorld();
                     EntityFactory.createClick(world, coords.x, coords.y, 0.4f, 4f, 0.15f)
                             .addToWorld();
