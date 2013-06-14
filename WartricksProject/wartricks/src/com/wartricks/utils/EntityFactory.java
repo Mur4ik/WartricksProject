@@ -14,6 +14,7 @@ import com.wartricks.components.Bounds;
 import com.wartricks.components.ColorAnimation;
 import com.wartricks.components.Cooldown;
 import com.wartricks.components.Cost;
+import com.wartricks.components.EnergyCounter;
 import com.wartricks.components.Expires;
 import com.wartricks.components.Health;
 import com.wartricks.components.Initiative;
@@ -29,17 +30,22 @@ import com.wartricks.custom.Pair;
 import com.wartricks.utils.Constants.Players;
 
 public class EntityFactory {
+    public static Entity createPlayer(World world, GameMap map, Players owner, int maxEnergy) {
+        final Entity e = world.createEntity();
+        e.addComponent(new EnergyCounter(maxEnergy));
+        world.getManager(TagManager.class).register(owner.toString(), e);
+        world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER);
+        return e;
+    }
+
     public static Entity createCreature(World world, GameMap map, String sprite, Players owner,
-            int x, int y, int rangeMin, int rangeMax) {
+            Color uiColor, int x, int y, float maxHealth) {
         final Entity e = world.createEntity();
         e.addComponent(new MapPosition(x, y));
         e.addComponent(new Sprite(sprite, Sprite.Layer.ACTORS_3));
-        e.addComponent(new Velocity());
-        e.addComponent(new Health(100));
+        e.addComponent(new Health(maxHealth));
         e.addComponent(new Bounds(40));
-        e.addComponent(new ActionSequence(new Color((float)Math.random(), (float)Math.random(),
-                (float)Math.random(), 1f)));
-        e.addComponent(new Range(rangeMin, rangeMax));
+        e.addComponent(new ActionSequence(uiColor));
         world.getManager(TagManager.class).register(sprite, e);
         switch (owner) {
             case ONE:

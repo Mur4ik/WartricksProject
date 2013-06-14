@@ -7,6 +7,8 @@ public final class Constants {
     }
 
     public class Groups {
+        public static final String PLAYER = "P";
+
         public static final String PLAYER_ONE_PROJECTILE = "P1P";
 
         public static final String PLAYER_TWO_PROJECTILE = "P2P";

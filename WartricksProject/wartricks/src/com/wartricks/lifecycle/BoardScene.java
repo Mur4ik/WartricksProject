@@ -19,6 +19,7 @@ import com.artemis.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -102,12 +103,21 @@ public class BoardScene extends AbstractScreen {
         gameWorld.initialize();
         inputSystem = new InputMultiplexer(playerInputSystem);
         Gdx.input.setInputProcessor(inputSystem);
-        EntityFactory.createCreature(world, gameMap, "dash", Players.ONE, 5, 3, 3, 3).addToWorld();
-        EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO, 9, 4, 2, 4).addToWorld();
-        EntityFactory.createCreature(world, gameMap, "apple", Players.ONE, 0, 1, 0, 2).addToWorld();
-        EntityFactory.createCreature(world, gameMap, "pinkie", Players.ONE, 3, 6, 1, 1)
-                .addToWorld();
-        EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO, 9, 5, 1, 2).addToWorld();
+        EntityFactory.createCreature(world, gameMap, "dash", Players.ONE,
+                new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 5,
+                3, 100).addToWorld();
+        EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
+                new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,
+                4, 100).addToWorld();
+        EntityFactory.createCreature(world, gameMap, "apple", Players.ONE,
+                new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 0,
+                1, 100).addToWorld();
+        EntityFactory.createCreature(world, gameMap, "pinkie", Players.ONE,
+                new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 3,
+                6, 100).addToWorld();
+        EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
+                new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,
+                5, 100).addToWorld();
         // final LoadScript script = new LoadScript("init.lua");
         // script.runScriptFunction("wave", null);
         // final LoadScript playerScript = new LoadScript("characters/player.lua");
