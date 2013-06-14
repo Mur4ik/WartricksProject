@@ -249,14 +249,15 @@ public class MapTools {
         return highlights;
     }
 
-    public PositionArray getArcRange(int originx, int originy, int targetx, int targety, int range) {
+    public PositionArray getArcRange(int originx, int originy, int targetx, int targety,
+            int minRange, int maxRange) {
         return this.getArcRange(new Pair(targetx, targety),
-                this.getDirectionVector(originx, originy, targetx, targety), range);
+                this.getDirectionVector(originx, originy, targetx, targety), minRange, maxRange);
     }
 
-    public PositionArray getArcRange(Pair origin, FloatPair direction, int range) {
-        if (range > gameMap.width) {
-            range = gameMap.width;
+    public PositionArray getArcRange(Pair origin, FloatPair direction, int minRange, int maxRange) {
+        if (maxRange > gameMap.width) {
+            maxRange = gameMap.width;
         }
         // Hack to make it compatible with wave
         direction.x = -direction.x;
@@ -267,13 +268,19 @@ public class MapTools {
         while (closed.size > 0) {
             final Pair position = closed.removeIndex(0);
             if (!open.contains(position, false)
-                    && (this.getDistance(origin.x, origin.y, position.x, position.y) <= range)) {
+                    && (this.getDistance(origin.x, origin.y, position.x, position.y) <= maxRange)) {
                 closed.addAll(this.getArcAdjacents(position, direction));
                 open.add(position);
             }
         }
-        open.removeIndex(0);
-        return open;
+        final PositionArray highlights = new PositionArray(gameMap);
+        for (final Pair cell : open) {
+            final int distance = this.getDistance(origin.x, origin.y, cell.x, cell.y);
+            if (distance >= minRange) {
+                highlights.add(cell);
+            }
+        }
+        return highlights;
     }
 
     private PositionArray getArcAdjacents(Pair target, FloatPair direction) {
