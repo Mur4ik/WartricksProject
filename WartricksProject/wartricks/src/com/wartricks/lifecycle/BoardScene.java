@@ -25,6 +25,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.wartricks.logic.GameMap;
 import com.wartricks.logic.VersusGame;
+import com.wartricks.systems.EnergyRenderSystem;
 import com.wartricks.systems.HudRenderSystem;
 import com.wartricks.systems.MapHighlightRenderSystem;
 import com.wartricks.systems.MapRenderSystem;
@@ -67,6 +68,8 @@ public class BoardScene extends AbstractScreen {
 
     private MapHighlightRenderSystem mapHighlightRenderSystem;
 
+    private EnergyRenderSystem energyRenderSystem;
+
     private VersusGame versusGame;
 
     public BoardScene(final BoardGame game, World world, SpriteBatch batch) {
@@ -88,26 +91,30 @@ public class BoardScene extends AbstractScreen {
                 true);
         pathRenderSystem = gameWorld.setSystem(new PathRenderSystem(camera, spriteBatch, gameMap),
                 true);
-        hudRenderSystem = gameWorld.setSystem(new HudRenderSystem(hudCamera, spriteBatch), true);
         mapHighlightRenderSystem = gameWorld.setSystem(new MapHighlightRenderSystem(camera,
                 gameMap, spriteBatch), true);
+        hudRenderSystem = gameWorld.setSystem(new HudRenderSystem(hudCamera, spriteBatch), true);
+        energyRenderSystem = gameWorld.setSystem(new EnergyRenderSystem(hudCamera, spriteBatch),
+                true);
         versusGame = new VersusGame(gameMap, gameWorld, camera);
         gameWorld.initialize();
         EntityFactory.createCreature(world, gameMap, "dash", Players.ONE,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 5,
-                3, 100).addToWorld();
+                3, 100, 5).addToWorld();
         EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,
-                4, 100).addToWorld();
+                4, 100, 5).addToWorld();
         EntityFactory.createCreature(world, gameMap, "apple", Players.ONE,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 0,
-                1, 100).addToWorld();
+                1, 100, 5).addToWorld();
         EntityFactory.createCreature(world, gameMap, "pinkie", Players.ONE,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 3,
-                6, 100).addToWorld();
+                6, 100, 5).addToWorld();
         EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,
-                5, 100).addToWorld();
+                5, 100, 5).addToWorld();
+        EntityFactory.createPlayer(world, gameMap, Players.ONE, 10).addToWorld();
+        EntityFactory.createPlayer(world, gameMap, Players.TWO, 10).addToWorld();
         versusGame.startLogic();
         // final LoadScript script = new LoadScript("init.lua");
         // script.runScriptFunction("wave", null);
@@ -126,7 +133,8 @@ public class BoardScene extends AbstractScreen {
         mapRenderSystem.process();
         mapHighlightRenderSystem.process();
         spriteRenderSystem.process();
-        pathRenderSystem.process();
+        // pathRenderSystem.process();
+        energyRenderSystem.process();
         spriteBatch.setProjectionMatrix(hudCamera.combined);
         hudRenderSystem.process();
     }

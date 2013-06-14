@@ -69,8 +69,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             // path.path.clear();
             gameMap.clearHighlights();
             // TODO maptools tests
-            // gameMap.addHighlights(gameMap.tools.getCircularRange(mapPosition.x, mapPosition.y,
-            // range.minRange, range.maxRange));
+            // gameMap.addHighlights(gameMap.tools.getCircularRange(moveTarget, 3, 6));
             // gameMap.addHighlights(gameMap.tools.getLinearRange((int)movement.origin.x,
             // (int)movement.origin.y, (int)movement.destination.x,
             // (int)movement.destination.y));
