@@ -15,7 +15,6 @@ import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
 import com.wartricks.components.CreatureSelected;
 import com.wartricks.components.MapPosition;
-import com.wartricks.components.Range;
 import com.wartricks.custom.Pair;
 import com.wartricks.lifecycle.BoardGame;
 import com.wartricks.logic.GameMap;
@@ -28,9 +27,6 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     @Mapper
     ComponentMapper<ActionSequence> ptm;
-
-    @Mapper
-    ComponentMapper<Range> rm;
 
     private OrthographicCamera camera;
 
@@ -71,8 +67,8 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             final Action movement = new Action("b52", mapPosition.position, moveTarget);
             // TODO uncomment to reset path on click
             // path.path.clear();
-            final Range range = rm.getSafe(e);
             gameMap.clearHighlights();
+            // TODO maptools tests
             // gameMap.addHighlights(gameMap.tools.getCircularRange(mapPosition.x, mapPosition.y,
             // range.minRange, range.maxRange));
             // gameMap.addHighlights(gameMap.tools.getLinearRange((int)movement.origin.x,
@@ -81,10 +77,9 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             // gameMap.addHighlights(gameMap.tools.getReverseFlowerRange(mapPosition.x,
             // mapPosition.y,
             // 5));
-            // final FloatPair destination = gameMap.tools.getDirectionVector(new
-            // Pair(mapPosition.x,
-            // mapPosition.y), movement.target);
-            // gameMap.addHighlights(gameMap.tools.getArcRange(movement.target, destination, 2));
+            // final FloatPair destination = gameMap.tools.getDirectionVector(mapPosition.position,
+            // movement.target);
+            // gameMap.addHighlights(gameMap.tools.getArcRange(movement.target, destination, 2, 4));
             // gameMap.addHighlights(gameMap.tools.getAtRelativePosition(new Pair(
             // (int)movement.destination.x, (int)movement.destination.y),
             // new FloatPair(-1, -1), 2));
