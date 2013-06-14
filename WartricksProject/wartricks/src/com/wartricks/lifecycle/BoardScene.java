@@ -71,11 +71,10 @@ public class BoardScene extends AbstractScreen {
 
     public BoardScene(final BoardGame game, World world, SpriteBatch batch) {
         super(game, world);
-        // TODO remote server
+        // TODO Lua server, shouldn't be here
         // this.createLuaState();
         // serverThread = new ServerThread();
         // serverThread.start();
-        // //////////
         spriteBatch = batch;
         gameMap = new GameMap(Constants.HEX_ROW_SIZE, Constants.HEX_COL_SIZE,
                 Constants.HEX_MAP_WIDTH, Constants.HEX_MAP_HEIGHT, camera);
@@ -109,6 +108,7 @@ public class BoardScene extends AbstractScreen {
         EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,
                 5, 100).addToWorld();
+        versusGame.startLogic();
         // final LoadScript script = new LoadScript("init.lua");
         // script.runScriptFunction("wave", null);
         // final LoadScript playerScript = new LoadScript("characters/player.lua");

@@ -22,6 +22,8 @@ public class VersusGame implements Observer {
 
     private OrthographicCamera camera;
 
+    public StateMachine state;
+
     public VersusGame(GameMap gameMap, World gameWorld, OrthographicCamera camera) {
         super();
         this.gameMap = gameMap;
@@ -30,10 +32,14 @@ public class VersusGame implements Observer {
         playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera, gameMap, gameWorld),
                 false);
         inputSystem = new InputMultiplexer(playerInputSystem);
-        Gdx.input.setInputProcessor(inputSystem);
+        state = new StateMachine();
     }
 
-    public static StateMachine state = new StateMachine();
+    public boolean startLogic() {
+        state.addObserver(this);
+        state.setCurrentState(GameState.CHOOSING_CHARACTER);
+        return true;
+    }
 
     @Override
     public void update(Observable obs, Object currentState) {
@@ -41,6 +47,7 @@ public class VersusGame implements Observer {
             final GameState state = (GameState)currentState;
             switch (state) {
                 case CHOOSING_CHARACTER:
+                    Gdx.input.setInputProcessor(inputSystem);
                     break;
                 case CHOOSING_CONFIRM:
                     break;
