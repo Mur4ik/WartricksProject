@@ -12,13 +12,15 @@ import com.wartricks.components.ActionSequence;
 import com.wartricks.components.ColorAnimation;
 import com.wartricks.components.Cooldown;
 import com.wartricks.components.Cost;
-import com.wartricks.components.EnergyCounter;
+import com.wartricks.components.EnergyBar;
+import com.wartricks.components.EnergyRegen;
 import com.wartricks.components.Expires;
 import com.wartricks.components.Health;
 import com.wartricks.components.Initiative;
 import com.wartricks.components.Label;
 import com.wartricks.components.MapPosition;
 import com.wartricks.components.OnCast;
+import com.wartricks.components.Owner;
 import com.wartricks.components.Position;
 import com.wartricks.components.Range;
 import com.wartricks.components.ScaleAnimation;
@@ -31,18 +33,20 @@ import com.wartricks.utils.Constants.Players;
 public class EntityFactory {
     public static Entity createPlayer(World world, GameMap map, Players owner, int maxEnergy) {
         final Entity e = world.createEntity();
-        e.addComponent(new EnergyCounter(maxEnergy));
+        e.addComponent(new EnergyBar(maxEnergy));
+        e.addComponent(new Owner(owner));
         world.getManager(TagManager.class).register(owner.toString(), e);
         world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER);
         return e;
     }
 
     public static Entity createCreature(World world, GameMap map, String sprite, Players owner,
-            Color uiColor, int x, int y, float maxHealth) {
+            Color uiColor, int x, int y, float maxHealth, int energyRegen) {
         final Entity e = world.createEntity();
         e.addComponent(new MapPosition(x, y));
         e.addComponent(new Sprite(sprite, Sprite.Layer.ACTORS_3));
         e.addComponent(new Health(maxHealth));
+        e.addComponent(new EnergyRegen(energyRegen));
         e.addComponent(new ActionSequence(uiColor));
         world.getManager(TagManager.class).register(sprite, e);
         switch (owner) {
@@ -76,6 +80,7 @@ public class EntityFactory {
             Pair origin, Pair target) {
         final Entity e = world.createEntity();
         e.addComponent(new Action(skill, origin, target));
+        e.addComponent(new Owner(owner));
         world.getManager(TagManager.class).register(identifier, e);
         switch (owner) {
             case ONE:
