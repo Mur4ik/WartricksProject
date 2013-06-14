@@ -11,7 +11,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
-import com.wartricks.boards.GameMap;
 import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
 import com.wartricks.components.CreatureSelected;
@@ -19,6 +18,7 @@ import com.wartricks.components.MapPosition;
 import com.wartricks.components.Range;
 import com.wartricks.custom.Pair;
 import com.wartricks.lifecycle.WartricksGame;
+import com.wartricks.logic.GameMap;
 import com.wartricks.utils.Constants;
 import com.wartricks.utils.EntityFactory;
 

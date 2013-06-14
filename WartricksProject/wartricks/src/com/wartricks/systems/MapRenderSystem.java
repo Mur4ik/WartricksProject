@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import com.wartricks.boards.GameMap;
+import com.wartricks.logic.GameMap;
 import com.wartricks.utils.PlatformUtils;
 
 public class MapRenderSystem extends VoidEntitySystem {

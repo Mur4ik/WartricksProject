@@ -24,7 +24,7 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
-import com.wartricks.boards.GameMap;
+import com.wartricks.logic.GameMap;
 import com.wartricks.systems.HudRenderSystem;
 import com.wartricks.systems.MapHighlightRenderSystem;
 import com.wartricks.systems.MapRenderSystem;

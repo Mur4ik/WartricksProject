@@ -7,7 +7,6 @@ import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
-import com.wartricks.boards.GameMap;
 import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
 import com.wartricks.components.Bounds;
@@ -27,6 +26,7 @@ import com.wartricks.components.ScaleAnimation;
 import com.wartricks.components.Sprite;
 import com.wartricks.components.Velocity;
 import com.wartricks.custom.Pair;
+import com.wartricks.logic.GameMap;
 import com.wartricks.utils.Constants.Players;
 
 public class EntityFactory {

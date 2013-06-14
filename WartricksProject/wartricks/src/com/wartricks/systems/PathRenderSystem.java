@@ -14,10 +14,10 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.wartricks.boards.GameMap;
 import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
 import com.wartricks.custom.FloatPair;
+import com.wartricks.logic.GameMap;
 import com.wartricks.utils.PlatformUtils;
 
 public class PathRenderSystem extends EntitySystem {

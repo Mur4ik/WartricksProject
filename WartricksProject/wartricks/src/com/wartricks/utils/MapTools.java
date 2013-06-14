@@ -3,12 +3,12 @@ package com.wartricks.utils;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
-import com.wartricks.boards.GameMap;
 import com.wartricks.custom.FloatPair;
 import com.wartricks.custom.MyMath;
 import com.wartricks.custom.Pair;
 import com.wartricks.custom.PositionArray;
 import com.wartricks.custom.Vec3;
+import com.wartricks.logic.GameMap;
 
 public class MapTools {
     public String name;

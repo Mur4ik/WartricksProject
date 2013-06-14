@@ -2,7 +2,7 @@
 package com.wartricks.custom;
 
 import com.badlogic.gdx.utils.Array;
-import com.wartricks.boards.GameMap;
+import com.wartricks.logic.GameMap;
 
 public class PositionArray extends Array<Pair> {
     private GameMap board;

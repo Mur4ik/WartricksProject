@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.wartricks.boards.GameMap;
 import com.wartricks.custom.FloatPair;
 import com.wartricks.custom.Pair;
 import com.wartricks.custom.PositionArray;
+import com.wartricks.logic.GameMap;
 import com.wartricks.utils.PlatformUtils;
 
 public class MapHighlightRenderSystem extends VoidEntitySystem {

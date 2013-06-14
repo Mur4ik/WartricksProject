@@ -19,10 +19,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.wartricks.boards.GameMap;
 import com.wartricks.components.MapPosition;
 import com.wartricks.components.Sprite;
 import com.wartricks.custom.FloatPair;
+import com.wartricks.logic.GameMap;
 import com.wartricks.utils.PlatformUtils;
 
 public class SpriteRenderSystem extends EntitySystem {
