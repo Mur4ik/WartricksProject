@@ -8,13 +8,13 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
 public class AbstractScreen implements Screen {
-    protected final WartricksGame game;
+    protected final BoardGame game;
 
     protected final World world;
 
     protected final OrthographicCamera camera;
 
-    public AbstractScreen(WartricksGame game, World world) {
+    public AbstractScreen(BoardGame game, World world) {
         this.game = game;
         this.world = world;
         camera = new OrthographicCamera();
@@ -47,8 +47,8 @@ public class AbstractScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        WartricksGame.WINDOW_WIDTH = width;
-        WartricksGame.WINDOW_HEIGHT = height;
+        BoardGame.WINDOW_WIDTH = width;
+        BoardGame.WINDOW_HEIGHT = height;
         camera.setToOrtho(false, width, height);
     }
 

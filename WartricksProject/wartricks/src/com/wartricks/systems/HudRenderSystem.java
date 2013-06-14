@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.wartricks.lifecycle.WartricksGame;
+import com.wartricks.lifecycle.BoardGame;
 import com.wartricks.utils.PlatformUtils;
 
 public class HudRenderSystem extends VoidEntitySystem {
@@ -46,7 +46,7 @@ public class HudRenderSystem extends VoidEntitySystem {
     @Override
     protected void processSystem() {
         spriteBatch.setColor(1, 1, 1, 1);
-        final float screenHeight = WartricksGame.WINDOW_HEIGHT;
+        final float screenHeight = BoardGame.WINDOW_HEIGHT;
         font.draw(spriteBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, screenHeight - 20);
         font.draw(spriteBatch, "Active entities: "
                 + world.getEntityManager().getActiveEntityCount(), 20, screenHeight - 40);

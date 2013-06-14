@@ -17,7 +17,7 @@ import com.wartricks.components.CreatureSelected;
 import com.wartricks.components.MapPosition;
 import com.wartricks.components.Range;
 import com.wartricks.custom.Pair;
-import com.wartricks.lifecycle.WartricksGame;
+import com.wartricks.lifecycle.BoardGame;
 import com.wartricks.logic.GameMap;
 import com.wartricks.utils.Constants;
 import com.wartricks.utils.EntityFactory;
@@ -36,7 +36,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
 
     private GameMap gameMap;
 
-    private WartricksGame game;
+    private BoardGame game;
 
     private State state, lastState;
 
@@ -49,14 +49,12 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
     };
 
     @SuppressWarnings("unchecked")
-    public PlayerInputSystem(OrthographicCamera screenCamera, GameMap map, World gameWorld,
-            WartricksGame game) {
+    public PlayerInputSystem(OrthographicCamera screenCamera, GameMap map, World gameWorld) {
         super(Aspect.getAspectForAll(CreatureSelected.class, MapPosition.class));
         camera = screenCamera;
         state = State.DEFAULT;
         lastState = State.DEFAULT;
         gameMap = map;
-        this.game = game;
         this.setWorld(gameWorld);
         selectedEntity = -1;
     }

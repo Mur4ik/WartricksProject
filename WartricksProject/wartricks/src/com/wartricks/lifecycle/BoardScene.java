@@ -17,7 +17,6 @@ import org.keplerproject.luajava.LuaStateFactory;
 
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
@@ -25,12 +24,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.wartricks.logic.GameMap;
+import com.wartricks.logic.VersusGame;
 import com.wartricks.systems.HudRenderSystem;
 import com.wartricks.systems.MapHighlightRenderSystem;
 import com.wartricks.systems.MapRenderSystem;
 import com.wartricks.systems.MovementSystem;
 import com.wartricks.systems.PathRenderSystem;
-import com.wartricks.systems.PlayerInputSystem;
 import com.wartricks.systems.SpriteRenderSystem;
 import com.wartricks.utils.Constants;
 import com.wartricks.utils.Constants.Players;
@@ -48,8 +47,6 @@ public class BoardScene extends AbstractScreen {
 
     private OrthographicCamera hudCamera;
 
-    private WartricksGame gameWartricks;
-
     private World gameWorld;
 
     private SpriteRenderSystem spriteRenderSystem;
@@ -64,17 +61,15 @@ public class BoardScene extends AbstractScreen {
 
     private PathRenderSystem pathRenderSystem;
 
-    private PlayerInputSystem playerInputSystem;
-
     private SpriteBatch spriteBatch;
 
     private MovementSystem movementSystem;
 
-    public InputMultiplexer inputSystem;
-
     private MapHighlightRenderSystem mapHighlightRenderSystem;
 
-    public BoardScene(final WartricksGame game, World world, SpriteBatch batch) {
+    private VersusGame versusGame;
+
+    public BoardScene(final BoardGame game, World world, SpriteBatch batch) {
         super(game, world);
         // TODO remote server
         // this.createLuaState();
@@ -84,12 +79,9 @@ public class BoardScene extends AbstractScreen {
         spriteBatch = batch;
         gameMap = new GameMap(Constants.HEX_ROW_SIZE, Constants.HEX_COL_SIZE,
                 Constants.HEX_MAP_WIDTH, Constants.HEX_MAP_HEIGHT, camera);
-        gameWartricks = game;
         fpsLogger = new FPSLogger();
         gameWorld = world;
         hudCamera = new OrthographicCamera();
-        playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera, gameMap, gameWorld,
-                game), true);
         movementSystem = gameWorld.setSystem(new MovementSystem(), true);
         spriteRenderSystem = gameWorld.setSystem(new SpriteRenderSystem(camera, spriteBatch,
                 gameMap), true);
@@ -100,9 +92,8 @@ public class BoardScene extends AbstractScreen {
         hudRenderSystem = gameWorld.setSystem(new HudRenderSystem(hudCamera, spriteBatch), true);
         mapHighlightRenderSystem = gameWorld.setSystem(new MapHighlightRenderSystem(camera,
                 gameMap, spriteBatch), true);
+        versusGame = new VersusGame(gameMap, gameWorld, camera);
         gameWorld.initialize();
-        inputSystem = new InputMultiplexer(playerInputSystem);
-        Gdx.input.setInputProcessor(inputSystem);
         EntityFactory.createCreature(world, gameMap, "dash", Players.ONE,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 5,
                 3, 100).addToWorld();
@@ -131,7 +122,6 @@ public class BoardScene extends AbstractScreen {
         super.render(delta);
         fpsLogger.log();
         spriteBatch.setProjectionMatrix(camera.combined);
-        playerInputSystem.process();
         movementSystem.process();
         mapRenderSystem.process();
         mapHighlightRenderSystem.process();

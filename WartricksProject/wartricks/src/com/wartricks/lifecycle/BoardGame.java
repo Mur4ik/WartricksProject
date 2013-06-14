@@ -10,7 +10,7 @@ import com.wartricks.systems.ColorAnimationSystem;
 import com.wartricks.systems.ExpiringSystem;
 import com.wartricks.systems.ScaleAnimationSystem;
 
-public class WartricksGame extends Game {
+public class BoardGame extends Game {
     public static int WINDOW_WIDTH;
 
     public static int WINDOW_HEIGHT;
@@ -19,7 +19,7 @@ public class WartricksGame extends Game {
 
     private SpriteBatch batch;
 
-    public WartricksGame(int width, int height) {
+    public BoardGame(int width, int height) {
         super();
         WINDOW_WIDTH = width;
         WINDOW_HEIGHT = height;
