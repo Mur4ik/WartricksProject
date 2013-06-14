@@ -7,23 +7,17 @@ public final class Constants {
     }
 
     public class Groups {
-        public static final String PLAYER_ONE = "P1";
-
-        public static final String PLAYER_TWO = "P2";
-
         public static final String PLAYER_ONE_PROJECTILE = "P1P";
 
         public static final String PLAYER_TWO_PROJECTILE = "P2P";
 
         public static final String PLAYER_NEUTRAL = "P0";
 
-        public static final String PLAYER_ONE_SKILL = "P1S";
+        public static final String PLAYER_SKILL = "PS";
 
         public static final String PLAYER_ONE_ACTION = "P1A";
 
         public static final String PLAYER_ONE_CREATURE = "P1C";
-
-        public static final String PLAYER_TWO_SKILL = "P2S";
 
         public static final String PLAYER_TWO_ACTION = "P2A";
 

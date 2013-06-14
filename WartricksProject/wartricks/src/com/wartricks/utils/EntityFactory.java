@@ -64,6 +64,7 @@ public class EntityFactory {
         e.addComponent(new Initiative(baseInitiative));
         e.addComponent(new OnCast(scriptname, scriptmethod));
         world.getManager(TagManager.class).register(name, e);
+        world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_SKILL);
         return e;
     }
 
@@ -150,50 +151,6 @@ public class EntityFactory {
         colorAnimation.alphaMax = 1f;
         colorAnimation.repeat = false;
         e.addComponent(colorAnimation);
-        return e;
-    }
-
-    public static Entity createEnemy(World world, String name, Sprite.Layer layer, int x, int y,
-            float vx, float vy) {
-        final Entity e = world.createEntity();
-        final MapPosition position = new MapPosition();
-        position.position.x = x;
-        position.position.y = y;
-        e.addComponent(position);
-        final Sprite sprite = new Sprite();
-        sprite.name = name;
-        sprite.r = 255 / 255f;
-        sprite.g = 0 / 255f;
-        sprite.b = 142 / 255f;
-        sprite.layer = layer;
-        e.addComponent(sprite);
-        final Velocity velocity = new Velocity(vx, vy);
-        e.addComponent(velocity);
-        e.addComponent(new Expires(20));
-        e.addComponent(new Health(20));
-        final Bounds bounds = new Bounds();
-        if ("den".equals(sprite.name)) {
-            bounds.radius = 200 * sprite.scaleX;
-        } else {
-            bounds.radius = 40 * sprite.scaleX;
-        }
-        e.addComponent(bounds);
-        world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_TWO);
-        return e;
-    }
-
-    public static Entity createBullet(World world, float x, float y) {
-        final Entity e = world.createEntity();
-        e.addComponent(new Position(x, y));
-        final Sprite bulletSprite = new Sprite("pinkie", Sprite.Layer.PARTICLES);
-        bulletSprite.r = MathUtils.random(1f);
-        bulletSprite.g = MathUtils.random(1f);
-        bulletSprite.b = MathUtils.random(1f);
-        e.addComponent(bulletSprite);
-        e.addComponent(new Velocity(0, 800));
-        e.addComponent(new Expires(2f));
-        e.addComponent(new Bounds(10));
-        world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_ONE_PROJECTILE);
         return e;
     }
 }
