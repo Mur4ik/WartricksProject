@@ -9,12 +9,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.wartricks.logic.StateMachine.GameState;
+import com.wartricks.systems.OnBeginTurnSystem;
+import com.wartricks.systems.OnEndTurnSystem;
 import com.wartricks.systems.PlayerInputSystem;
 
 public class VersusGame implements Observer {
     public InputMultiplexer inputSystem;
 
     private PlayerInputSystem playerInputSystem;
+
+    private OnBeginTurnSystem onBeginTurnSystem;
+
+    private OnEndTurnSystem onEndTurnSystem;
 
     private GameMap gameMap;
 
@@ -30,6 +36,9 @@ public class VersusGame implements Observer {
         this.gameWorld = gameWorld;
         this.camera = camera;
         playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera, gameMap), false);
+        onBeginTurnSystem = gameWorld.setSystem(new OnBeginTurnSystem(gameMap, gameWorld), false);
+        onEndTurnSystem = gameWorld.setSystem(new OnEndTurnSystem(gameMap, gameWorld), false);
+        Gdx.input.setInputProcessor(inputSystem);
         inputSystem = new InputMultiplexer(playerInputSystem);
         state = new StateMachine();
     }
@@ -46,7 +55,6 @@ public class VersusGame implements Observer {
             final GameState state = (GameState)currentState;
             switch (state) {
                 case CHOOSING_CHARACTER:
-                    Gdx.input.setInputProcessor(inputSystem);
                     break;
                 case CHOOSING_CONFIRM:
                     break;
@@ -55,6 +63,8 @@ public class VersusGame implements Observer {
                 case CHOOSING_TARGET:
                     break;
                 case RESOLVING_ACTIONS:
+                    onBeginTurnSystem.process();
+                    onEndTurnSystem.process();
                     break;
             }
         }
