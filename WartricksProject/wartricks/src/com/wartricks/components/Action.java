@@ -2,25 +2,24 @@
 package com.wartricks.components;
 
 import com.artemis.Component;
-import com.wartricks.custom.FloatPair;
+import com.wartricks.custom.Pair;
 
 public class Action extends Component {
-    public FloatPair origin;
+    public String skillName;
 
-    public FloatPair destination;
+    public Pair origin;
 
-    public Action(float x0, float y0, float tx, float ty) {
-        origin = new FloatPair(x0, y0);
-        destination = new FloatPair(tx, ty);
+    public Pair target;
+
+    public Action(String skillName, int originX, int originY, int targetX, int targetY) {
+        origin = new Pair(originX, originY);
+        target = new Pair(targetX, targetY);
+        this.skillName = skillName;
     }
 
-    public Action(FloatPair originPar, FloatPair destinationPar) {
+    public Action(String skillName, Pair originPar, Pair destinationPar) {
         origin = originPar;
-        destination = destinationPar;
-    }
-
-    public Action() {
-        origin = new FloatPair(0, 0);
-        destination = new FloatPair(0, 0);
+        target = destinationPar;
+        this.skillName = skillName;
     }
 }

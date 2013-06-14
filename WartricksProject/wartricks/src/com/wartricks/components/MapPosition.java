@@ -2,16 +2,20 @@
 package com.wartricks.components;
 
 import com.artemis.Component;
+import com.wartricks.custom.Pair;
 
 public class MapPosition extends Component {
-    public int x, y;
+    public Pair position;
 
     public MapPosition(int x, int y) {
-        this.x = x;
-        this.y = y;
+        position = new Pair(x, y);
     }
 
     public MapPosition() {
         this(0, 0);
+    }
+
+    public MapPosition(Pair target) {
+        position = target;
     }
 }

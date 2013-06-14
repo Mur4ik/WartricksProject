@@ -12,10 +12,10 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import com.wartricks.boards.GameMap;
-import com.wartricks.components.CreatureSelected;
-import com.wartricks.components.MapPosition;
 import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
+import com.wartricks.components.CreatureSelected;
+import com.wartricks.components.MapPosition;
 import com.wartricks.components.Range;
 import com.wartricks.custom.Pair;
 import com.wartricks.lifecycle.WartricksGame;
@@ -70,9 +70,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             final ActionSequence path = ptm.get(e);
             MapPosition mapPosition = mpm.getSafe(e);
             gameMap.moveEntity(e.getId(), moveTarget.x, moveTarget.y);
-            final Action movement = new Action(mapPosition.x, mapPosition.y, moveTarget.x, moveTarget.y);
-            mapPosition = new MapPosition(moveTarget.x, moveTarget.y);
-            path.path.add(movement);
+            final Action movement = new Action("b52", mapPosition.position, moveTarget);
             // TODO uncomment to reset path on click
             // path.path.clear();
             final Range range = rm.getSafe(e);
@@ -85,18 +83,16 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             // gameMap.addHighlights(gameMap.tools.getReverseFlowerRange(mapPosition.x,
             // mapPosition.y,
             // 5));
-            // final FloatPair destination =
-            // gameMap.tools.getDirectionVector((int)movement.origin.x,
-            // (int)movement.origin.y, (int)movement.destination.x,
-            // (int)movement.destination.y);
-            // gameMap.addHighlights(gameMap.tools.getArcRange(new Pair((int)movement.destination.x,
-            // (int)movement.destination.y), destination, 2));
+            // final FloatPair destination = gameMap.tools.getDirectionVector(new
+            // Pair(mapPosition.x,
+            // mapPosition.y), movement.target);
+            // gameMap.addHighlights(gameMap.tools.getArcRange(movement.target, destination, 2));
             // gameMap.addHighlights(gameMap.tools.getAtRelativePosition(new Pair(
             // (int)movement.destination.x, (int)movement.destination.y),
             // new FloatPair(-1, -1), 2));
-            // gameMap.addHighlights(gameMap.tools.getWaveRange((int)movement.origin.x,
-            // (int)movement.origin.y, (int)movement.destination.x,
-            // (int)movement.destination.y));
+            // gameMap.addHighlights(gameMap.tools.getWaveRange(movement.caster, movement.target));
+            mapPosition = new MapPosition(moveTarget.x, moveTarget.y);
+            path.path.add(movement);
             e.removeComponent(MapPosition.class);
             e.addComponent(mapPosition);
             e.changedInWorld();

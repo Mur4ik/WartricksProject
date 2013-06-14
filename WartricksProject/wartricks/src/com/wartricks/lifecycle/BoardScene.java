@@ -32,6 +32,7 @@ import com.wartricks.systems.PathRenderSystem;
 import com.wartricks.systems.PlayerInputSystem;
 import com.wartricks.systems.SpriteRenderSystem;
 import com.wartricks.utils.Constants;
+import com.wartricks.utils.Constants.Players;
 import com.wartricks.utils.EntityFactory;
 import com.wartricks.utils.PlatformUtils;
 
@@ -101,11 +102,12 @@ public class BoardScene extends AbstractScreen {
         gameWorld.initialize();
         inputSystem = new InputMultiplexer(playerInputSystem);
         Gdx.input.setInputProcessor(inputSystem);
-        EntityFactory.createCharacter(world, gameMap, "dash", 5, 3, 3, 3).addToWorld();
-        EntityFactory.createCharacter(world, gameMap, "kirby", 9, 4, 2, 4).addToWorld();
-        EntityFactory.createCharacter(world, gameMap, "apple", 0, 1, 0, 2).addToWorld();
-        EntityFactory.createCharacter(world, gameMap, "pinkie", 3, 6, 1, 1).addToWorld();
-        EntityFactory.createCharacter(world, gameMap, "kirby", 9, 5, 1, 2).addToWorld();
+        EntityFactory.createCreature(world, gameMap, "dash", Players.ONE, 5, 3, 3, 3).addToWorld();
+        EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO, 9, 4, 2, 4).addToWorld();
+        EntityFactory.createCreature(world, gameMap, "apple", Players.ONE, 0, 1, 0, 2).addToWorld();
+        EntityFactory.createCreature(world, gameMap, "pinkie", Players.ONE, 3, 6, 1, 1)
+                .addToWorld();
+        EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO, 9, 5, 1, 2).addToWorld();
         // final LoadScript script = new LoadScript("init.lua");
         // script.runScriptFunction("wave", null);
         // final LoadScript playerScript = new LoadScript("characters/player.lua");
@@ -124,7 +126,7 @@ public class BoardScene extends AbstractScreen {
         mapRenderSystem.process();
         mapHighlightRenderSystem.process();
         spriteRenderSystem.process();
-        // pathRenderSystem.process();
+        pathRenderSystem.process();
         spriteBatch.setProjectionMatrix(hudCamera.combined);
         hudRenderSystem.process();
     }

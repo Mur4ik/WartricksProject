@@ -88,7 +88,8 @@ public class SpriteRenderSystem extends EntitySystem {
     protected void process(Entity e) {
         if (pm.has(e)) {
             final MapPosition mapPosition = pm.getSafe(e);
-            final FloatPair position = gameMap.tools.world2window(mapPosition.x, mapPosition.y);
+            final FloatPair position = gameMap.tools.world2window(mapPosition.position.x,
+                    mapPosition.position.y);
             final Sprite sprite = sm.get(e);
             final AtlasRegion spriteRegion = regionsByEntity.get(e.getId());
             spriteBatch.setColor(sprite.r, sprite.g, sprite.b, sprite.a);
