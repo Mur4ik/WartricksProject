@@ -15,14 +15,14 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.wartricks.boards.GameMap;
-import com.wartricks.components.Move;
-import com.wartricks.components.Path;
+import com.wartricks.components.Action;
+import com.wartricks.components.ActionSequence;
 import com.wartricks.custom.FloatPair;
 import com.wartricks.utils.PlatformUtils;
 
 public class PathRenderSystem extends EntitySystem {
     @Mapper
-    ComponentMapper<Path> mm;
+    ComponentMapper<ActionSequence> mm;
 
     private OrthographicCamera camera;
 
@@ -35,7 +35,7 @@ public class PathRenderSystem extends EntitySystem {
 
     @SuppressWarnings("unchecked")
     public PathRenderSystem(OrthographicCamera camera, SpriteBatch batch, GameMap map) {
-        super(Aspect.getAspectForAll(Path.class));
+        super(Aspect.getAspectForAll(ActionSequence.class));
         this.camera = camera;
         spriteBatch = batch;
         gameMap = map;
@@ -75,10 +75,10 @@ public class PathRenderSystem extends EntitySystem {
     }
 
     private void process(Entity e) {
-        final Path moves = mm.get(e);
+        final ActionSequence moves = mm.get(e);
         font.setColor(moves.pathColor);
         if (!moves.path.isEmpty()) {
-            Move move;
+            Action move;
             for (int i = 0; i < moves.path.size(); i++) {
                 move = moves.path.get(i);
                 if (!move.origin.equals(move.destination)) {

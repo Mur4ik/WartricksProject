@@ -107,6 +107,7 @@ public class BoardScene extends AbstractScreen {
         EntityFactory.createCharacter(world, gameMap, "pinkie", 3, 6, 1, 1).addToWorld();
         EntityFactory.createCharacter(world, gameMap, "kirby", 9, 5, 1, 2).addToWorld();
         // final LoadScript script = new LoadScript("init.lua");
+        // script.runScriptFunction("wave", null);
         // final LoadScript playerScript = new LoadScript("characters/player.lua");
         // playerScript.runScriptFunction("create", EntityFactory.class, world);
         // EntityFactory.createLabel(world, "life", "100", 50, 50).addToWorld();

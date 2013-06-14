@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.wartricks.boards.GameMap;
-import com.wartricks.utils.MapTools;
 import com.wartricks.utils.PlatformUtils;
 
 public class MapRenderSystem extends VoidEntitySystem {
@@ -97,7 +96,7 @@ public class MapRenderSystem extends VoidEntitySystem {
             }
         }
         // This line can draw a small image of the whole map
-        // batch.draw(gameMap.texture,0,0);
+        // spriteBatch.draw(gameMap.texture, 0, 0);
     }
 
     @Override

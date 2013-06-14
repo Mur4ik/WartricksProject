@@ -14,7 +14,7 @@ import com.wartricks.components.Expires;
 import com.wartricks.components.Health;
 import com.wartricks.components.Label;
 import com.wartricks.components.MapPosition;
-import com.wartricks.components.Path;
+import com.wartricks.components.ActionSequence;
 import com.wartricks.components.Position;
 import com.wartricks.components.Range;
 import com.wartricks.components.ScaleAnimation;
@@ -30,7 +30,7 @@ public class EntityFactory {
         e.addComponent(new Velocity());
         e.addComponent(new Health(100));
         e.addComponent(new Bounds(40));
-        e.addComponent(new Path(new Color((float)Math.random(), (float)Math.random(), (float)Math
+        e.addComponent(new ActionSequence(new Color((float)Math.random(), (float)Math.random(), (float)Math
                 .random(), 1f)));
         e.addComponent(new Range(rangeMin, rangeMax));
         world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_ONE);

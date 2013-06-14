@@ -6,27 +6,27 @@ import java.util.LinkedList;
 import com.artemis.Component;
 import com.badlogic.gdx.graphics.Color;
 
-public class Path extends Component {
-    public LinkedList<Move> path;
+public class ActionSequence extends Component {
+    public LinkedList<Action> path;
 
     public Color pathColor;
 
-    public Path(Move move, Color color) {
-        path = new LinkedList<Move>();
+    public ActionSequence(Action move, Color color) {
+        path = new LinkedList<Action>();
         path.addLast(move);
         pathColor = color;
     }
 
-    public Path(Move move) {
+    public ActionSequence(Action move) {
         this(move, Color.BLACK);
     }
 
-    public Path(Color color) {
-        path = new LinkedList<Move>();
+    public ActionSequence(Color color) {
+        path = new LinkedList<Action>();
         pathColor = color;
     }
 
-    public Path() {
+    public ActionSequence() {
         this(Color.BLACK);
     }
 }
