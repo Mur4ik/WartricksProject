@@ -236,6 +236,12 @@ public class MapTools {
         return this.getWaveRange(new Pair(targetx, targety), direction);
     }
 
+    public PositionArray getWaveRange(Pair origin, Pair destination) {
+        final FloatPair direction = this.getDirectionVector(origin.x, origin.y, destination.x,
+                destination.y);
+        return this.getWaveRange(new Pair(destination.x, destination.y), direction);
+    }
+
     public PositionArray getWaveRange(Pair origin, FloatPair direction) {
         final PositionArray highlights = new PositionArray(gameMap);
         highlights.add(origin);
@@ -252,6 +258,9 @@ public class MapTools {
         if (range > gameMap.width) {
             range = gameMap.width;
         }
+        // Hack to make it compatible with wave
+        direction.x = -direction.x;
+        direction.y = -direction.y;
         final PositionArray open = new PositionArray(gameMap);
         final PositionArray closed = new PositionArray(gameMap);
         closed.add(origin);
@@ -275,27 +284,27 @@ public class MapTools {
         }
         if (direction.x > 0) {
             if (direction.y >= 0) {
-                highlights.add(target.x + 1, target.y - offset);
-                highlights.add(target.x, target.y + 1);
-            } else {
-                highlights.add(target.x + 1, (target.y + 1) - offset);
+                highlights.add(target.x - 1, (target.y + 1) - offset);
                 highlights.add(target.x, target.y - 1);
+            } else {
+                highlights.add(target.x, target.y + 1);
+                highlights.add(target.x - 1, target.y - offset);
             }
         } else if (direction.x < 0) {
             if (direction.y >= 0) {
-                highlights.add(target.x, target.y + 1);
-                highlights.add(target.x - 1, target.y - offset);
-            } else {
-                highlights.add(target.x - 1, (target.y + 1) - offset);
+                highlights.add(target.x + 1, (target.y + 1) - offset);
                 highlights.add(target.x, target.y - 1);
+            } else {
+                highlights.add(target.x + 1, target.y - offset);
+                highlights.add(target.x, target.y + 1);
             }
         } else {
             if (direction.y > 0) {
-                highlights.add(target.x + 1, (target.y + 1) - offset);
-                highlights.add(target.x - 1, (target.y + 1) - offset);
-            } else if (direction.y < 0) {
                 highlights.add(target.x + 1, target.y - offset);
                 highlights.add(target.x - 1, target.y - offset);
+            } else if (direction.y < 0) {
+                highlights.add(target.x + 1, (target.y + 1) - offset);
+                highlights.add(target.x - 1, (target.y + 1) - offset);
             }
         }
         return highlights;
