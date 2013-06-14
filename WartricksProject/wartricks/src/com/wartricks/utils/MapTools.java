@@ -273,14 +273,7 @@ public class MapTools {
                 open.add(position);
             }
         }
-        final PositionArray highlights = new PositionArray(gameMap);
-        for (final Pair cell : open) {
-            final int distance = this.getDistance(origin.x, origin.y, cell.x, cell.y);
-            if (distance >= minRange) {
-                highlights.add(cell);
-            }
-        }
-        return highlights;
+        return this.pruneBelowMinRange(open, origin, minRange);
     }
 
     private PositionArray getArcAdjacents(Pair target, FloatPair direction) {
@@ -317,19 +310,19 @@ public class MapTools {
         return highlights;
     }
 
-    public PositionArray getFlowerRange(Pair origin, int range) {
-        return this.getFlowerRange(origin.x, origin.y, range);
+    public PositionArray getFlowerRange(Pair origin, int minRange, int maxRange) {
+        return this.getFlowerRange(origin.x, origin.y, minRange, maxRange);
     }
 
-    public PositionArray getFlowerRange(int x, int y, int range) {
-        if (range > gameMap.width) {
-            range = gameMap.width;
+    public PositionArray getFlowerRange(int x, int y, int minRange, int maxRange) {
+        if (maxRange > gameMap.width) {
+            maxRange = gameMap.width;
         }
         final PositionArray highlights = new PositionArray(gameMap);
         highlights.add(x, y);
-        if (range > 0) {
+        if (maxRange > 0) {
             int movey = 0;
-            for (int currentRange = 1; currentRange <= range; currentRange++) {
+            for (int currentRange = 1; currentRange <= maxRange; currentRange++) {
                 highlights.add(x, y + currentRange);
                 if ((currentRange % 2) == 0) {
                     highlights.add(x + currentRange, (y - currentRange) + movey);
@@ -346,22 +339,22 @@ public class MapTools {
                 }
             }
         }
-        return highlights;
+        return this.pruneBelowMinRange(highlights, new Pair(x, y), minRange);
     }
 
-    public PositionArray getReverseFlowerRange(Pair origin, int range) {
-        return this.getReverseFlowerRange(origin.x, origin.y, range);
+    public PositionArray getReverseFlowerRange(Pair origin, int minRange, int maxRange) {
+        return this.getReverseFlowerRange(origin.x, origin.y, minRange, maxRange);
     }
 
-    public PositionArray getReverseFlowerRange(int x, int y, int range) {
-        if (range > gameMap.width) {
-            range = gameMap.width;
+    public PositionArray getReverseFlowerRange(int x, int y, int minRange, int maxRange) {
+        if (maxRange > gameMap.width) {
+            maxRange = gameMap.width;
         }
         final PositionArray highlights = new PositionArray(gameMap);
         highlights.add(x, y);
-        if (range > 0) {
+        if (maxRange > 0) {
             int movey = 0;
-            for (int currentRange = 1; currentRange <= range; currentRange++) {
+            for (int currentRange = 1; currentRange <= maxRange; currentRange++) {
                 highlights.add(x, y - currentRange);
                 if ((currentRange % 2) == 0) {
                     highlights.add(x - currentRange, (y + movey));
@@ -376,6 +369,17 @@ public class MapTools {
                     }
                     movey++;
                 }
+            }
+        }
+        return this.pruneBelowMinRange(highlights, new Pair(x, y), minRange);
+    }
+
+    private PositionArray pruneBelowMinRange(PositionArray open, Pair origin, int minRange) {
+        final PositionArray highlights = new PositionArray(gameMap);
+        for (final Pair cell : open) {
+            final int distance = this.getDistance(origin.x, origin.y, cell.x, cell.y);
+            if (distance >= minRange) {
+                highlights.add(cell);
             }
         }
         return highlights;
