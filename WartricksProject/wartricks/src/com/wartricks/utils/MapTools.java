@@ -178,14 +178,7 @@ public class MapTools {
                 }
             }
         }
-        final PositionArray highlights = new PositionArray(gameMap);
-        for (final Pair cell : visited) {
-            final int distance = this.getDistance(x, y, cell.x, cell.y);
-            if (distance >= minRange) {
-                highlights.add(cell);
-            }
-        }
-        return highlights;
+        return this.pruneBelowMinRange(visited, new Pair(x, y), minRange);
     }
 
     public PositionArray getLinearRange(Pair origin, Pair destination) {
