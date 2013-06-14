@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
-import com.wartricks.components.Bounds;
 import com.wartricks.components.ColorAnimation;
 import com.wartricks.components.Cooldown;
 import com.wartricks.components.Cost;
@@ -44,7 +43,6 @@ public class EntityFactory {
         e.addComponent(new MapPosition(x, y));
         e.addComponent(new Sprite(sprite, Sprite.Layer.ACTORS_3));
         e.addComponent(new Health(maxHealth));
-        e.addComponent(new Bounds(40));
         e.addComponent(new ActionSequence(uiColor));
         world.getManager(TagManager.class).register(sprite, e);
         switch (owner) {
