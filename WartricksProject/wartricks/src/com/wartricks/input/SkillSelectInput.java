@@ -9,7 +9,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.wartricks.components.MapPosition;
 import com.wartricks.components.Range;
-import com.wartricks.components.SelectedSkill;
 import com.wartricks.custom.FloatPair;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
@@ -60,28 +59,19 @@ public class SkillSelectInput implements InputProcessor {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (game.gameState.getCurrentState() == GameState.CHOOSING_SKILL) {
-            final int skillId = game.gameWorld.getManager(TagManager.class)
-                    .getEntity("piruloNOjutsu").getId();
-            if ((skillId > -1) && (skillId != game.selectedSkill)) {
-                if (game.selectedSkill > -1) {
-                    final Entity old = game.gameWorld.getEntity(game.selectedSkill);
-                    old.removeComponent(SelectedSkill.class);
-                    // TODO
-                    // ptm.getSafe(old).path.clear();
-                    old.changedInWorld();
-                }
+            final int skillId = game.gameWorld.getManager(TagManager.class).getEntity("move")
+                    .getId();
+            if (skillId > -1) {
                 final Entity e = game.gameWorld.getEntity(skillId);
-                e.addComponent(new SelectedSkill());
-                e.changedInWorld();
-                final MapPosition origin = mm.get(game.gameWorld.getEntity(game.selectedPlayer));
+                final MapPosition origin = mm.get(game.gameWorld.getEntity(game.gameState
+                        .getSelectedCreature()));
                 final Range range = rm.get(e);
                 game.gameMap.addHighlightedShape(Shapes.CIRCLE, range.minRange, range.maxRange,
                         origin.position, new FloatPair(1, 1));
-                game.selectedSkill = skillId;
+                game.gameState.setSelectedSkill(skillId);
                 game.gameState.setCurrentState(GameState.CHOOSING_TARGET);
                 return true;
             }
-            return true;
         }
         return false;
     }

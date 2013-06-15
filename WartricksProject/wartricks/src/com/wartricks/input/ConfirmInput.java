@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
+import com.wartricks.utils.Constants.Players;
 
 public class ConfirmInput implements InputProcessor {
     private OrthographicCamera camera;
@@ -43,7 +44,16 @@ public class ConfirmInput implements InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (game.gameState.getCurrentState() == GameState.CHOOSING_CONFIRM) {
+        if ((game.gameState.getCurrentState() == GameState.CHOOSING_CONFIRM) && (button == 0)) {
+            game.gameMap.highlighted.clear();
+            game.gameState.setSelectedCreature(-1);
+            game.gameState.setSelectedSkill(-1);
+            game.gameState.setSelectedHex(null);
+            if (game.gameState.getActivePlayer() == Players.ONE) {
+                game.gameState.setActivePlayer(Players.TWO);
+            } else {
+                game.gameState.setActivePlayer(Players.ONE);
+            }
             return true;
         }
         return false;

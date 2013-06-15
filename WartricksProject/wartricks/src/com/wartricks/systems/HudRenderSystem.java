@@ -1,6 +1,8 @@
 
 package com.wartricks.systems;
 
+import com.artemis.ComponentMapper;
+import com.artemis.annotations.Mapper;
 import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -10,7 +12,10 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.wartricks.components.OnCast;
+import com.wartricks.components.Sprite;
 import com.wartricks.lifecycle.BoardGame;
+import com.wartricks.logic.VersusGame;
 import com.wartricks.utils.PlatformUtils;
 
 public class HudRenderSystem extends VoidEntitySystem {
@@ -20,9 +25,18 @@ public class HudRenderSystem extends VoidEntitySystem {
 
     private OrthographicCamera camera;
 
-    public HudRenderSystem(OrthographicCamera camera, SpriteBatch batch) {
+    private VersusGame game;
+
+    @Mapper
+    private ComponentMapper<Sprite> sm;
+
+    @Mapper
+    private ComponentMapper<OnCast> om;
+
+    public HudRenderSystem(OrthographicCamera camera, SpriteBatch batch, VersusGame game) {
         spriteBatch = batch;
         this.camera = camera;
+        this.game = game;
     }
 
     @Override
@@ -54,6 +68,20 @@ public class HudRenderSystem extends VoidEntitySystem {
                 screenHeight - 60);
         font.draw(spriteBatch, "Total deleted: " + world.getEntityManager().getTotalDeleted(), 20,
                 screenHeight - 80);
+        font.draw(spriteBatch, "GameState: " + game.gameState.getCurrentState(), 20,
+                screenHeight - 120);
+        font.draw(spriteBatch, "ActivePlayer: " + game.gameState.getActivePlayer(), 20,
+                screenHeight - 140);
+        final int selectedCreature = game.gameState.getSelectedCreature();
+        final int selectedSkill = game.gameState.getSelectedSkill();
+        if (selectedCreature > -1) {
+            final Sprite sprite = sm.get(game.gameWorld.getEntity(selectedCreature));
+            font.draw(spriteBatch, "SelectedCreature: " + sprite.name, 20, screenHeight - 160);
+            if (selectedSkill > -1) {
+                final OnCast script = om.get(game.gameWorld.getEntity(selectedSkill));
+                font.draw(spriteBatch, "SelectedSkill: " + script.path, 20, screenHeight - 180);
+            }
+        }
     }
 
     @Override

@@ -51,6 +51,7 @@ public class EntityFactory {
         e.addComponent(new EnergyRegen(energyRegen));
         e.addComponent(new ActionSequence(uiColor));
         e.addComponent(new SkillSet(skillSet));
+        e.addComponent(new Owner(owner));
         world.getManager(TagManager.class).register(sprite, e);
         switch (owner) {
             case ONE:
@@ -67,13 +68,13 @@ public class EntityFactory {
     }
 
     public static Entity createSkill(World world, String name, int baseCost, int minRange,
-            int maxRange, int baseInitiative, int cooldown, String scriptname, String scriptmethod) {
+            int maxRange, int baseInitiative, int cooldown, String scriptmethod) {
         final Entity e = world.createEntity();
         e.addComponent(new Cooldown(cooldown));
         e.addComponent(new Range(minRange, maxRange));
         e.addComponent(new Cost(baseCost));
         e.addComponent(new Initiative(baseInitiative));
-        e.addComponent(new OnCast(scriptname, scriptmethod));
+        e.addComponent(new OnCast(name, scriptmethod));
         world.getManager(TagManager.class).register(name, e);
         world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_SKILL);
         return e;

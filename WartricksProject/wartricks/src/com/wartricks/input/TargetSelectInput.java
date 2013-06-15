@@ -1,8 +1,10 @@
 
 package com.wartricks.input;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.wartricks.custom.Pair;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
 
@@ -44,7 +46,12 @@ public class TargetSelectInput implements InputProcessor {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if ((game.gameState.getCurrentState() == GameState.CHOOSING_TARGET) && (button == 0)) {
-            return true;
+            final Pair coords = game.gameMap.tools.window2world(Gdx.input.getX(), Gdx.input.getY());
+            if (game.gameMap.highlighted.contains(coords, false)) {
+                game.gameState.setSelectedHex(coords);
+                game.gameState.setCurrentState(GameState.CHOOSING_CONFIRM);
+                return true;
+            }
         }
         return false;
     }

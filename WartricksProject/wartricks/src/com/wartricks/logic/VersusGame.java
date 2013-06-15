@@ -43,15 +43,11 @@ public class VersusGame implements Observer {
 
     private OnEndTurnSystem onEndTurnSystem;
 
-    public int selectedPlayer, selectedSkill;
-
     public VersusGame(GameMap gameMap, World gameWorld, OrthographicCamera camera) {
         super();
         this.gameMap = gameMap;
         this.gameWorld = gameWorld;
         this.camera = camera;
-        selectedPlayer = -1;
-        selectedSkill = -1;
         onBeginTurnSystem = gameWorld.setSystem(new OnBeginTurnSystem(this), false);
         onEndTurnSystem = gameWorld.setSystem(new OnEndTurnSystem(this), false);
         // playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera, gameMap), false);

@@ -1,11 +1,13 @@
 
 package com.wartricks.input;
 
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
+import com.artemis.annotations.Mapper;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.wartricks.components.SelectedCreature;
+import com.wartricks.components.Owner;
 import com.wartricks.custom.Pair;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
@@ -17,10 +19,14 @@ public class CreatureSelectInput implements InputProcessor {
 
     private VersusGame game;
 
+    @Mapper
+    ComponentMapper<Owner> om;
+
     public CreatureSelectInput(OrthographicCamera camera, VersusGame game) {
         super();
         this.camera = camera;
         this.game = game;
+        om = game.gameWorld.getMapper(Owner.class);
     }
 
     @Override
@@ -54,21 +60,15 @@ public class CreatureSelectInput implements InputProcessor {
             if ((coords.x >= 0) && (coords.x <= (Constants.HEX_MAP_WIDTH - 1)) && (coords.y >= 0)
                     && (coords.y <= (Constants.HEX_MAP_HEIGHT - 1))) {
                 final int entityId = game.gameMap.getEntityAt(coords.x, coords.y);
-                if ((entityId > -1) && (entityId != game.selectedPlayer)) {
-                    if (game.selectedPlayer > -1) {
-                        final Entity old = game.gameWorld.getEntity(game.selectedPlayer);
-                        old.removeComponent(SelectedCreature.class);
-                        // TODO
-                        // ptm.getSafe(old).path.clear();
-                        old.changedInWorld();
-                    }
+                if (entityId > -1) {
                     final Entity e = game.gameWorld.getEntity(entityId);
-                    e.addComponent(new SelectedCreature());
-                    e.changedInWorld();
-                    game.selectedPlayer = entityId;
-                    EntityFactory.createClick(game.gameWorld, coords.x, coords.y, 0.4f, 4f, 0.15f)
-                            .addToWorld();
-                    game.gameState.setCurrentState(GameState.CHOOSING_SKILL);
+                    final Owner owner = om.get(e);
+                    if (owner.owner == game.gameState.getActivePlayer()) {
+                        game.gameState.setSelectedCreature(entityId);
+                        EntityFactory.createClick(game.gameWorld, coords.x, coords.y, 0.4f, 4f,
+                                0.15f).addToWorld();
+                        game.gameState.setCurrentState(GameState.CHOOSING_SKILL);
+                    }
                     return true;
                 }
             }
