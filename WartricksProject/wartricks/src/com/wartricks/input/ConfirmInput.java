@@ -1,12 +1,10 @@
 
 package com.wartricks.input;
 
-import com.artemis.Entity;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
-import com.wartricks.utils.Constants.Players;
 
 public class ConfirmInput implements InputProcessor {
     private OrthographicCamera camera;
@@ -46,19 +44,7 @@ public class ConfirmInput implements InputProcessor {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if ((game.gameState.getCurrentState() == GameState.CHOOSING_CONFIRM) && (button == 0)) {
-            if (true) {
-                final Entity e = game.gameWorld.getEntity(game.gameState.getSelectedCreature());
-                game.execute(e);
-                game.gameMap.highlighted.clear();
-                game.gameState.setSelectedCreature(-1);
-                game.gameState.setSelectedSkill(-1);
-                game.gameState.setSelectedHex(null);
-                if (game.gameState.getActivePlayer() == Players.ONE) {
-                    game.gameState.setActivePlayer(Players.TWO);
-                } else {
-                    game.gameState.setActivePlayer(Players.ONE);
-                }
-            }
+            game.gameState.setCurrentState(GameState.RESOLVING_ACTIONS);
             return true;
         }
         return false;

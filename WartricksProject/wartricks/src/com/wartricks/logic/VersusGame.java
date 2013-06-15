@@ -87,6 +87,11 @@ public class VersusGame implements Observer {
                 case CHOOSING_TARGET:
                     break;
                 case RESOLVING_ACTIONS:
+                    this.execute();
+                    gameMap.highlighted.clear();
+                    gameState.setSelectedCreature(-1);
+                    gameState.setSelectedSkill(-1);
+                    gameState.setSelectedHex(null);
                     onEndTurnSystem.process();
                     if (Players.ONE == gameState.getActivePlayer()) {
                         gameState.setActivePlayer(Players.TWO);
@@ -98,10 +103,11 @@ public class VersusGame implements Observer {
         }
     }
 
-    public void execute(Entity e) {
+    public void execute() {
         // TODO placeholder
+        gameMap.moveEntity(gameState.getSelectedCreature(), gameState.getSelectedHex());
         final MapPosition mapPosition = new MapPosition(gameState.getSelectedHex());
-        gameMap.moveEntity(e.getId(), gameState.getSelectedHex());
+        final Entity e = gameWorld.getEntity(gameState.getSelectedCreature());
         e.removeComponent(MapPosition.class);
         e.addComponent(mapPosition);
         e.changedInWorld();
