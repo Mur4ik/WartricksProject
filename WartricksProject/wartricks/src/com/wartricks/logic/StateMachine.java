@@ -6,7 +6,7 @@ import java.util.Observable;
 import com.wartricks.utils.Constants.Players;
 
 public class StateMachine extends Observable {
-    enum GameState {
+    public enum GameState {
         CHOOSING_CHARACTER, CHOOSING_SKILL, CHOOSING_TARGET, CHOOSING_CONFIRM, RESOLVING_ACTIONS
     }
 
@@ -22,6 +22,10 @@ public class StateMachine extends Observable {
 
     public GameState getCurrentState() {
         return currentState;
+    }
+
+    public Players getActivePlayer() {
+        return activePlayer;
     }
 
     public void setCurrentState(GameState state) {

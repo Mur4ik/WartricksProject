@@ -8,44 +8,69 @@ import com.artemis.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.wartricks.input.ConfirmInput;
+import com.wartricks.input.CreatureSelectInput;
+import com.wartricks.input.SkillSelectInput;
+import com.wartricks.input.TargetSelectInput;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.systems.OnBeginTurnSystem;
 import com.wartricks.systems.OnEndTurnSystem;
 import com.wartricks.systems.PlayerInputSystem;
+import com.wartricks.utils.Constants.Players;
 
 public class VersusGame implements Observer {
+    private OrthographicCamera camera;
+
+    public GameMap gameMap;
+
+    public World gameWorld;
+
+    public StateMachine gameState;
+
     public InputMultiplexer inputSystem;
 
     private PlayerInputSystem playerInputSystem;
+
+    private TargetSelectInput targetSelectInput;
+
+    private CreatureSelectInput creatureSelectInput;
+
+    private SkillSelectInput skillSelectInput;
+
+    private ConfirmInput confirmSelectInput;
 
     private OnBeginTurnSystem onBeginTurnSystem;
 
     private OnEndTurnSystem onEndTurnSystem;
 
-    private GameMap gameMap;
-
-    private World gameWorld;
-
-    private OrthographicCamera camera;
-
-    public StateMachine state;
+    public int selectedPlayer, selectedSkill;
 
     public VersusGame(GameMap gameMap, World gameWorld, OrthographicCamera camera) {
         super();
         this.gameMap = gameMap;
         this.gameWorld = gameWorld;
         this.camera = camera;
-        playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera, gameMap), false);
-        onBeginTurnSystem = gameWorld.setSystem(new OnBeginTurnSystem(gameMap, gameWorld), false);
-        onEndTurnSystem = gameWorld.setSystem(new OnEndTurnSystem(gameMap, gameWorld), false);
+        selectedPlayer = -1;
+        selectedSkill = -1;
+        onBeginTurnSystem = gameWorld.setSystem(new OnBeginTurnSystem(this), false);
+        onEndTurnSystem = gameWorld.setSystem(new OnEndTurnSystem(this), false);
+        // playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera, gameMap), false);
+        inputSystem = new InputMultiplexer();
+        creatureSelectInput = new CreatureSelectInput(camera, this);
+        skillSelectInput = new SkillSelectInput(camera, this);
+        targetSelectInput = new TargetSelectInput(camera, this);
+        confirmSelectInput = new ConfirmInput(camera, this);
+        inputSystem.addProcessor(creatureSelectInput);
+        inputSystem.addProcessor(skillSelectInput);
+        inputSystem.addProcessor(targetSelectInput);
+        inputSystem.addProcessor(confirmSelectInput);
         Gdx.input.setInputProcessor(inputSystem);
-        inputSystem = new InputMultiplexer(playerInputSystem);
-        state = new StateMachine();
+        gameState = new StateMachine();
     }
 
     public boolean startLogic() {
-        state.addObserver(this);
-        state.setCurrentState(GameState.CHOOSING_CHARACTER);
+        gameState.addObserver(this);
+        gameState.setCurrentState(GameState.CHOOSING_CHARACTER);
         return true;
     }
 
@@ -55,6 +80,7 @@ public class VersusGame implements Observer {
             final GameState state = (GameState)currentState;
             switch (state) {
                 case CHOOSING_CHARACTER:
+                    onBeginTurnSystem.process();
                     break;
                 case CHOOSING_CONFIRM:
                     break;
@@ -63,8 +89,12 @@ public class VersusGame implements Observer {
                 case CHOOSING_TARGET:
                     break;
                 case RESOLVING_ACTIONS:
-                    onBeginTurnSystem.process();
                     onEndTurnSystem.process();
+                    if (Players.ONE == gameState.getActivePlayer()) {
+                        gameState.setActivePlayer(Players.TWO);
+                    } else {
+                        gameState.setActivePlayer(Players.ONE);
+                    }
                     break;
             }
         }

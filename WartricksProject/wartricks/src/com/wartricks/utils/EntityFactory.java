@@ -66,8 +66,8 @@ public class EntityFactory {
         return e;
     }
 
-    public static Entity createSkill(World world, String name, int baseCost, int baseInitiative,
-            int minRange, int maxRange, int cooldown, String scriptname, String scriptmethod) {
+    public static Entity createSkill(World world, String name, int baseCost, int minRange,
+            int maxRange, int baseInitiative, int cooldown, String scriptname, String scriptmethod) {
         final Entity e = world.createEntity();
         e.addComponent(new Cooldown(cooldown));
         e.addComponent(new Range(minRange, maxRange));

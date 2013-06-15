@@ -11,6 +11,10 @@ import com.wartricks.custom.Vec3;
 import com.wartricks.logic.GameMap;
 
 public class MapTools {
+    public enum Shapes {
+        CONE, CIRCLE, FLOWER, REVERSEFLOWER, WAVE
+    }
+
     public String name;
 
     private GameMap gameMap;
