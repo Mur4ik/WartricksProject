@@ -4,6 +4,7 @@ package com.wartricks.logic;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
@@ -106,10 +107,10 @@ public class VersusGame implements Observer {
     public void execute() {
         // TODO placeholder
         gameMap.moveEntity(gameState.getSelectedCreature(), gameState.getSelectedHex());
-        final MapPosition mapPosition = new MapPosition(gameState.getSelectedHex());
         final Entity e = gameWorld.getEntity(gameState.getSelectedCreature());
-        e.removeComponent(MapPosition.class);
-        e.addComponent(mapPosition);
+        final ComponentMapper<MapPosition> mm = gameWorld.getMapper(MapPosition.class);
+        final MapPosition mapPosition = mm.get(e);
+        mapPosition.position = gameState.getSelectedHex();
         e.changedInWorld();
     }
 }
