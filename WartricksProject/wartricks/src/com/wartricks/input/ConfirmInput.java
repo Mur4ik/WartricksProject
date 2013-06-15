@@ -61,8 +61,8 @@ public class ConfirmInput implements InputProcessor {
             final Entity creature = game.gameWorld.getEntity(game.gameState.getSelectedCreature());
             final MapPosition position = mm.get(creature);
             final ActionSequence sequence = asm.get(creature);
-            sequence.actions.add(new Action(game.gameState.getSelectedSkill(), position.position,
-                    game.gameState.getSelectedHex()));
+            sequence.actions.add(new Action(game.gameState.getSelectedCreature(), game.gameState
+                    .getSelectedSkill(), position.position, game.gameState.getSelectedHex()));
             game.gameState.getSelectedIds().add(game.gameState.getSelectedCreature());
             creature.changedInWorld();
             game.gameState.setCurrentState(GameState.CHOOSING_CHARACTER);

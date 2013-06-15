@@ -11,4 +11,8 @@ public class Initiative extends Component {
         this.baseInitiative = baseInitiative;
         modifierInitiative = 0;
     }
+
+    public int getCalculatedInitiative() {
+        return baseInitiative + modifierInitiative;
+    }
 }

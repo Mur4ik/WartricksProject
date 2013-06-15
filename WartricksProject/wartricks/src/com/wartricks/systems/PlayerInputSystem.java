@@ -62,7 +62,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             final ActionSequence path = ptm.get(e);
             MapPosition mapPosition = mpm.getSafe(e);
             gameMap.moveEntity(e.getId(), moveTarget.x, moveTarget.y);
-            final Action movement = new Action(0, mapPosition.position, moveTarget);
+            final Action movement = new Action(0, 0, mapPosition.position, moveTarget);
             // TODO uncomment to reset path on click
             // path.path.clear();
             gameMap.clearHighlights();
