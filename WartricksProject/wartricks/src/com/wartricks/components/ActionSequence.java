@@ -7,13 +7,13 @@ import com.artemis.Component;
 import com.badlogic.gdx.graphics.Color;
 
 public class ActionSequence extends Component {
-    public LinkedList<Action> path;
+    public LinkedList<Action> actions;
 
     public Color pathColor;
 
     public ActionSequence(Action move, Color color) {
-        path = new LinkedList<Action>();
-        path.addLast(move);
+        actions = new LinkedList<Action>();
+        actions.addLast(move);
         pathColor = color;
     }
 
@@ -22,7 +22,7 @@ public class ActionSequence extends Component {
     }
 
     public ActionSequence(Color color) {
-        path = new LinkedList<Action>();
+        actions = new LinkedList<Action>();
         pathColor = color;
     }
 

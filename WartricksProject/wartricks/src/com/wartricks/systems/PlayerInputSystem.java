@@ -62,7 +62,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             final ActionSequence path = ptm.get(e);
             MapPosition mapPosition = mpm.getSafe(e);
             gameMap.moveEntity(e.getId(), moveTarget.x, moveTarget.y);
-            final Action movement = new Action("b52", mapPosition.position, moveTarget);
+            final Action movement = new Action(0, mapPosition.position, moveTarget);
             // TODO uncomment to reset path on click
             // path.path.clear();
             gameMap.clearHighlights();
@@ -81,7 +81,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             // new FloatPair(-1, -1), 2));
             // gameMap.addHighlights(gameMap.tools.getWaveRange(movement.caster, movement.target));
             mapPosition = new MapPosition(moveTarget.x, moveTarget.y);
-            path.path.add(movement);
+            path.actions.add(movement);
             e.removeComponent(MapPosition.class);
             e.addComponent(mapPosition);
             e.changedInWorld();

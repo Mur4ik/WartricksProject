@@ -4,13 +4,10 @@ package com.wartricks.logic;
 import java.util.Observable;
 import java.util.Observer;
 
-import com.artemis.ComponentMapper;
-import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.wartricks.components.MapPosition;
 import com.wartricks.input.ConfirmInput;
 import com.wartricks.input.CreatureSelectInput;
 import com.wartricks.input.SkillSelectInput;
@@ -18,7 +15,7 @@ import com.wartricks.input.TargetSelectInput;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.systems.OnBeginTurnSystem;
 import com.wartricks.systems.OnEndTurnSystem;
-import com.wartricks.systems.PlayerInputSystem;
+import com.wartricks.systems.OnExecuteTurnSystem;
 import com.wartricks.utils.Constants.Players;
 
 public class VersusGame implements Observer {
@@ -32,8 +29,6 @@ public class VersusGame implements Observer {
 
     public InputMultiplexer inputSystem;
 
-    private PlayerInputSystem playerInputSystem;
-
     private TargetSelectInput targetSelectInput;
 
     private CreatureSelectInput creatureSelectInput;
@@ -46,13 +41,16 @@ public class VersusGame implements Observer {
 
     private OnEndTurnSystem onEndTurnSystem;
 
+    private OnExecuteTurnSystem onExecuteTurnSystem;
+
     public VersusGame(GameMap gameMap, World gameWorld, OrthographicCamera camera) {
         super();
         this.gameMap = gameMap;
         this.gameWorld = gameWorld;
         this.camera = camera;
-        onBeginTurnSystem = gameWorld.setSystem(new OnBeginTurnSystem(this), false);
-        onEndTurnSystem = gameWorld.setSystem(new OnEndTurnSystem(this), false);
+        onExecuteTurnSystem = gameWorld.setSystem(new OnExecuteTurnSystem(this), true);
+        onBeginTurnSystem = gameWorld.setSystem(new OnBeginTurnSystem(this), true);
+        onEndTurnSystem = gameWorld.setSystem(new OnEndTurnSystem(this), true);
         // playerInputSystem = gameWorld.setSystem(new PlayerInputSystem(camera, gameMap), false);
         inputSystem = new InputMultiplexer();
         creatureSelectInput = new CreatureSelectInput(camera, this);
@@ -80,6 +78,7 @@ public class VersusGame implements Observer {
             switch (state) {
                 case CHOOSING_CHARACTER:
                     onBeginTurnSystem.process();
+                    gameMap.clearHighlights();
                     break;
                 case CHOOSING_CONFIRM:
                     break;
@@ -88,11 +87,12 @@ public class VersusGame implements Observer {
                 case CHOOSING_TARGET:
                     break;
                 case RESOLVING_ACTIONS:
-                    this.execute();
-                    gameMap.highlighted.clear();
+                    onExecuteTurnSystem.process();
+                    gameMap.clearHighlights();
                     gameState.setSelectedCreature(-1);
                     gameState.setSelectedSkill(-1);
                     gameState.setSelectedHex(null);
+                    gameState.clearSelectedIds();
                     onEndTurnSystem.process();
                     if (Players.ONE == gameState.getActivePlayer()) {
                         gameState.setActivePlayer(Players.TWO);
@@ -102,15 +102,5 @@ public class VersusGame implements Observer {
                     break;
             }
         }
-    }
-
-    public void execute() {
-        // TODO placeholder
-        gameMap.moveEntity(gameState.getSelectedCreature(), gameState.getSelectedHex());
-        final Entity e = gameWorld.getEntity(gameState.getSelectedCreature());
-        final ComponentMapper<MapPosition> mm = gameWorld.getMapper(MapPosition.class);
-        final MapPosition mapPosition = mm.get(e);
-        mapPosition.position = gameState.getSelectedHex();
-        e.changedInWorld();
     }
 }

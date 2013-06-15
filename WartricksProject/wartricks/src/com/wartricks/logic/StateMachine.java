@@ -3,6 +3,7 @@ package com.wartricks.logic;
 
 import java.util.Observable;
 
+import com.badlogic.gdx.utils.Array;
 import com.wartricks.custom.Pair;
 import com.wartricks.utils.Constants.Players;
 
@@ -19,6 +20,8 @@ public class StateMachine extends Observable {
 
     private Pair selectedHex;
 
+    private Array<Integer> selectedIds;
+
     public StateMachine() {
         super();
         currentState = GameState.CHOOSING_CHARACTER;
@@ -26,6 +29,7 @@ public class StateMachine extends Observable {
         selectedCreature = -1;
         selectedSkill = -1;
         selectedHex = null;
+        selectedIds = new Array<Integer>();
     }
 
     public GameState getCurrentState() {
@@ -72,5 +76,14 @@ public class StateMachine extends Observable {
 
     public void setSelectedHex(Pair selectedHex) {
         this.selectedHex = selectedHex;
+    }
+
+    public Array<Integer> getSelectedIds() {
+        return selectedIds;
+    }
+
+    public boolean clearSelectedIds() {
+        selectedIds.clear();
+        return true;
     }
 }

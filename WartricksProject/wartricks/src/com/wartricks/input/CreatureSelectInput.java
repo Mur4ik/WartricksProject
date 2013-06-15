@@ -60,7 +60,7 @@ public class CreatureSelectInput implements InputProcessor {
             if ((coords.x >= 0) && (coords.x <= (Constants.HEX_MAP_WIDTH - 1)) && (coords.y >= 0)
                     && (coords.y <= (Constants.HEX_MAP_HEIGHT - 1))) {
                 final int entityId = game.gameMap.getEntityAt(coords.x, coords.y);
-                if (entityId > -1) {
+                if ((entityId > -1) && !game.gameState.getSelectedIds().contains(entityId, false)) {
                     final Entity e = game.gameWorld.getEntity(entityId);
                     final Owner owner = om.get(e);
                     if (owner.owner == game.gameState.getActivePlayer()) {

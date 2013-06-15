@@ -8,7 +8,6 @@ import com.artemis.managers.TagManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
 import com.wartricks.components.ColorAnimation;
 import com.wartricks.components.Cooldown;
@@ -28,7 +27,6 @@ import com.wartricks.components.ScaleAnimation;
 import com.wartricks.components.SkillSet;
 import com.wartricks.components.Sprite;
 import com.wartricks.components.Velocity;
-import com.wartricks.custom.Pair;
 import com.wartricks.logic.GameMap;
 import com.wartricks.utils.Constants.Players;
 
@@ -80,25 +78,23 @@ public class EntityFactory {
         return e;
     }
 
-    public static Entity createAction(World world, String identifier, Players owner, String skill,
-            Pair origin, Pair target) {
-        final Entity e = world.createEntity();
-        e.addComponent(new Action(skill, origin, target));
-        e.addComponent(new Owner(owner));
-        world.getManager(TagManager.class).register(identifier, e);
-        switch (owner) {
-            case ONE:
-                world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_ONE_ACTION);
-                break;
-            case TWO:
-                world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_TWO_ACTION);
-                break;
-            default:
-                break;
-        }
-        return e;
-    }
-
+    // public static Entity createAction(World world, Players owner, int skill, Pair origin,
+    // Pair target) {
+    // final Entity e = world.createEntity();
+    // e.addComponent(new Action(skill, origin, target));
+    // e.addComponent(new Owner(owner));
+    // switch (owner) {
+    // case ONE:
+    // world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_ONE_ACTION);
+    // break;
+    // case TWO:
+    // world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_TWO_ACTION);
+    // break;
+    // default:
+    // break;
+    // }
+    // return e;
+    // }
     public static Entity createParticle(World world, float x, float y, float delay) {
         final Entity e = world.createEntity();
         final Position position = new Position();

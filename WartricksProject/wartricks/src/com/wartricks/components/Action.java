@@ -5,21 +5,21 @@ import com.artemis.Component;
 import com.wartricks.custom.Pair;
 
 public class Action extends Component {
-    public String skillName;
+    public int skillId;
 
     public Pair origin;
 
     public Pair target;
 
-    public Action(String skillName, int originX, int originY, int targetX, int targetY) {
+    public Action(int skillId, int originX, int originY, int targetX, int targetY) {
         origin = new Pair(originX, originY);
         target = new Pair(targetX, targetY);
-        this.skillName = skillName;
+        this.skillId = skillId;
     }
 
-    public Action(String skillName, Pair originPar, Pair destinationPar) {
+    public Action(int skillName, Pair originPar, Pair destinationPar) {
         origin = originPar;
         target = destinationPar;
-        this.skillName = skillName;
+        skillId = skillName;
     }
 }

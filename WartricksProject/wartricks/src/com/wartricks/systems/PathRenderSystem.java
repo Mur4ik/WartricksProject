@@ -77,10 +77,10 @@ public class PathRenderSystem extends EntitySystem {
     private void process(Entity e) {
         final ActionSequence moves = mm.get(e);
         font.setColor(moves.pathColor);
-        if (!moves.path.isEmpty()) {
+        if (!moves.actions.isEmpty()) {
             Action move;
-            for (int i = 0; i < moves.path.size(); i++) {
-                move = moves.path.get(i);
+            for (int i = 0; i < moves.actions.size(); i++) {
+                move = moves.actions.get(i);
                 if (!move.origin.equals(move.target)) {
                     final FloatPair coordsOrigin = gameMap.tools.world2window(move.origin.x,
                             move.origin.y);
