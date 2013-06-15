@@ -165,4 +165,8 @@ public class GameMap {
                 break;
         }
     }
+
+    public void moveEntity(int id, Pair selectedHex) {
+        this.moveEntity(id, selectedHex.x, selectedHex.y);
+    }
 }

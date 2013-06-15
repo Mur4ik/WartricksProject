@@ -20,9 +20,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.wartricks.components.MapPosition;
+import com.wartricks.components.Owner;
 import com.wartricks.components.Sprite;
 import com.wartricks.custom.FloatPair;
 import com.wartricks.logic.GameMap;
+import com.wartricks.utils.Constants.Players;
 import com.wartricks.utils.PlatformUtils;
 
 public class SpriteRenderSystem extends EntitySystem {
@@ -31,6 +33,9 @@ public class SpriteRenderSystem extends EntitySystem {
 
     @Mapper
     ComponentMapper<Sprite> sm;
+
+    @Mapper
+    ComponentMapper<Owner> om;
 
     private OrthographicCamera camera;
 
@@ -48,7 +53,7 @@ public class SpriteRenderSystem extends EntitySystem {
 
     @SuppressWarnings("unchecked")
     public SpriteRenderSystem(OrthographicCamera camera, SpriteBatch batch, GameMap map) {
-        super(Aspect.getAspectForAll(MapPosition.class, Sprite.class));
+        super(Aspect.getAspectForAll(MapPosition.class, Sprite.class, Owner.class));
         this.camera = camera;
         spriteBatch = batch;
         gameMap = map;
@@ -91,8 +96,13 @@ public class SpriteRenderSystem extends EntitySystem {
             final FloatPair position = gameMap.tools.world2window(mapPosition.position.x,
                     mapPosition.position.y);
             final Sprite sprite = sm.get(e);
+            final Owner owner = om.get(e);
             final AtlasRegion spriteRegion = regionsByEntity.get(e.getId());
-            spriteBatch.setColor(sprite.r, sprite.g, sprite.b, sprite.a);
+            if (owner.owner == Players.TWO) {
+                spriteBatch.setColor(sprite.r, sprite.g - 0.5f, sprite.b - 0.5f, sprite.a);
+            } else {
+                spriteBatch.setColor(sprite.r - 0.5f, sprite.g - 0.5f, sprite.b, sprite.a);
+            }
             final float posX = position.x - ((spriteRegion.getRegionWidth() / 2) * sprite.scaleX);
             final float posY = position.y - ((spriteRegion.getRegionHeight() / 2) * sprite.scaleX);
             spriteBatch.draw(spriteRegion, posX, posY, 0, 0, spriteRegion.getRegionWidth(),

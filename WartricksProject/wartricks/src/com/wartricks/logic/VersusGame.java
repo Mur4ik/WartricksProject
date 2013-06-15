@@ -4,10 +4,12 @@ package com.wartricks.logic;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.artemis.Entity;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.wartricks.components.MapPosition;
 import com.wartricks.input.ConfirmInput;
 import com.wartricks.input.CreatureSelectInput;
 import com.wartricks.input.SkillSelectInput;
@@ -94,5 +96,14 @@ public class VersusGame implements Observer {
                     break;
             }
         }
+    }
+
+    public void execute(Entity e) {
+        // TODO placeholder
+        final MapPosition mapPosition = new MapPosition(gameState.getSelectedHex());
+        gameMap.moveEntity(e.getId(), gameState.getSelectedHex());
+        e.removeComponent(MapPosition.class);
+        e.addComponent(mapPosition);
+        e.changedInWorld();
     }
 }
