@@ -65,12 +65,19 @@ public class ActionExecutor {
     private boolean execute(String script, String method, VersusGame game, int caster, Pair origin,
             Pair target) {
         if (script == "move") {
-            game.gameMap.moveEntity(caster, target);
-            final ComponentMapper<MapPosition> mm = game.gameWorld.getMapper(MapPosition.class);
-            final Entity creature = game.gameWorld.getEntity(caster);
-            final MapPosition mapPosition = mm.get(creature);
-            mapPosition.position = target;
-            creature.changedInWorld();
+            if (-1 != game.gameMap.getPositionAt(target.x, target.y)) {
+                game.gameMap.moveEntity(caster, target);
+                final ComponentMapper<MapPosition> mm = game.gameWorld.getMapper(MapPosition.class);
+                final Entity creature = game.gameWorld.getEntity(caster);
+                final MapPosition mapPosition = mm.get(creature);
+                mapPosition.position = target;
+                creature.changedInWorld();
+            } else {
+                final ComponentMapper<ActionSequence> asq = game.gameWorld
+                        .getMapper(ActionSequence.class);
+                final ActionSequence seq = asq.get(game.gameWorld.getEntity(caster));
+                seq.onCastActions.clear();
+            }
         }
         if (script == "jump") {
             final Entity creature = game.gameWorld.getEntity(caster);
@@ -78,6 +85,14 @@ public class ActionExecutor {
                     creature);
             sequence.onBeginTurnActions.add(new Action(caster, 0, origin, new Pair(origin.x,
                     origin.y - 1)));
+            creature.changedInWorld();
+        }
+        if (script == "attack") {
+            final Entity creature = game.gameWorld.getEntity(caster);
+            final ActionSequence sequence = game.gameWorld.getMapper(ActionSequence.class).get(
+                    creature);
+            sequence.onEndTurnActions.add(new Action(caster, 0, origin, new Pair(origin.x,
+                    origin.y + 1)));
             creature.changedInWorld();
         }
         return true;
