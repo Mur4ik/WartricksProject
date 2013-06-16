@@ -61,7 +61,7 @@ public class SkillSelectInput implements InputProcessor {
         if (game.state.getCurrentState() == GameState.CHOOSING_SKILL) {
             final int randSkill = (int)(Math.random() * 100);
             // TODO always same skill
-            final int skillId = game.world.getManager(TagManager.class).getEntity("move").getId();
+            final int skillId = game.world.getManager(TagManager.class).getEntity("jump").getId();
             if (skillId > -1) {
                 final Entity e = game.world.getEntity(skillId);
                 final MapPosition origin = mm.get(game.world.getEntity(game.state

@@ -106,18 +106,16 @@ public class BoardScene extends AbstractScreen {
                 versusGame), true);
         gameWorld.initialize();
         // TODO creating skills
-        EntityFactory.createSkill(gameWorld, "move", 2, 1, 2, 700, 5, "move", "stuff", "stuff")
+        EntityFactory.createSkill(gameWorld, "move", 2, 1, 2, 700, 5, "jump_OnBegin", "jump_OnEnd")
                 .addToWorld();
-        EntityFactory.createSkill(gameWorld, "attack", 2, 1, 1, 600, 5, "", null, null)
+        EntityFactory.createSkill(gameWorld, "attack", 2, 1, 1, 600, 5, null, null).addToWorld();
+        EntityFactory.createSkill(gameWorld, "jump", 2, 1, 1, 500, 5, "jump_OnBegin", "jump_OnEnd")
                 .addToWorld();
-        EntityFactory.createSkill(gameWorld, "jump", 2, 1, 1, 500, 5, "", "things", "stuff")
+        EntityFactory.createSkill(gameWorld, "impactrueno", 2, 1, 1, 400, 5, null, null)
                 .addToWorld();
-        EntityFactory.createSkill(gameWorld, "impactrueno", 2, 1, 1, 400, 5, "", null, null)
+        EntityFactory.createSkill(gameWorld, "gorro del amor", 2, 1, 1, 300, 5, "", "")
                 .addToWorld();
-        EntityFactory.createSkill(gameWorld, "gorro del amor", 2, 1, 1, 300, 5, "", "", "")
-                .addToWorld();
-        EntityFactory.createSkill(gameWorld, "piruloNOjutsu", 2, 1, 1, 200, 5, "", "", "")
-                .addToWorld();
+        EntityFactory.createSkill(gameWorld, "piruloNOjutsu", 2, 1, 1, 200, 5, "", "").addToWorld();
         // TODO creating creatures
         EntityFactory.createCreature(world, gameMap, "dash", Players.ONE,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 5,

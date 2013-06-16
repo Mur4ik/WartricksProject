@@ -68,19 +68,18 @@ public class EntityFactory {
     }
 
     public static Entity createSkill(World world, String name, int baseCost, int minRange,
-            int maxRange, int baseInitiative, int cooldown, String scriptmethod,
-            String onBeginTurnMethod, String onEndTurnMethod) {
+            int maxRange, int baseInitiative, int cooldown, String onBeginTurn, String onEndTurn) {
         final Entity e = world.createEntity();
         e.addComponent(new Cooldown(cooldown));
         e.addComponent(new Range(minRange, maxRange));
         e.addComponent(new Cost(baseCost));
         e.addComponent(new Initiative(baseInitiative));
-        e.addComponent(new OnCast(name, scriptmethod));
-        if ((null != onBeginTurnMethod) && !onBeginTurnMethod.isEmpty()) {
-            e.addComponent(new OnBeginTurn(name, onBeginTurnMethod));
+        e.addComponent(new OnCast(name));
+        if ((null != onBeginTurn) && !onBeginTurn.isEmpty()) {
+            e.addComponent(new OnBeginTurn(onBeginTurn));
         }
-        if ((null != onEndTurnMethod) && !onEndTurnMethod.isEmpty()) {
-            e.addComponent(new OnBeginTurn(name, onEndTurnMethod));
+        if ((null != onEndTurn) && !onEndTurn.isEmpty()) {
+            e.addComponent(new OnBeginTurn(onEndTurn));
         }
         world.getManager(TagManager.class).register(name, e);
         world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_SKILL);

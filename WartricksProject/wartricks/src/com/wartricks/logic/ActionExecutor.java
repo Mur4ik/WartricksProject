@@ -6,8 +6,6 @@ import bsh.Interpreter;
 
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Mapper;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.wartricks.components.Action;
 import com.wartricks.components.OnBeginTurn;
 import com.wartricks.components.OnCast;
@@ -37,8 +35,7 @@ public class ActionExecutor {
     public boolean executeCast(Action action) {
         final OnCast executable = ocm.getSafe(game.world.getEntity(action.skillId));
         if (null != executable) {
-            this.execute(executable.path, executable.method, game, action.creatureId,
-                    action.origin, action.target);
+            this.execute(executable.script, game, action.creatureId, action.origin, action.target);
             return true;
         }
         return false;
@@ -47,8 +44,7 @@ public class ActionExecutor {
     public boolean executeBeginTurn(Action action) {
         final OnBeginTurn executable = bm.get(game.world.getEntity(action.skillId));
         if (null != executable) {
-            this.execute(executable.path, executable.method, game, action.creatureId,
-                    action.origin, action.target);
+            this.execute(executable.script, game, action.creatureId, action.origin, action.target);
             return true;
         }
         return false;
@@ -57,28 +53,27 @@ public class ActionExecutor {
     public boolean executeEndTurn(Action action) {
         final OnEndTurn executable = em.get(game.world.getEntity(action.skillId));
         if (null != executable) {
-            this.execute(executable.path, executable.method, game, action.creatureId,
-                    action.origin, action.target);
+            this.execute(executable.script, game, action.creatureId, action.origin, action.target);
             return true;
         }
         return false;
     }
 
-    private boolean execute(String script, String method, VersusGame game, int caster, Pair origin,
-            Pair target) {
-        try {
-            final FileHandle file = Gdx.files.internal("scripts/" + script + ".bsh");
-            final Interpreter interp = new Interpreter();
-            interp.set("game", game);
-            interp.set("caster", caster);
-            interp.set("origin", origin);
-            interp.set("target", target);
-            interp.eval(file.readString());
-        } catch (final EvalError e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+    private boolean execute(String script, VersusGame game, int caster, Pair origin, Pair target) {
+        if (null != script) {
+            try {
+                final Interpreter interp = new Interpreter();
+                interp.set("game", game);
+                interp.set("caster", caster);
+                interp.set("origin", origin);
+                interp.set("target", target);
+                interp.eval(script);
+            } catch (final EvalError e) {
+                e.printStackTrace();
+            }
+            return true;
         }
-        return true;
+        return false;
     }
     // private boolean execute(String script, String method, VersusGame game, int caster, Pair
     // origin,
