@@ -3,6 +3,7 @@ package com.wartricks.input;
 
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
+import com.artemis.managers.GroupManager;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,6 +12,8 @@ import com.wartricks.components.ActionSequence;
 import com.wartricks.components.MapPosition;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
+import com.wartricks.utils.Constants.Groups;
+import com.wartricks.utils.Constants.Players;
 
 public class ConfirmInput implements InputProcessor {
     private OrthographicCamera camera;
@@ -69,7 +72,18 @@ public class ConfirmInput implements InputProcessor {
             game.gameState.setSelectedCreature(-1);
             game.gameState.setSelectedSkill(-1);
             game.gameState.setSelectedHex(null);
-            game.gameState.setCurrentState(GameState.CHOOSING_CHARACTER);
+            String group;
+            if (game.gameState.getActivePlayer() == Players.ONE) {
+                group = Groups.PLAYER_ONE_CREATURE;
+            } else {
+                group = Groups.PLAYER_TWO_CREATURE;
+            }
+            if (game.gameState.getSelectedIds().size >= game.gameWorld
+                    .getManager(GroupManager.class).getEntities(group).size()) {
+                game.gameState.setCurrentState(GameState.PLAYER_FINISHED);
+            } else {
+                game.gameState.setCurrentState(GameState.CHOOSING_CHARACTER);
+            }
             return true;
         }
         return false;

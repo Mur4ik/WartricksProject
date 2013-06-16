@@ -102,8 +102,8 @@ public class BoardScene extends AbstractScreen {
                 versusGame), true);
         energyRenderSystem = gameWorld.setSystem(new EnergyRenderSystem(hudCamera, spriteBatch),
                 true);
-        skillRenderSystem = gameWorld
-                .setSystem(new SkillRenderSystem(hudCamera, spriteBatch), true);
+        skillRenderSystem = gameWorld.setSystem(new SkillRenderSystem(hudCamera, spriteBatch,
+                versusGame), true);
         gameWorld.initialize();
         // TODO creating skills
         EntityFactory.createSkill(gameWorld, "move", 2, 1, 1, 700, 5, "", "stuff", "stuff")

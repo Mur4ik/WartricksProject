@@ -19,8 +19,8 @@ import com.wartricks.components.Cooldown;
 import com.wartricks.components.Cost;
 import com.wartricks.components.Initiative;
 import com.wartricks.components.Range;
-import com.wartricks.components.SelectedCreature;
 import com.wartricks.components.SkillSet;
+import com.wartricks.logic.VersusGame;
 import com.wartricks.utils.PlatformUtils;
 
 public class SkillRenderSystem extends EntityProcessingSystem {
@@ -29,6 +29,8 @@ public class SkillRenderSystem extends EntityProcessingSystem {
     private BitmapFont font;
 
     private OrthographicCamera camera;
+
+    private VersusGame game;
 
     @Mapper
     ComponentMapper<SkillSet> sm;
@@ -46,10 +48,11 @@ public class SkillRenderSystem extends EntityProcessingSystem {
     ComponentMapper<Initiative> im;
 
     @SuppressWarnings("unchecked")
-    public SkillRenderSystem(OrthographicCamera camera, SpriteBatch batch) {
-        super(Aspect.getAspectForAll(SelectedCreature.class, SkillSet.class));
+    public SkillRenderSystem(OrthographicCamera camera, SpriteBatch batch, VersusGame game) {
+        super(Aspect.getAspectForAll(SkillSet.class));
         spriteBatch = batch;
         this.camera = camera;
+        this.game = game;
     }
 
     @Override
@@ -77,22 +80,24 @@ public class SkillRenderSystem extends EntityProcessingSystem {
 
     @Override
     protected void process(Entity e) {
-        spriteBatch.setColor(1, 1, 1, 1);
-        final SkillSet skills = sm.get(e);
-        final int margin = 15;
-        for (int i = 0; i < skills.skillSet.size; i++) {
-            final String skillName = skills.skillSet.get(i);
-            final Entity skill = world.getManager(TagManager.class).getEntity(skillName);
-            if (null != skill) {
-                final Range range = rm.getSafe(skill);
-                final Cost cost = cm.getSafe(skill);
-                final Cooldown cooldown = cdm.getSafe(skill);
-                final Initiative initiative = im.getSafe(skill);
-                String skillDescription = "%s: Cost %d Range %d-%d Cooldown %d Initiative %d";
-                skillDescription = String.format(skillDescription, skillName, cost.baseCost,
-                        range.minRange, range.maxRange, cooldown.currentCooldown,
-                        initiative.baseInitiative);
-                font.draw(spriteBatch, skillDescription, 20, 100 + (margin * i));
+        if (game.gameState.getSelectedCreature() == e.getId()) {
+            spriteBatch.setColor(1, 1, 1, 1);
+            final SkillSet skills = sm.get(e);
+            final int margin = 15;
+            for (int i = 0; i < skills.skillSet.size; i++) {
+                final String skillName = skills.skillSet.get(i);
+                final Entity skill = world.getManager(TagManager.class).getEntity(skillName);
+                if (null != skill) {
+                    final Range range = rm.getSafe(skill);
+                    final Cost cost = cm.getSafe(skill);
+                    final Cooldown cooldown = cdm.getSafe(skill);
+                    final Initiative initiative = im.getSafe(skill);
+                    String skillDescription = "%s: Cost %d Range %d-%d Cooldown %d Initiative %d";
+                    skillDescription = String.format(skillDescription, skillName, cost.baseCost,
+                            range.minRange, range.maxRange, cooldown.currentCooldown,
+                            initiative.baseInitiative);
+                    font.draw(spriteBatch, skillDescription, 20, 100 + (margin * i));
+                }
             }
         }
     }
