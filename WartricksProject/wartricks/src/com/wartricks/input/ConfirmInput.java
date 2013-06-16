@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
 import com.wartricks.components.MapPosition;
+import com.wartricks.components.OnCast;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
 import com.wartricks.utils.Constants.Groups;
@@ -34,8 +35,19 @@ public class ConfirmInput implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.ENTER) {
-            game.state.setCurrentState(GameState.PLAYER_FINISHED);
+        switch (keycode) {
+            case Input.Keys.ENTER:
+                game.state.setCurrentState(GameState.PLAYER_FINISHED);
+                return true;
+            case Input.Keys.BACKSPACE:
+                break;
+            case Input.Keys.SPACE:
+                final int skillId = game.state.getSelectedSkill();
+                if (skillId > -1) {
+                    game.world.getEntity(skillId).getComponent(OnCast.class).reload();
+                    return true;
+                }
+                break;
         }
         return false;
     }
@@ -64,9 +76,8 @@ public class ConfirmInput implements InputProcessor {
             final Entity creature = game.world.getEntity(game.state.getSelectedCreature());
             final MapPosition position = mm.get(creature);
             final ActionSequence sequence = asm.get(creature);
-            sequence.onCastActions.add(new Action(game.state.getSelectedCreature(),
-                    game.state.getSelectedSkill(), position.position, game.state
-                            .getSelectedHex()));
+            sequence.onCastActions.add(new Action(game.state.getSelectedCreature(), game.state
+                    .getSelectedSkill(), position.position, game.state.getSelectedHex()));
             game.state.getSelectedIds().add(game.state.getSelectedCreature());
             creature.changedInWorld();
             game.state.setSelectedCreature(-1);
@@ -78,8 +89,8 @@ public class ConfirmInput implements InputProcessor {
             } else {
                 group = Groups.PLAYER_TWO_CREATURE;
             }
-            if (game.state.getSelectedIds().size >= game.world
-                    .getManager(GroupManager.class).getEntities(group).size()) {
+            if (game.state.getSelectedIds().size >= game.world.getManager(GroupManager.class)
+                    .getEntities(group).size()) {
                 game.state.setCurrentState(GameState.PLAYER_FINISHED);
             } else {
                 game.state.setCurrentState(GameState.CHOOSING_CHARACTER);

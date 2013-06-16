@@ -79,7 +79,7 @@ public class HudRenderSystem extends VoidEntitySystem {
             font.draw(spriteBatch, "SelectedCreature: " + sprite.name, 20, screenHeight - 160);
             if (selectedSkill > -1) {
                 final OnCast script = om.get(game.world.getEntity(selectedSkill));
-                font.draw(spriteBatch, "SelectedSkill: " + script.path, 20, screenHeight - 180);
+                font.draw(spriteBatch, "SelectedSkill: " + script.name, 20, screenHeight - 180);
             }
         }
     }
