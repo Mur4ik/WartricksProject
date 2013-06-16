@@ -6,12 +6,16 @@ import bsh.Interpreter;
 
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Mapper;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.wartricks.components.Action;
 import com.wartricks.components.OnCast;
 import com.wartricks.custom.Pair;
 
 public class ActionExecutor {
     VersusGame game;
+
+    String initScript;
 
     @Mapper
     ComponentMapper<OnCast> ocm;
@@ -20,6 +24,10 @@ public class ActionExecutor {
         super();
         this.game = game;
         ocm = game.world.getMapper(OnCast.class);
+        final FileHandle file = Gdx.files.internal("scripts/skills/init.bsh");
+        if (file.exists()) {
+            initScript = file.readString();
+        }
     }
 
     public boolean execute(Action action) {
@@ -35,6 +43,7 @@ public class ActionExecutor {
         if (null != script) {
             try {
                 final Interpreter interp = new Interpreter();
+                interp.eval(initScript);
                 interp.set("game", game);
                 interp.set("caster", caster);
                 interp.set("origin", origin);
