@@ -1,8 +1,12 @@
     import com.wartricks.components.ActionSequence;
+    import com.wartricks.components.ActionSequenceOnEndTurn;
     import com.wartricks.components.Action;
     import com.wartricks.custom.Pair;
+    import com.wartricks.utils.EntityFactory;
     
     creature = game.world.getEntity(caster);
     sequence = game.world.getMapper(ActionSequence.class).get(creature);
-    sequence.onBeginTurnActions.add(new Action(caster, 0, origin, new Pair(origin.x, origin.y - 1)));
+    bolafuego = EntityFactory.createSkill(game.world, "bolafuego", 2, 2, 5, 300, 5, "", "");
+    bolafuego.addToWorld();
+    creature.addComponent(new ActionSequenceOnEndTurn(new Action(caster, bolafuego.getId(), origin, new Pair(origin.x, origin.y - 1))));
     creature.changedInWorld();

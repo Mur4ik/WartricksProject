@@ -19,7 +19,6 @@ import com.wartricks.components.Health;
 import com.wartricks.components.Initiative;
 import com.wartricks.components.Label;
 import com.wartricks.components.MapPosition;
-import com.wartricks.components.OnBeginTurn;
 import com.wartricks.components.OnCast;
 import com.wartricks.components.Owner;
 import com.wartricks.components.Position;
@@ -75,12 +74,6 @@ public class EntityFactory {
         e.addComponent(new Cost(baseCost));
         e.addComponent(new Initiative(baseInitiative));
         e.addComponent(new OnCast(name));
-        if ((null != onBeginTurn) && !onBeginTurn.isEmpty()) {
-            e.addComponent(new OnBeginTurn(onBeginTurn));
-        }
-        if ((null != onEndTurn) && !onEndTurn.isEmpty()) {
-            e.addComponent(new OnBeginTurn(onEndTurn));
-        }
         world.getManager(TagManager.class).register(name, e);
         world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_SKILL);
         return e;

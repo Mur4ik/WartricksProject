@@ -1,0 +1,17 @@
+ import com.wartricks.components.MapPosition;
+ import com.wartricks.components.ActionSequence;
+ import com.wartricks.components.ActionSequenceOnEndTurn;
+ 
+ creature = game.world.getEntity(caster);
+ creature.removeComponent(ActionSequenceOnEndTurn.class);
+ if (!game.map.cellOccupied(target.x, target.y)) {
+ game.map.moveEntity(caster, target);
+ mm = game.world.getMapper(MapPosition.class);
+ mapPosition = mm.get(creature);
+ mapPosition.setPosition(target);
+ creature.changedInWorld();
+ } else {
+ asq = game.world.getMapper(ActionSequence.class);
+ seq = asq.get(game.world.getEntity(caster));
+ seq.onCastActions.clear();
+}
