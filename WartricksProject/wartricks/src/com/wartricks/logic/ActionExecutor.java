@@ -27,13 +27,13 @@ public class ActionExecutor {
     public ActionExecutor(VersusGame game) {
         super();
         this.game = game;
-        ocm = game.gameWorld.getMapper(OnCast.class);
-        bm = game.gameWorld.getMapper(OnBeginTurn.class);
-        em = game.gameWorld.getMapper(OnEndTurn.class);
+        ocm = game.world.getMapper(OnCast.class);
+        bm = game.world.getMapper(OnBeginTurn.class);
+        em = game.world.getMapper(OnEndTurn.class);
     }
 
     public boolean executeCast(Action action) {
-        final OnCast executable = ocm.getSafe(game.gameWorld.getEntity(action.skillId));
+        final OnCast executable = ocm.getSafe(game.world.getEntity(action.skillId));
         if (null != executable) {
             this.execute(executable.path, executable.method, game, action.creatureId,
                     action.origin, action.target);
@@ -43,7 +43,7 @@ public class ActionExecutor {
     }
 
     public boolean executeBeginTurn(Action action) {
-        final OnBeginTurn executable = bm.get(game.gameWorld.getEntity(action.skillId));
+        final OnBeginTurn executable = bm.get(game.world.getEntity(action.skillId));
         if (null != executable) {
             this.execute(executable.path, executable.method, game, action.creatureId,
                     action.origin, action.target);
@@ -53,7 +53,7 @@ public class ActionExecutor {
     }
 
     public boolean executeEndTurn(Action action) {
-        final OnEndTurn executable = em.get(game.gameWorld.getEntity(action.skillId));
+        final OnEndTurn executable = em.get(game.world.getEntity(action.skillId));
         if (null != executable) {
             this.execute(executable.path, executable.method, game, action.creatureId,
                     action.origin, action.target);
@@ -65,31 +65,31 @@ public class ActionExecutor {
     private boolean execute(String script, String method, VersusGame game, int caster, Pair origin,
             Pair target) {
         if (script == "move") {
-            if (-1 != game.gameMap.getPositionAt(target.x, target.y)) {
-                game.gameMap.moveEntity(caster, target);
-                final ComponentMapper<MapPosition> mm = game.gameWorld.getMapper(MapPosition.class);
-                final Entity creature = game.gameWorld.getEntity(caster);
+            if (!game.map.cellOccupied(target.x, target.y)) {
+                game.map.moveEntity(caster, target);
+                final ComponentMapper<MapPosition> mm = game.world.getMapper(MapPosition.class);
+                final Entity creature = game.world.getEntity(caster);
                 final MapPosition mapPosition = mm.get(creature);
                 mapPosition.position = target;
                 creature.changedInWorld();
             } else {
-                final ComponentMapper<ActionSequence> asq = game.gameWorld
+                final ComponentMapper<ActionSequence> asq = game.world
                         .getMapper(ActionSequence.class);
-                final ActionSequence seq = asq.get(game.gameWorld.getEntity(caster));
+                final ActionSequence seq = asq.get(game.world.getEntity(caster));
                 seq.onCastActions.clear();
             }
         }
         if (script == "jump") {
-            final Entity creature = game.gameWorld.getEntity(caster);
-            final ActionSequence sequence = game.gameWorld.getMapper(ActionSequence.class).get(
+            final Entity creature = game.world.getEntity(caster);
+            final ActionSequence sequence = game.world.getMapper(ActionSequence.class).get(
                     creature);
             sequence.onBeginTurnActions.add(new Action(caster, 0, origin, new Pair(origin.x,
                     origin.y - 1)));
             creature.changedInWorld();
         }
         if (script == "attack") {
-            final Entity creature = game.gameWorld.getEntity(caster);
-            final ActionSequence sequence = game.gameWorld.getMapper(ActionSequence.class).get(
+            final Entity creature = game.world.getEntity(caster);
+            final ActionSequence sequence = game.world.getMapper(ActionSequence.class).get(
                     creature);
             sequence.onEndTurnActions.add(new Action(caster, 0, origin, new Pair(origin.x,
                     origin.y + 1)));

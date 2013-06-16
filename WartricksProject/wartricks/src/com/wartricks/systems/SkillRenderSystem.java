@@ -80,7 +80,7 @@ public class SkillRenderSystem extends EntityProcessingSystem {
 
     @Override
     protected void process(Entity e) {
-        if (game.gameState.getSelectedCreature() == e.getId()) {
+        if (game.state.getSelectedCreature() == e.getId()) {
             spriteBatch.setColor(1, 1, 1, 1);
             final SkillSet skills = sm.get(e);
             final int margin = 15;

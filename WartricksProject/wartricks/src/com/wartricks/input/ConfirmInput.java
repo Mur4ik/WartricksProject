@@ -28,14 +28,14 @@ public class ConfirmInput implements InputProcessor {
         super();
         this.camera = camera;
         this.game = game;
-        asm = game.gameWorld.getMapper(ActionSequence.class);
-        mm = game.gameWorld.getMapper(MapPosition.class);
+        asm = game.world.getMapper(ActionSequence.class);
+        mm = game.world.getMapper(MapPosition.class);
     }
 
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.ENTER) {
-            game.gameState.setCurrentState(GameState.PLAYER_FINISHED);
+            game.state.setCurrentState(GameState.PLAYER_FINISHED);
         }
         return false;
     }
@@ -60,29 +60,29 @@ public class ConfirmInput implements InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if ((game.gameState.getCurrentState() == GameState.CHOOSING_CONFIRM) && (button == 0)) {
-            final Entity creature = game.gameWorld.getEntity(game.gameState.getSelectedCreature());
+        if ((game.state.getCurrentState() == GameState.CHOOSING_CONFIRM) && (button == 0)) {
+            final Entity creature = game.world.getEntity(game.state.getSelectedCreature());
             final MapPosition position = mm.get(creature);
             final ActionSequence sequence = asm.get(creature);
-            sequence.onCastActions.add(new Action(game.gameState.getSelectedCreature(),
-                    game.gameState.getSelectedSkill(), position.position, game.gameState
+            sequence.onCastActions.add(new Action(game.state.getSelectedCreature(),
+                    game.state.getSelectedSkill(), position.position, game.state
                             .getSelectedHex()));
-            game.gameState.getSelectedIds().add(game.gameState.getSelectedCreature());
+            game.state.getSelectedIds().add(game.state.getSelectedCreature());
             creature.changedInWorld();
-            game.gameState.setSelectedCreature(-1);
-            game.gameState.setSelectedSkill(-1);
-            game.gameState.setSelectedHex(null);
+            game.state.setSelectedCreature(-1);
+            game.state.setSelectedSkill(-1);
+            game.state.setSelectedHex(null);
             String group;
-            if (game.gameState.getActivePlayer() == Players.ONE) {
+            if (game.state.getActivePlayer() == Players.ONE) {
                 group = Groups.PLAYER_ONE_CREATURE;
             } else {
                 group = Groups.PLAYER_TWO_CREATURE;
             }
-            if (game.gameState.getSelectedIds().size >= game.gameWorld
+            if (game.state.getSelectedIds().size >= game.world
                     .getManager(GroupManager.class).getEntities(group).size()) {
-                game.gameState.setCurrentState(GameState.PLAYER_FINISHED);
+                game.state.setCurrentState(GameState.PLAYER_FINISHED);
             } else {
-                game.gameState.setCurrentState(GameState.CHOOSING_CHARACTER);
+                game.state.setCurrentState(GameState.CHOOSING_CHARACTER);
             }
             return true;
         }

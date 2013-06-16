@@ -68,17 +68,17 @@ public class HudRenderSystem extends VoidEntitySystem {
                 screenHeight - 60);
         font.draw(spriteBatch, "Total deleted: " + world.getEntityManager().getTotalDeleted(), 20,
                 screenHeight - 80);
-        font.draw(spriteBatch, "GameState: " + game.gameState.getCurrentState(), 20,
+        font.draw(spriteBatch, "GameState: " + game.state.getCurrentState(), 20,
                 screenHeight - 120);
-        font.draw(spriteBatch, "ActivePlayer: " + game.gameState.getActivePlayer(), 20,
+        font.draw(spriteBatch, "ActivePlayer: " + game.state.getActivePlayer(), 20,
                 screenHeight - 140);
-        final int selectedCreature = game.gameState.getSelectedCreature();
-        final int selectedSkill = game.gameState.getSelectedSkill();
+        final int selectedCreature = game.state.getSelectedCreature();
+        final int selectedSkill = game.state.getSelectedSkill();
         if (selectedCreature > -1) {
-            final Sprite sprite = sm.get(game.gameWorld.getEntity(selectedCreature));
+            final Sprite sprite = sm.get(game.world.getEntity(selectedCreature));
             font.draw(spriteBatch, "SelectedCreature: " + sprite.name, 20, screenHeight - 160);
             if (selectedSkill > -1) {
-                final OnCast script = om.get(game.gameWorld.getEntity(selectedSkill));
+                final OnCast script = om.get(game.world.getEntity(selectedSkill));
                 font.draw(spriteBatch, "SelectedSkill: " + script.path, 20, screenHeight - 180);
             }
         }

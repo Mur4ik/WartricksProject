@@ -27,7 +27,7 @@ public class OnEndTurnSystem extends EntityProcessingSystem {
         final ActionSequence sequence = asm.get(e);
         if (sequence.onEndTurnActions.size() > 1) {
             for (final Action action : sequence.onEndTurnActions) {
-                game.gameExecutor.executeEndTurn(action);
+                game.executor.executeEndTurn(action);
             }
         }
     }

@@ -45,11 +45,11 @@ public class TargetSelectInput implements InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if ((game.gameState.getCurrentState() == GameState.CHOOSING_TARGET) && (button == 0)) {
-            final Pair coords = game.gameMap.tools.window2world(Gdx.input.getX(), Gdx.input.getY());
-            if (game.gameMap.highlighted.contains(coords, false)) {
-                game.gameState.setSelectedHex(coords);
-                game.gameState.setCurrentState(GameState.CHOOSING_CONFIRM);
+        if ((game.state.getCurrentState() == GameState.CHOOSING_TARGET) && (button == 0)) {
+            final Pair coords = game.map.tools.window2world(Gdx.input.getX(), Gdx.input.getY());
+            if (game.map.highlighted.contains(coords, false)) {
+                game.state.setSelectedHex(coords);
+                game.state.setCurrentState(GameState.CHOOSING_CONFIRM);
                 return true;
             }
         }

@@ -28,8 +28,8 @@ public class SkillSelectInput implements InputProcessor {
     public SkillSelectInput(OrthographicCamera camera, VersusGame game) {
         this.camera = camera;
         this.game = game;
-        rm = game.gameWorld.getMapper(Range.class);
-        mm = game.gameWorld.getMapper(MapPosition.class);
+        rm = game.world.getMapper(Range.class);
+        mm = game.world.getMapper(MapPosition.class);
     }
 
     @Override
@@ -58,25 +58,25 @@ public class SkillSelectInput implements InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (game.gameState.getCurrentState() == GameState.CHOOSING_SKILL) {
+        if (game.state.getCurrentState() == GameState.CHOOSING_SKILL) {
             final int randSkill = (int)(Math.random() * 100);
             int skillId = -1;
             if (randSkill < 30) {
-                skillId = game.gameWorld.getManager(TagManager.class).getEntity("jump").getId();
+                skillId = game.world.getManager(TagManager.class).getEntity("jump").getId();
             } else if (randSkill > 70) {
-                skillId = game.gameWorld.getManager(TagManager.class).getEntity("attack").getId();
+                skillId = game.world.getManager(TagManager.class).getEntity("attack").getId();
             } else {
-                skillId = game.gameWorld.getManager(TagManager.class).getEntity("move").getId();
+                skillId = game.world.getManager(TagManager.class).getEntity("move").getId();
             }
             if (skillId > -1) {
-                final Entity e = game.gameWorld.getEntity(skillId);
-                final MapPosition origin = mm.get(game.gameWorld.getEntity(game.gameState
+                final Entity e = game.world.getEntity(skillId);
+                final MapPosition origin = mm.get(game.world.getEntity(game.state
                         .getSelectedCreature()));
                 final Range range = rm.get(e);
-                game.gameMap.addHighlightedShape(Shapes.CIRCLE, range.minRange, range.maxRange,
+                game.map.addHighlightedShape(Shapes.CIRCLE, range.minRange, range.maxRange,
                         origin.position, new FloatPair(1, 1));
-                game.gameState.setSelectedSkill(skillId);
-                game.gameState.setCurrentState(GameState.CHOOSING_TARGET);
+                game.state.setSelectedSkill(skillId);
+                game.state.setCurrentState(GameState.CHOOSING_TARGET);
                 return true;
             }
         }

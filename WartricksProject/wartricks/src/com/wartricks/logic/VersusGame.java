@@ -21,13 +21,13 @@ import com.wartricks.utils.Constants.Players;
 public class VersusGame implements Observer {
     private OrthographicCamera camera;
 
-    public GameMap gameMap;
+    public GameMap map;
 
-    public World gameWorld;
+    public World world;
 
-    public ActionExecutor gameExecutor;
+    public ActionExecutor executor;
 
-    public StateMachine gameState;
+    public StateMachine state;
 
     public InputMultiplexer inputSystem;
 
@@ -47,10 +47,10 @@ public class VersusGame implements Observer {
 
     public VersusGame(GameMap gameMap, World gameWorld, OrthographicCamera camera) {
         super();
-        this.gameMap = gameMap;
-        this.gameWorld = gameWorld;
+        map = gameMap;
+        world = gameWorld;
         this.camera = camera;
-        gameExecutor = new ActionExecutor(this);
+        executor = new ActionExecutor(this);
         onExecuteTurnSystem = gameWorld.setSystem(new OnExecuteTurnSystem(this), true);
         onBeginTurnSystem = gameWorld.setSystem(new OnBeginTurnSystem(this), true);
         onEndTurnSystem = gameWorld.setSystem(new OnEndTurnSystem(this), true);
@@ -65,26 +65,26 @@ public class VersusGame implements Observer {
         inputSystem.addProcessor(targetSelectInput);
         inputSystem.addProcessor(confirmSelectInput);
         Gdx.input.setInputProcessor(inputSystem);
-        gameState = new StateMachine();
+        state = new StateMachine();
     }
 
     public boolean startLogic() {
-        gameState.addObserver(this);
-        gameState.setCurrentState(GameState.CHOOSING_CHARACTER);
+        state.addObserver(this);
+        state.setCurrentState(GameState.CHOOSING_CHARACTER);
         return true;
     }
 
     @Override
     public void update(Observable obs, Object currentState) {
         if (currentState instanceof GameState) {
-            final GameState state = (GameState)currentState;
-            switch (state) {
+            final GameState gameState = (GameState)currentState;
+            switch (gameState) {
                 case BEGIN_TURN:
                     onBeginTurnSystem.process();
-                    gameState.setActivePlayer(Players.ONE);
-                    gameState.setCurrentState(GameState.CHOOSING_CHARACTER);
+                    state.setActivePlayer(Players.ONE);
+                    state.setCurrentState(GameState.CHOOSING_CHARACTER);
                 case CHOOSING_CHARACTER:
-                    gameMap.clearHighlights();
+                    map.clearHighlights();
                     break;
                 case CHOOSING_CONFIRM:
                     break;
@@ -93,19 +93,19 @@ public class VersusGame implements Observer {
                 case CHOOSING_TARGET:
                     break;
                 case PLAYER_FINISHED:
-                    gameState.clearSelectedIds();
-                    gameMap.clearHighlights();
-                    if (Players.ONE == gameState.getActivePlayer()) {
-                        gameState.setActivePlayer(Players.TWO);
-                        gameState.setCurrentState(GameState.CHOOSING_CHARACTER);
-                    } else if (Players.TWO == gameState.getActivePlayer()) {
+                    state.clearSelectedIds();
+                    map.clearHighlights();
+                    if (Players.ONE == state.getActivePlayer()) {
+                        state.setActivePlayer(Players.TWO);
+                        state.setCurrentState(GameState.CHOOSING_CHARACTER);
+                    } else if (Players.TWO == state.getActivePlayer()) {
                         onExecuteTurnSystem.process();
-                        gameState.setCurrentState(GameState.END_TURN);
+                        state.setCurrentState(GameState.END_TURN);
                     }
                     break;
                 case END_TURN:
                     onEndTurnSystem.process();
-                    gameState.setCurrentState(GameState.BEGIN_TURN);
+                    state.setCurrentState(GameState.BEGIN_TURN);
                     break;
             }
         }

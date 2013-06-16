@@ -26,7 +26,7 @@ public class CreatureSelectInput implements InputProcessor {
         super();
         this.camera = camera;
         this.game = game;
-        om = game.gameWorld.getMapper(Owner.class);
+        om = game.world.getMapper(Owner.class);
     }
 
     @Override
@@ -55,19 +55,19 @@ public class CreatureSelectInput implements InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if ((game.gameState.getCurrentState() == GameState.CHOOSING_CHARACTER) && (button == 0)) {
-            final Pair coords = game.gameMap.tools.window2world(Gdx.input.getX(), Gdx.input.getY());
+        if ((game.state.getCurrentState() == GameState.CHOOSING_CHARACTER) && (button == 0)) {
+            final Pair coords = game.map.tools.window2world(Gdx.input.getX(), Gdx.input.getY());
             if ((coords.x >= 0) && (coords.x <= (Constants.HEX_MAP_WIDTH - 1)) && (coords.y >= 0)
                     && (coords.y <= (Constants.HEX_MAP_HEIGHT - 1))) {
-                final int entityId = game.gameMap.getEntityAt(coords.x, coords.y);
-                if ((entityId > -1) && !game.gameState.getSelectedIds().contains(entityId, false)) {
-                    final Entity e = game.gameWorld.getEntity(entityId);
+                final int entityId = game.map.getEntityAt(coords.x, coords.y);
+                if ((entityId > -1) && !game.state.getSelectedIds().contains(entityId, false)) {
+                    final Entity e = game.world.getEntity(entityId);
                     final Owner owner = om.get(e);
-                    if (owner.owner == game.gameState.getActivePlayer()) {
-                        game.gameState.setSelectedCreature(entityId);
-                        EntityFactory.createClick(game.gameWorld, coords.x, coords.y, 0.4f, 4f,
+                    if (owner.owner == game.state.getActivePlayer()) {
+                        game.state.setSelectedCreature(entityId);
+                        EntityFactory.createClick(game.world, coords.x, coords.y, 0.4f, 4f,
                                 0.15f).addToWorld();
-                        game.gameState.setCurrentState(GameState.CHOOSING_SKILL);
+                        game.state.setCurrentState(GameState.CHOOSING_SKILL);
                     }
                     return true;
                 }

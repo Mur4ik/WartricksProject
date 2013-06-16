@@ -28,7 +28,7 @@ public class OnExecuteTurnSystem extends VoidEntitySystem {
 
     @Override
     protected void processSystem() {
-        final ImmutableBag<Entity> characters = game.gameWorld.getManager(GroupManager.class)
+        final ImmutableBag<Entity> characters = game.world.getManager(GroupManager.class)
                 .getEntities(Groups.CREATURE);
         final Array<Action> turn = new Array<Action>();
         do {
@@ -38,9 +38,9 @@ public class OnExecuteTurnSystem extends VoidEntitySystem {
                     turn.add(sequence.onCastActions.remove(0));
                 }
             }
-            turn.sort(new ActionComparator(game.gameWorld));
+            turn.sort(new ActionComparator(game.world));
             for (final Action action : turn) {
-                game.gameExecutor.executeCast(action);
+                game.executor.executeCast(action);
             }
             turn.clear();
         } while (turn.size > 0);
