@@ -60,14 +60,8 @@ public class SkillSelectInput implements InputProcessor {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (game.state.getCurrentState() == GameState.CHOOSING_SKILL) {
             final int randSkill = (int)(Math.random() * 100);
-            int skillId = -1;
-            if (randSkill < 30) {
-                skillId = game.world.getManager(TagManager.class).getEntity("jump").getId();
-            } else if (randSkill > 70) {
-                skillId = game.world.getManager(TagManager.class).getEntity("attack").getId();
-            } else {
-                skillId = game.world.getManager(TagManager.class).getEntity("move").getId();
-            }
+            // TODO always same skill
+            final int skillId = game.world.getManager(TagManager.class).getEntity("move").getId();
             if (skillId > -1) {
                 final Entity e = game.world.getEntity(skillId);
                 final MapPosition origin = mm.get(game.world.getEntity(game.state

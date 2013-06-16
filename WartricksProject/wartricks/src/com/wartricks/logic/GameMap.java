@@ -104,6 +104,10 @@ public class GameMap {
         coordByEntity.put(id, new Pair(x, y));
     }
 
+    public void moveEntity(int id, Pair selectedHex) {
+        this.moveEntity(id, selectedHex.x, selectedHex.y);
+    }
+
     public void moveEntity(int id, int x, int y) {
         final Pair old = coordByEntity.put(id, new Pair(x, y));
         entityByCoord[old.x][old.y] = -1;
@@ -164,9 +168,5 @@ public class GameMap {
             case WAVE:
                 break;
         }
-    }
-
-    public void moveEntity(int id, Pair selectedHex) {
-        this.moveEntity(id, selectedHex.x, selectedHex.y);
     }
 }

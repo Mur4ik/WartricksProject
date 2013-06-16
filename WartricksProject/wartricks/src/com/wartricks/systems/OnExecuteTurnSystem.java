@@ -20,7 +20,6 @@ public class OnExecuteTurnSystem extends VoidEntitySystem {
     @Mapper
     ComponentMapper<ActionSequence> asm;
 
-    @SuppressWarnings("unchecked")
     public OnExecuteTurnSystem(VersusGame game) {
         super();
         this.game = game;

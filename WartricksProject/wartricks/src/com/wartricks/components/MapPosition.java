@@ -18,4 +18,12 @@ public class MapPosition extends Component {
     public MapPosition(Pair target) {
         position = target;
     }
+
+    public Pair getPosition() {
+        return position;
+    }
+
+    public void setPosition(Pair position) {
+        this.position = position;
+    }
 }

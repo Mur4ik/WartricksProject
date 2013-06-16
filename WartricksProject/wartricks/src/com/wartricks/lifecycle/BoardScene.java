@@ -106,7 +106,7 @@ public class BoardScene extends AbstractScreen {
                 versusGame), true);
         gameWorld.initialize();
         // TODO creating skills
-        EntityFactory.createSkill(gameWorld, "move", 2, 1, 1, 700, 5, "", "stuff", "stuff")
+        EntityFactory.createSkill(gameWorld, "move", 2, 1, 2, 700, 5, "move", "stuff", "stuff")
                 .addToWorld();
         EntityFactory.createSkill(gameWorld, "attack", 2, 1, 1, 600, 5, "", null, null)
                 .addToWorld();
@@ -156,7 +156,7 @@ public class BoardScene extends AbstractScreen {
     @Override
     public void render(final float delta) {
         super.render(delta);
-        fpsLogger.log();
+        // fpsLogger.log();
         spriteBatch.setProjectionMatrix(camera.combined);
         movementSystem.process();
         mapRenderSystem.process();
