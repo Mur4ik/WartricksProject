@@ -32,7 +32,7 @@ public class ConfirmInput implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.ENTER) {
-            game.gameState.setCurrentState(GameState.RESOLVING_ACTIONS);
+            game.gameState.setCurrentState(GameState.PLAYER_FINISHED);
         }
         return false;
     }
@@ -61,10 +61,14 @@ public class ConfirmInput implements InputProcessor {
             final Entity creature = game.gameWorld.getEntity(game.gameState.getSelectedCreature());
             final MapPosition position = mm.get(creature);
             final ActionSequence sequence = asm.get(creature);
-            sequence.actions.add(new Action(game.gameState.getSelectedCreature(), game.gameState
-                    .getSelectedSkill(), position.position, game.gameState.getSelectedHex()));
+            sequence.onCastActions.add(new Action(game.gameState.getSelectedCreature(),
+                    game.gameState.getSelectedSkill(), position.position, game.gameState
+                            .getSelectedHex()));
             game.gameState.getSelectedIds().add(game.gameState.getSelectedCreature());
             creature.changedInWorld();
+            game.gameState.setSelectedCreature(-1);
+            game.gameState.setSelectedSkill(-1);
+            game.gameState.setSelectedHex(null);
             game.gameState.setCurrentState(GameState.CHOOSING_CHARACTER);
             return true;
         }

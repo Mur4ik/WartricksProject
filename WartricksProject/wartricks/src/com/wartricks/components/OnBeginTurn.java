@@ -1,18 +1,30 @@
 
 package com.wartricks.components;
 
-import com.artemis.Entity;
-import com.artemis.World;
-import com.wartricks.logic.GameMap;
-import com.wartricks.utils.LoadScript;
-
 public class OnBeginTurn extends AbstractScriptAction {
+    private boolean active;
+
+    private int casterId;
+
     public OnBeginTurn(String scriptName, String methodName) {
         super(scriptName, methodName);
+        active = false;
+        casterId = -1;
     }
 
-    public void execute(GameMap gameMap, World gameWorld, Entity action) {
-        final LoadScript script = new LoadScript(path);
-        script.runUnboundScriptFunction(method, gameMap, gameWorld, action);
+    public boolean activate(int casterId) {
+        this.casterId = casterId;
+        active = true;
+        return true;
+    }
+
+    public boolean deactivate() {
+        casterId = -1;
+        active = false;
+        return true;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 }

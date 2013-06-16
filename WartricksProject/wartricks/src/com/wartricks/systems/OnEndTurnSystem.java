@@ -6,24 +6,29 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
 import com.artemis.systems.EntityProcessingSystem;
-import com.wartricks.components.OnEndTurn;
+import com.wartricks.components.Action;
+import com.wartricks.components.ActionSequence;
 import com.wartricks.logic.VersusGame;
 
 public class OnEndTurnSystem extends EntityProcessingSystem {
     private VersusGame game;
 
     @Mapper
-    ComponentMapper<OnEndTurn> tm;
+    ComponentMapper<ActionSequence> asm;
 
     @SuppressWarnings("unchecked")
     public OnEndTurnSystem(VersusGame game) {
-        super(Aspect.getAspectForAll(OnEndTurn.class));
+        super(Aspect.getAspectForAll(ActionSequence.class));
         this.game = game;
     }
 
     @Override
     protected void process(Entity e) {
-        // final OnEndTurn executable = tm.getSafe(e);
-        // executable.execute(gameMap, gameWorld, e);
+        final ActionSequence sequence = asm.get(e);
+        if (sequence.onBeginTurnActions.size() > 1) {
+            for (final Action action : sequence.onBeginTurnActions) {
+                game.gameExecutor.executeEndTurn(action);
+            }
+        }
     }
 }

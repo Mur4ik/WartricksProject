@@ -19,6 +19,7 @@ import com.wartricks.components.Health;
 import com.wartricks.components.Initiative;
 import com.wartricks.components.Label;
 import com.wartricks.components.MapPosition;
+import com.wartricks.components.OnBeginTurn;
 import com.wartricks.components.OnCast;
 import com.wartricks.components.Owner;
 import com.wartricks.components.Position;
@@ -66,13 +67,20 @@ public class EntityFactory {
     }
 
     public static Entity createSkill(World world, String name, int baseCost, int minRange,
-            int maxRange, int baseInitiative, int cooldown, String scriptmethod) {
+            int maxRange, int baseInitiative, int cooldown, String scriptmethod,
+            String onBeginTurnMethod, String onEndTurnMethod) {
         final Entity e = world.createEntity();
         e.addComponent(new Cooldown(cooldown));
         e.addComponent(new Range(minRange, maxRange));
         e.addComponent(new Cost(baseCost));
         e.addComponent(new Initiative(baseInitiative));
         e.addComponent(new OnCast(name, scriptmethod));
+        if ((null != onBeginTurnMethod) && !onBeginTurnMethod.isEmpty()) {
+            e.addComponent(new OnBeginTurn(name, onBeginTurnMethod));
+        }
+        if ((null != onEndTurnMethod) && !onEndTurnMethod.isEmpty()) {
+            e.addComponent(new OnBeginTurn(name, onEndTurnMethod));
+        }
         world.getManager(TagManager.class).register(name, e);
         world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_SKILL);
         return e;

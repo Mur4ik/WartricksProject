@@ -10,8 +10,6 @@ import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.utils.Array;
 import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
-import com.wartricks.components.MapPosition;
-import com.wartricks.components.OnCast;
 import com.wartricks.custom.ActionComparator;
 import com.wartricks.logic.VersusGame;
 import com.wartricks.utils.Constants.Groups;
@@ -19,9 +17,6 @@ import com.wartricks.utils.Constants.Players;
 
 public class OnExecuteTurnSystem extends VoidEntitySystem {
     private VersusGame game;
-
-    @Mapper
-    ComponentMapper<OnCast> ocm;
 
     @Mapper
     ComponentMapper<ActionSequence> asm;
@@ -46,24 +41,13 @@ public class OnExecuteTurnSystem extends VoidEntitySystem {
         do {
             for (int i = 0; i < characters.size(); i++) {
                 final ActionSequence sequence = asm.get(characters.get(i));
-                if (sequence.actions.size() > 0) {
-                    turn.add(sequence.actions.remove(0));
+                if (sequence.onCastActions.size() > 0) {
+                    turn.add(sequence.onCastActions.remove(0));
                 }
             }
             turn.sort(new ActionComparator(game.gameWorld));
             for (final Action action : turn) {
-                final OnCast executable = ocm.getSafe(game.gameWorld.getEntity(action.skillId));
-                // TODO placeholder
-                if (executable.path == "move") {
-                    game.gameMap.moveEntity(action.creatureId, action.target);
-                    final ComponentMapper<MapPosition> mm = game.gameWorld
-                            .getMapper(MapPosition.class);
-                    final Entity caster = game.gameWorld.getEntity(action.creatureId);
-                    final MapPosition mapPosition = mm.get(caster);
-                    mapPosition.position = action.target;
-                    caster.changedInWorld();
-                }
-                //
+                game.gameExecutor.executeCast(action);
             }
             turn.clear();
         } while (turn.size > 0);

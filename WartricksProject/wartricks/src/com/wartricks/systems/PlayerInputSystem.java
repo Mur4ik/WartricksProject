@@ -81,7 +81,7 @@ public class PlayerInputSystem extends EntityProcessingSystem implements InputPr
             // new FloatPair(-1, -1), 2));
             // gameMap.addHighlights(gameMap.tools.getWaveRange(movement.caster, movement.target));
             mapPosition = new MapPosition(moveTarget.x, moveTarget.y);
-            path.actions.add(movement);
+            path.onCastActions.add(movement);
             e.removeComponent(MapPosition.class);
             e.addComponent(mapPosition);
             e.changedInWorld();

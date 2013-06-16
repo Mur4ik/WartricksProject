@@ -9,7 +9,7 @@ import com.wartricks.utils.Constants.Players;
 
 public class StateMachine extends Observable {
     public enum GameState {
-        CHOOSING_CHARACTER, CHOOSING_SKILL, CHOOSING_TARGET, CHOOSING_CONFIRM, RESOLVING_ACTIONS
+        CHOOSING_CHARACTER, CHOOSING_SKILL, CHOOSING_TARGET, CHOOSING_CONFIRM, PLAYER_FINISHED, BEGIN_TURN, END_TURN
     }
 
     private GameState currentState;
@@ -47,11 +47,9 @@ public class StateMachine extends Observable {
     }
 
     public void setActivePlayer(Players player) {
-        // To maintain the finite automata consistent we reset it
-        currentState = GameState.CHOOSING_CHARACTER;
         activePlayer = player;
         this.setChanged();
-        this.notifyObservers(currentState);
+        this.notifyObservers(activePlayer);
     }
 
     public int getSelectedCreature() {

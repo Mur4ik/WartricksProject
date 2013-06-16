@@ -25,6 +25,8 @@ public class VersusGame implements Observer {
 
     public World gameWorld;
 
+    public ActionExecutor gameExecutor;
+
     public StateMachine gameState;
 
     public InputMultiplexer inputSystem;
@@ -48,6 +50,7 @@ public class VersusGame implements Observer {
         this.gameMap = gameMap;
         this.gameWorld = gameWorld;
         this.camera = camera;
+        gameExecutor = new ActionExecutor(this);
         onExecuteTurnSystem = gameWorld.setSystem(new OnExecuteTurnSystem(this), true);
         onBeginTurnSystem = gameWorld.setSystem(new OnBeginTurnSystem(this), true);
         onEndTurnSystem = gameWorld.setSystem(new OnEndTurnSystem(this), true);
@@ -76,8 +79,11 @@ public class VersusGame implements Observer {
         if (currentState instanceof GameState) {
             final GameState state = (GameState)currentState;
             switch (state) {
-                case CHOOSING_CHARACTER:
+                case BEGIN_TURN:
                     onBeginTurnSystem.process();
+                    gameState.setActivePlayer(Players.ONE);
+                    gameState.setCurrentState(GameState.CHOOSING_CHARACTER);
+                case CHOOSING_CHARACTER:
                     gameMap.clearHighlights();
                     break;
                 case CHOOSING_CONFIRM:
@@ -86,19 +92,20 @@ public class VersusGame implements Observer {
                     break;
                 case CHOOSING_TARGET:
                     break;
-                case RESOLVING_ACTIONS:
-                    onExecuteTurnSystem.process();
-                    gameMap.clearHighlights();
-                    gameState.setSelectedCreature(-1);
-                    gameState.setSelectedSkill(-1);
-                    gameState.setSelectedHex(null);
+                case PLAYER_FINISHED:
                     gameState.clearSelectedIds();
-                    onEndTurnSystem.process();
+                    gameMap.clearHighlights();
                     if (Players.ONE == gameState.getActivePlayer()) {
                         gameState.setActivePlayer(Players.TWO);
-                    } else {
-                        gameState.setActivePlayer(Players.ONE);
+                        gameState.setCurrentState(GameState.CHOOSING_CHARACTER);
+                    } else if (Players.TWO == gameState.getActivePlayer()) {
+                        onExecuteTurnSystem.process();
+                        gameState.setCurrentState(GameState.END_TURN);
                     }
+                    break;
+                case END_TURN:
+                    onEndTurnSystem.process();
+                    gameState.setCurrentState(GameState.BEGIN_TURN);
                     break;
             }
         }
