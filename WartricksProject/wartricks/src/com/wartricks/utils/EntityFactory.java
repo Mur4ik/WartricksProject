@@ -52,6 +52,7 @@ public class EntityFactory {
         e.addComponent(new SkillSet(skillSet));
         e.addComponent(new Owner(owner));
         world.getManager(TagManager.class).register(sprite, e);
+        world.getManager(GroupManager.class).add(e, Constants.Groups.CREATURE);
         switch (owner) {
             case ONE:
                 world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_ONE_CREATURE);

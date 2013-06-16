@@ -13,7 +13,6 @@ import com.wartricks.components.ActionSequence;
 import com.wartricks.custom.ActionComparator;
 import com.wartricks.logic.VersusGame;
 import com.wartricks.utils.Constants.Groups;
-import com.wartricks.utils.Constants.Players;
 
 public class OnExecuteTurnSystem extends VoidEntitySystem {
     private VersusGame game;
@@ -29,14 +28,8 @@ public class OnExecuteTurnSystem extends VoidEntitySystem {
 
     @Override
     protected void processSystem() {
-        String group;
-        if (game.gameState.getActivePlayer() == Players.ONE) {
-            group = Groups.PLAYER_ONE_CREATURE;
-        } else {
-            group = Groups.PLAYER_TWO_CREATURE;
-        }
         final ImmutableBag<Entity> characters = game.gameWorld.getManager(GroupManager.class)
-                .getEntities(group);
+                .getEntities(Groups.CREATURE);
         final Array<Action> turn = new Array<Action>();
         do {
             for (int i = 0; i < characters.size(); i++) {
