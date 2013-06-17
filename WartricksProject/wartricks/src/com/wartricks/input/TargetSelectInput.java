@@ -57,11 +57,7 @@ public class TargetSelectInput implements InputProcessor {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if ((game.state.getCurrentState() == GameState.CHOOSING_TARGET) && (button == 0)) {
             final Pair coords = game.map.tools.window2world(Gdx.input.getX(), Gdx.input.getY());
-            if (game.map.highlighted.contains(coords, false)) {
-                game.state.setSelectedHex(coords);
-                game.state.setCurrentState(GameState.CHOOSING_CONFIRM);
-                return true;
-            }
+            return game.selectHexagon(coords);
         }
         return false;
     }

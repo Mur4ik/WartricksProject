@@ -11,4 +11,8 @@ public class Cost extends Component {
         this.baseCost = baseCost;
         modifierCost = 0;
     }
+
+    public int getCostAfterModifiers() {
+        return baseCost + modifierCost;
+    }
 }

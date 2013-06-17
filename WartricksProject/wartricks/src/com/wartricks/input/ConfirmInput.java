@@ -3,10 +3,13 @@ package com.wartricks.input;
 
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
+import com.artemis.managers.TagManager;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
+import com.wartricks.components.Cost;
+import com.wartricks.components.EnergyBar;
 import com.wartricks.components.MapPosition;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
@@ -20,12 +23,18 @@ public class ConfirmInput implements InputProcessor {
 
     private ComponentMapper<MapPosition> mm;
 
+    private ComponentMapper<EnergyBar> ebm;
+
+    private ComponentMapper<Cost> com;
+
     public ConfirmInput(OrthographicCamera camera, VersusGame game) {
         super();
         this.camera = camera;
         this.game = game;
         asm = game.world.getMapper(ActionSequence.class);
         mm = game.world.getMapper(MapPosition.class);
+        ebm = game.world.getMapper(EnergyBar.class);
+        com = game.world.getMapper(Cost.class);
     }
 
     @Override
@@ -59,9 +68,16 @@ public class ConfirmInput implements InputProcessor {
             final ActionSequence sequence = asm.get(creature);
             sequence.onCastActions.add(new Action(game.state.getSelectedCreature(), game.state
                     .getSelectedSkill(), position.position, game.state.getSelectedHex()));
+            creature.changedInWorld();
+            final Entity player = game.world.getManager(TagManager.class).getEntity(
+                    game.state.getActivePlayer().toString());
+            final Entity skill = game.world.getEntity(game.state.getSelectedSkill());
+            final Cost cost = com.get(skill);
+            final EnergyBar bar = ebm.get(player);
+            bar.currentEnergy -= cost.getCostAfterModifiers();
+            player.changedInWorld();
             // TODO incorrect
             // game.state.getSelectedIds().add(game.state.getSelectedCreature());
-            creature.changedInWorld();
             // TODO removed autoturns
             // String group;
             // if (game.state.getActivePlayer() == Players.ONE) {
