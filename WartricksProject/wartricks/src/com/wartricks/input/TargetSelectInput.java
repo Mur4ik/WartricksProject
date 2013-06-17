@@ -24,7 +24,7 @@ public class TargetSelectInput implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         switch (keycode) {
-            case Input.Keys.SPACE:
+            case Input.Keys.R:
                 final int skillId = game.state.getSelectedSkill();
                 if (skillId > -1) {
                     game.world.getEntity(skillId).getComponent(OnCast.class).reload();
