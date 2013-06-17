@@ -82,8 +82,8 @@ public class PathRenderSystem extends EntitySystem {
             for (int i = 0; i < moves.onCastActions.size(); i++) {
                 move = moves.onCastActions.get(i);
                 if (!move.origin.equals(move.target)) {
-                    final FloatPair coordsOrigin = gameMap.tools.world2window(move.origin.x,
-                            move.origin.y);
+                    final FloatPair coordsOrigin = gameMap.tools.world2window(move.target.x,
+                            move.target.y);
                     font.draw(spriteBatch, String.valueOf(i), coordsOrigin.x - 10,
                             coordsOrigin.y - 10);
                     // spriteBatch.draw(feet, coordsOrigin.x - (feet.getWidth() / 2), coordsOrigin.y
