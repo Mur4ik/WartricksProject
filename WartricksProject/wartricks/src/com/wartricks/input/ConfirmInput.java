@@ -4,13 +4,11 @@ package com.wartricks.input;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.managers.GroupManager;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
 import com.wartricks.components.MapPosition;
-import com.wartricks.components.OnCast;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
 import com.wartricks.utils.Constants.Groups;
@@ -35,20 +33,6 @@ public class ConfirmInput implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        switch (keycode) {
-            case Input.Keys.ENTER:
-                game.state.setCurrentState(GameState.PLAYER_FINISHED);
-                return true;
-            case Input.Keys.BACKSPACE:
-                break;
-            case Input.Keys.SPACE:
-                final int skillId = game.state.getSelectedSkill();
-                if (skillId > -1) {
-                    game.world.getEntity(skillId).getComponent(OnCast.class).reload();
-                    return true;
-                }
-                break;
-        }
         return false;
     }
 

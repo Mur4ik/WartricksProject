@@ -5,17 +5,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.wartricks.components.OnCast;
-import com.wartricks.custom.Pair;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
 
-public class TargetSelectInput implements InputProcessor {
+public class GeneralInput implements InputProcessor {
     private OrthographicCamera camera;
 
     private VersusGame game;
 
-    public TargetSelectInput(OrthographicCamera camera, VersusGame game) {
+    public GeneralInput(OrthographicCamera camera, VersusGame game) {
         super();
         this.camera = camera;
         this.game = game;
@@ -24,12 +22,15 @@ public class TargetSelectInput implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         switch (keycode) {
+            case Input.Keys.ESCAPE:
+                Gdx.app.exit();
+                return true;
+            case Input.Keys.ENTER:
+                game.state.setCurrentState(GameState.PLAYER_FINISHED);
+                return true;
+            case Input.Keys.BACKSPACE:
+                break;
             case Input.Keys.SPACE:
-                final int skillId = game.state.getSelectedSkill();
-                if (skillId > -1) {
-                    game.world.getEntity(skillId).getComponent(OnCast.class).reload();
-                    return true;
-                }
                 break;
         }
         return false;
@@ -55,14 +56,7 @@ public class TargetSelectInput implements InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if ((game.state.getCurrentState() == GameState.CHOOSING_TARGET) && (button == 0)) {
-            final Pair coords = game.map.tools.window2world(Gdx.input.getX(), Gdx.input.getY());
-            if (game.map.highlighted.contains(coords, false)) {
-                game.state.setSelectedHex(coords);
-                game.state.setCurrentState(GameState.CHOOSING_CONFIRM);
-                return true;
-            }
-        }
+        // TODO Auto-generated method stub
         return false;
     }
 
