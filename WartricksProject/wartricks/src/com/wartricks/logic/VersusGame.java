@@ -17,9 +17,11 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
+import com.wartricks.components.Cooldown;
 import com.wartricks.components.Cost;
 import com.wartricks.components.EnergyBar;
 import com.wartricks.components.EnergyRegen;
+import com.wartricks.components.Initiative;
 import com.wartricks.components.MapPosition;
 import com.wartricks.components.Owner;
 import com.wartricks.components.Range;
@@ -80,10 +82,19 @@ public class VersusGame implements Observer {
     private ComponentMapper<Cost> com;
 
     @Mapper
-    ComponentMapper<Owner> om;
+    private ComponentMapper<ActionSequence> asm;
 
     @Mapper
-    ComponentMapper<EnergyRegen> erm;
+    private ComponentMapper<Initiative> im;
+
+    @Mapper
+    private ComponentMapper<Owner> om;
+
+    @Mapper
+    private ComponentMapper<EnergyRegen> erm;
+
+    @Mapper
+    private ComponentMapper<Cooldown> cdm;
 
     public VersusGame(GameMap gameMap, World gameWorld, OrthographicCamera camera) {
         super();
@@ -97,6 +108,9 @@ public class VersusGame implements Observer {
         com = world.getMapper(Cost.class);
         om = world.getMapper(Owner.class);
         erm = world.getMapper(EnergyRegen.class);
+        asm = world.getMapper(ActionSequence.class);
+        im = world.getMapper(Initiative.class);
+        cdm = world.getMapper(Cooldown.class);
         onExecuteTurnSystem = gameWorld.setSystem(new OnExecuteTurnSystem(this), true);
         onBeginTurnSystem = gameWorld.setSystem(new OnBeginTurnSystem(this), true);
         onEndTurnSystem = gameWorld.setSystem(new OnEndTurnSystem(this), true);
@@ -165,6 +179,7 @@ public class VersusGame implements Observer {
     private boolean onBeginTurn() {
         this.restoreEnergy(Players.ONE);
         this.restoreEnergy(Players.TWO);
+        this.refreshSkills();
         return false;
     }
 
@@ -178,12 +193,15 @@ public class VersusGame implements Observer {
             final Entity player = world.getManager(TagManager.class).getEntity(
                     state.getActivePlayer().toString());
             final Cost cost = com.getSafe(skill);
+            final Cooldown cooldown = cdm.getSafe(skill);
             final EnergyBar bar = ebm.getSafe(player);
-            if ((bar.getCurrentEnergy() - cost.getCostAfterModifiers()) >= 0) {
+            if (cooldown.isReady()
+                    && ((bar.getCurrentEnergy() - cost.getCostAfterModifiers()) >= 0)) {
                 final MapPosition origin = mm.getSafe(world.getEntity(state.getSelectedCreature()));
                 final Range range = rm.getSafe(skill);
                 map.addHighlightedShape(Shapes.CIRCLE, range.getMinRangeAfterModifiers(),
-                        range.getMaxRangeAfterModifiers(), origin.getPosition(), new FloatPair(1, 1));
+                        range.getMaxRangeAfterModifiers(), origin.getPosition(),
+                        new FloatPair(1, 1));
                 state.setSelectedSkill(skillId);
                 state.setCurrentState(GameState.CHOOSING_TARGET);
                 return true;
@@ -217,7 +235,7 @@ public class VersusGame implements Observer {
                 final Entity skill = world.getEntity(removed.skillId);
                 final Cost cost = com.getSafe(skill);
                 final EnergyBar bar = ebm.getSafe(player);
-                bar.setCurrentEnergy(bar.getCurrentEnergy() + cost.getCostAfterModifiers());
+                bar.modifyCurrentEnergyBy(cost.getCostAfterModifiers());
                 player.changedInWorld();
             } catch (final NoSuchElementException e) {
                 e.printStackTrace();
@@ -244,8 +262,53 @@ public class VersusGame implements Observer {
                 creatureGroup);
         for (int i = 0; i < creatures.size(); i++) {
             final EnergyRegen regen = erm.getSafe(creatures.get(i));
-            bar.setCurrentEnergy(bar.getCurrentEnergy() + regen.getEnergyRegenAfterModifiers());
+            bar.modifyCurrentEnergyBy(regen.getEnergyRegenAfterModifiers());
         }
         playerEntity.changedInWorld();
+    }
+
+    private void refreshSkills() {
+        final ImmutableBag<Entity> skills = world.getManager(GroupManager.class).getEntities(
+                Groups.PLAYER_SKILL);
+        for (int i = 0; i < skills.size(); i++) {
+            final Cooldown cooldown = cdm.getSafe(skills.get(i));
+            cooldown.refreshOnce();
+        }
+    }
+
+    public boolean confirmAction() {
+        final Entity creature = world.getEntity(state.getSelectedCreature());
+        final MapPosition position = mm.get(creature);
+        final ActionSequence sequence = asm.get(creature);
+        sequence.onCastActions.add(new Action(state.getSelectedCreature(),
+                state.getSelectedSkill(), position.getPosition(), state.getSelectedHex()));
+        creature.changedInWorld();
+        final Entity player = world.getManager(TagManager.class).getEntity(
+                state.getActivePlayer().toString());
+        final Entity skill = world.getEntity(state.getSelectedSkill());
+        final Cost cost = com.getSafe(skill);
+        final EnergyBar bar = ebm.getSafe(player);
+        bar.modifyCurrentEnergyBy(-cost.getCostAfterModifiers());
+        player.changedInWorld();
+        final Cooldown cooldown = cdm.getSafe(skill);
+        cooldown.setCurrentCooldown(0);
+        skill.changedInWorld();
+        // TODO incorrect
+        // state.getSelectedIds().add(state.getSelectedCreature());
+        // TODO removed autoturns
+        // String group;
+        // if (state.getActivePlayer() == Players.ONE) {
+        // group = Groups.PLAYER_ONE_CREATURE;
+        // } else {
+        // group = Groups.PLAYER_TWO_CREATURE;
+        // }
+        //
+        // if (state.getSelectedIds().size >= world.getManager(GroupManager.class)
+        // .getEntities(group).size()) {
+        // state.setCurrentState(GameState.PLAYER_FINISHED);
+        // } else {
+        state.setCurrentState(GameState.CHOOSING_CHARACTER);
+        // }
+        return false;
     }
 }
