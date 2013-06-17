@@ -1,10 +1,13 @@
 
 package com.wartricks.input;
 
+import java.util.NoSuchElementException;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.wartricks.components.ActionSequence;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
 
@@ -29,8 +32,17 @@ public class GeneralInput implements InputProcessor {
                 game.state.setCurrentState(GameState.PLAYER_FINISHED);
                 return true;
             case Input.Keys.BACKSPACE:
-                break;
+                if (game.state.getSelectedCreature() > -1) {
+                    try {
+                        game.world.getEntity(game.state.getSelectedCreature()).getComponent(
+                                ActionSequence.class).onCastActions.removeLast();
+                    } catch (final NoSuchElementException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return true;
             case Input.Keys.SPACE:
+                game.state.setCurrentState(GameState.CHOOSING_CHARACTER);
                 break;
         }
         return false;

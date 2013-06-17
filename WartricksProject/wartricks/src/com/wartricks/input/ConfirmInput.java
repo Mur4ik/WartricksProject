@@ -3,7 +3,6 @@ package com.wartricks.input;
 
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
-import com.artemis.managers.GroupManager;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.wartricks.components.Action;
@@ -11,8 +10,6 @@ import com.wartricks.components.ActionSequence;
 import com.wartricks.components.MapPosition;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
-import com.wartricks.utils.Constants.Groups;
-import com.wartricks.utils.Constants.Players;
 
 public class ConfirmInput implements InputProcessor {
     private OrthographicCamera camera;
@@ -62,23 +59,23 @@ public class ConfirmInput implements InputProcessor {
             final ActionSequence sequence = asm.get(creature);
             sequence.onCastActions.add(new Action(game.state.getSelectedCreature(), game.state
                     .getSelectedSkill(), position.position, game.state.getSelectedHex()));
-            game.state.getSelectedIds().add(game.state.getSelectedCreature());
+            // TODO incorrect
+            // game.state.getSelectedIds().add(game.state.getSelectedCreature());
             creature.changedInWorld();
-            game.state.setSelectedCreature(-1);
-            game.state.setSelectedSkill(-1);
-            game.state.setSelectedHex(null);
-            String group;
-            if (game.state.getActivePlayer() == Players.ONE) {
-                group = Groups.PLAYER_ONE_CREATURE;
-            } else {
-                group = Groups.PLAYER_TWO_CREATURE;
-            }
-            if (game.state.getSelectedIds().size >= game.world.getManager(GroupManager.class)
-                    .getEntities(group).size()) {
-                game.state.setCurrentState(GameState.PLAYER_FINISHED);
-            } else {
-                game.state.setCurrentState(GameState.CHOOSING_CHARACTER);
-            }
+            // TODO removed autoturns
+            // String group;
+            // if (game.state.getActivePlayer() == Players.ONE) {
+            // group = Groups.PLAYER_ONE_CREATURE;
+            // } else {
+            // group = Groups.PLAYER_TWO_CREATURE;
+            // }
+            //
+            // if (game.state.getSelectedIds().size >= game.world.getManager(GroupManager.class)
+            // .getEntities(group).size()) {
+            // game.state.setCurrentState(GameState.PLAYER_FINISHED);
+            // } else {
+            game.state.setCurrentState(GameState.CHOOSING_CHARACTER);
+            // }
             return true;
         }
         return false;

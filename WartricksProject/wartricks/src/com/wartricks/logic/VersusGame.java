@@ -90,6 +90,7 @@ public class VersusGame implements Observer {
                     state.setCurrentState(GameState.CHOOSING_CHARACTER);
                 case CHOOSING_CHARACTER:
                     map.clearHighlights();
+                    state.clearSelection();
                     break;
                 case CHOOSING_CONFIRM:
                     break;
@@ -98,7 +99,7 @@ public class VersusGame implements Observer {
                 case CHOOSING_TARGET:
                     break;
                 case PLAYER_FINISHED:
-                    state.clearSelectedIds();
+                    state.clearSelection();
                     map.clearHighlights();
                     if (Players.ONE == state.getActivePlayer()) {
                         state.setActivePlayer(Players.TWO);

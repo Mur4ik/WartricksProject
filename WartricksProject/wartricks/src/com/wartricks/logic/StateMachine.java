@@ -84,4 +84,10 @@ public class StateMachine extends Observable {
         selectedIds.clear();
         return true;
     }
+
+    public void clearSelection() {
+        this.setSelectedCreature(-1);
+        this.setSelectedSkill(-1);
+        this.setSelectedHex(null);
+    }
 }
