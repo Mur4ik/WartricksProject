@@ -24,7 +24,7 @@ public class ActionExecutor {
         super();
         this.game = game;
         ocm = game.world.getMapper(OnCast.class);
-        final FileHandle file = Gdx.files.internal("scripts/skills/init.bsh");
+        final FileHandle file = Gdx.files.internal("scripts/init.bsh");
         if (file.exists()) {
             initScript = file.readString();
         }
