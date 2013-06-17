@@ -52,17 +52,13 @@ public class EntityFactory {
         e.addComponent(new Owner(owner));
         world.getManager(TagManager.class).register(sprite, e);
         world.getManager(GroupManager.class).add(e, Constants.Groups.CREATURE);
-        switch (owner) {
-            case ONE:
-                world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_ONE_CREATURE);
-                break;
-            case TWO:
-                world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_TWO_CREATURE);
-                break;
-            default:
-                break;
-        }
+        final String ownerGroup = (owner == Players.ONE) ? Constants.Groups.PLAYER_ONE_CREATURE
+                : Constants.Groups.PLAYER_TWO_CREATURE;
+        world.getManager(GroupManager.class).add(e, ownerGroup);
         map.addEntity(e.getId(), x, y);
+        final Entity player = world.getManager(TagManager.class).getEntity(owner.toString());
+        final EnergyBar energyBar = world.getMapper(EnergyBar.class).get(player);
+        energyBar.setMaxEnergyModifier(energyBar.getMaxEnergyModifier() + energyRegen);
         return e;
     }
 

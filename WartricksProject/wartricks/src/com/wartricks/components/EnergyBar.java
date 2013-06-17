@@ -27,6 +27,9 @@ public class EnergyBar extends Component {
 
     public void setCurrentEnergy(int currentEnergy) {
         this.currentEnergy = currentEnergy;
+        if (currentEnergy > this.getMaxEnergyAfterModifiers()) {
+            this.currentEnergy = this.getMaxEnergyAfterModifiers();
+        }
     }
 
     public int getMaxEnergyModifier() {
@@ -39,5 +42,13 @@ public class EnergyBar extends Component {
 
     public int getMaxEnergyAfterModifiers() {
         return maxEnergyBase + maxEnergyModifier;
+    }
+
+    public float modifyCurrentEnergyBy(float value) {
+        currentEnergy += value;
+        if (currentEnergy > this.getMaxEnergyAfterModifiers()) {
+            currentEnergy = this.getMaxEnergyAfterModifiers();
+        }
+        return currentEnergy;
     }
 }
