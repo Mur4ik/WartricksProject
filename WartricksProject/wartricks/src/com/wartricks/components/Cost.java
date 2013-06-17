@@ -4,15 +4,29 @@ package com.wartricks.components;
 import com.artemis.Component;
 
 public class Cost extends Component {
-    public int baseCost, modifierCost;
+    private int costBase;
+
+    private int costModifier;
 
     public Cost(int baseCost) {
         super();
-        this.baseCost = baseCost;
-        modifierCost = 0;
+        costBase = baseCost;
+        this.setCostModifier(0);
     }
 
     public int getCostAfterModifiers() {
-        return baseCost + modifierCost;
+        return this.getCostBase() + this.getCostModifier();
+    }
+
+    public int getCostBase() {
+        return costBase;
+    }
+
+    public int getCostModifier() {
+        return costModifier;
+    }
+
+    public void setCostModifier(int costModifier) {
+        this.costModifier = costModifier;
     }
 }

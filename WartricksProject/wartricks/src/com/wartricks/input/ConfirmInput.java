@@ -67,14 +67,14 @@ public class ConfirmInput implements InputProcessor {
             final MapPosition position = mm.get(creature);
             final ActionSequence sequence = asm.get(creature);
             sequence.onCastActions.add(new Action(game.state.getSelectedCreature(), game.state
-                    .getSelectedSkill(), position.position, game.state.getSelectedHex()));
+                    .getSelectedSkill(), position.getPosition(), game.state.getSelectedHex()));
             creature.changedInWorld();
             final Entity player = game.world.getManager(TagManager.class).getEntity(
                     game.state.getActivePlayer().toString());
             final Entity skill = game.world.getEntity(game.state.getSelectedSkill());
             final Cost cost = com.get(skill);
             final EnergyBar bar = ebm.get(player);
-            bar.currentEnergy -= cost.getCostAfterModifiers();
+            bar.setCurrentEnergy(bar.getCurrentEnergy() - cost.getCostAfterModifiers());
             player.changedInWorld();
             // TODO incorrect
             // game.state.getSelectedIds().add(game.state.getSelectedCreature());

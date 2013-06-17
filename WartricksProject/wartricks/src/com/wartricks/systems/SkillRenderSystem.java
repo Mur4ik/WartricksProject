@@ -93,9 +93,9 @@ public class SkillRenderSystem extends EntityProcessingSystem {
                     final Cooldown cooldown = cdm.getSafe(skill);
                     final Initiative initiative = im.getSafe(skill);
                     String skillDescription = "%s: Cost %d Range %d-%d Cooldown %d Initiative %d";
-                    skillDescription = String.format(skillDescription, skillName, cost.baseCost,
-                            range.minRange, range.maxRange, cooldown.currentCooldown,
-                            initiative.baseInitiative);
+                    skillDescription = String.format(skillDescription, skillName, cost.getCostBase(),
+                            range.getMinRangeAfterModifiers(), range.getMaxRangeAfterModifiers(),
+                            cooldown.getCurrentCooldown(), initiative.getBaseInitiative());
                     font.draw(spriteBatch, skillDescription, 20, 100 + (margin * i));
                 }
             }

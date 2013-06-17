@@ -162,15 +162,14 @@ public class VersusGame implements Observer {
         }
     }
 
-    private boolean onEndTurn() {
-        return false;
-    }
-
     private boolean onBeginTurn() {
         this.restoreEnergy(Players.ONE);
         this.restoreEnergy(Players.TWO);
         return false;
-        // TODO Auto-generated method stub
+    }
+
+    private boolean onEndTurn() {
+        return false;
     }
 
     public boolean selectSkill(int skillId) {
@@ -180,11 +179,11 @@ public class VersusGame implements Observer {
                     state.getActivePlayer().toString());
             final Cost cost = com.getSafe(skill);
             final EnergyBar bar = ebm.getSafe(player);
-            if ((bar.currentEnergy - cost.getCostAfterModifiers()) >= 0) {
+            if ((bar.getCurrentEnergy() - cost.getCostAfterModifiers()) >= 0) {
                 final MapPosition origin = mm.getSafe(world.getEntity(state.getSelectedCreature()));
                 final Range range = rm.getSafe(skill);
-                map.addHighlightedShape(Shapes.CIRCLE, range.minRange, range.maxRange,
-                        origin.position, new FloatPair(1, 1));
+                map.addHighlightedShape(Shapes.CIRCLE, range.getMinRangeAfterModifiers(),
+                        range.getMaxRangeAfterModifiers(), origin.getPosition(), new FloatPair(1, 1));
                 state.setSelectedSkill(skillId);
                 state.setCurrentState(GameState.CHOOSING_TARGET);
                 return true;
@@ -199,7 +198,7 @@ public class VersusGame implements Observer {
         if ((entityId > -1) && !state.getSelectedIds().contains(entityId, false)) {
             final Entity e = world.getEntity(entityId);
             final Owner owner = om.getSafe(e);
-            if (owner.owner == state.getActivePlayer()) {
+            if (owner.getOwner() == state.getActivePlayer()) {
                 state.setSelectedCreature(entityId);
                 state.setCurrentState(GameState.CHOOSING_SKILL);
             }
@@ -218,7 +217,7 @@ public class VersusGame implements Observer {
                 final Entity skill = world.getEntity(removed.skillId);
                 final Cost cost = com.getSafe(skill);
                 final EnergyBar bar = ebm.getSafe(player);
-                bar.currentEnergy += cost.getCostAfterModifiers();
+                bar.setCurrentEnergy(bar.getCurrentEnergy() + cost.getCostAfterModifiers());
                 player.changedInWorld();
             } catch (final NoSuchElementException e) {
                 e.printStackTrace();
@@ -245,7 +244,7 @@ public class VersusGame implements Observer {
                 creatureGroup);
         for (int i = 0; i < creatures.size(); i++) {
             final EnergyRegen regen = erm.getSafe(creatures.get(i));
-            bar.currentEnergy += regen.getEnergyRegenAfterModifiers();
+            bar.setCurrentEnergy(bar.getCurrentEnergy() + regen.getEnergyRegenAfterModifiers());
         }
         playerEntity.changedInWorld();
     }

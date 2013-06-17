@@ -93,12 +93,12 @@ public class SpriteRenderSystem extends EntitySystem {
     protected void process(Entity e) {
         if (pm.has(e)) {
             final MapPosition mapPosition = pm.getSafe(e);
-            final FloatPair position = gameMap.tools.world2window(mapPosition.position.x,
-                    mapPosition.position.y);
+            final FloatPair position = gameMap.tools.world2window(mapPosition.getPosition().x,
+                    mapPosition.getPosition().y);
             final Sprite sprite = sm.get(e);
             final Owner owner = om.get(e);
             final AtlasRegion spriteRegion = regionsByEntity.get(e.getId());
-            if (owner.owner == Players.TWO) {
+            if (owner.getOwner() == Players.TWO) {
                 spriteBatch.setColor(sprite.r, sprite.g - 0.5f, sprite.b - 0.5f, sprite.a);
             } else {
                 spriteBatch.setColor(sprite.r - 0.5f, sprite.g - 0.5f, sprite.b, sprite.a);

@@ -69,11 +69,11 @@ public class EnergyRenderSystem extends EntityProcessingSystem {
         final Owner owner = om.get(e);
         if ((null != energy) && (null != owner)) {
             int margin = 20;
-            if (owner.owner.equals(Players.ONE)) {
+            if (owner.getOwner().equals(Players.ONE)) {
                 margin *= 3;
             }
-            font.draw(spriteBatch, "Energy for player " + owner.owner.toString() + ": "
-                    + energy.currentEnergy + "/" + (energy.maxEnergy + energy.modifierEnergy), 20,
+            font.draw(spriteBatch, "Energy for player " + owner.getOwner().toString() + ": "
+                    + energy.getCurrentEnergy() + "/" + (energy.getMaxEnergy() + energy.getMaxEnergyModifier()), 20,
                     margin);
         }
     }

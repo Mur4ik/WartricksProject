@@ -3,6 +3,7 @@ package com.wartricks.components;
 
 import com.artemis.Component;
 
+// TODO unused
 public class Position extends Component {
     public float x, y;
 

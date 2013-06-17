@@ -5,10 +5,10 @@ import com.artemis.Component;
 import com.wartricks.custom.Pair;
 
 public class MapPosition extends Component {
-    public Pair position;
+    private Pair position;
 
     public MapPosition(int x, int y) {
-        position = new Pair(x, y);
+        this.setPosition(new Pair(x, y));
     }
 
     public MapPosition() {
@@ -16,7 +16,7 @@ public class MapPosition extends Component {
     }
 
     public MapPosition(Pair target) {
-        position = target;
+        this.setPosition(target);
     }
 
     public Pair getPosition() {
@@ -25,5 +25,10 @@ public class MapPosition extends Component {
 
     public void setPosition(Pair position) {
         this.position = position;
+    }
+
+    public void setPosition(int x, int y) {
+        position.x = x;
+        position.y = y;
     }
 }

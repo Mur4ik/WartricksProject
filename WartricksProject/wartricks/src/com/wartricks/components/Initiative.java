@@ -4,15 +4,29 @@ package com.wartricks.components;
 import com.artemis.Component;
 
 public class Initiative extends Component {
-    public int baseInitiative, modifierInitiative;
+    private int initiativeBase;
+
+    private int initiativeModifier;
 
     public Initiative(int baseInitiative) {
         super();
-        this.baseInitiative = baseInitiative;
-        modifierInitiative = 0;
+        this.initiativeBase = baseInitiative;
+        this.setModifierInitiative(0);
     }
 
-    public int getCalculatedInitiative() {
-        return baseInitiative + modifierInitiative;
+    public int getInitiativeAfterModifiers() {
+        return this.getBaseInitiative() + this.getModifierInitiative();
+    }
+
+    public int getBaseInitiative() {
+        return initiativeBase;
+    }
+
+    public int getModifierInitiative() {
+        return initiativeModifier;
+    }
+
+    public void setModifierInitiative(int modifierInitiative) {
+        this.initiativeModifier = modifierInitiative;
     }
 }

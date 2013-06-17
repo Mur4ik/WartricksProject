@@ -25,9 +25,9 @@ public class ActionComparator implements Comparator<Action> {
     public int compare(Action action1, Action action2) {
         final Initiative init1 = im.get(world.getEntity(action1.skillId));
         final Initiative init2 = im.get(world.getEntity(action2.skillId));
-        if (init1.getCalculatedInitiative() > init2.getCalculatedInitiative()) {
+        if (init1.getInitiativeAfterModifiers() > init2.getInitiativeAfterModifiers()) {
             return 1;
-        } else if (init1.getCalculatedInitiative() < init2.getCalculatedInitiative()) {
+        } else if (init1.getInitiativeAfterModifiers() < init2.getInitiativeAfterModifiers()) {
             return -1;
         } else {
             return 0;
