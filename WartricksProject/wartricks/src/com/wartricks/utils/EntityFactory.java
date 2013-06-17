@@ -67,7 +67,7 @@ public class EntityFactory {
     }
 
     public static Entity createSkill(World world, String name, int baseCost, int minRange,
-            int maxRange, int baseInitiative, int cooldown, String onBeginTurn, String onEndTurn) {
+            int maxRange, int baseInitiative, int cooldown) {
         final Entity e = world.createEntity();
         e.addComponent(new Cooldown(cooldown));
         e.addComponent(new Range(minRange, maxRange));

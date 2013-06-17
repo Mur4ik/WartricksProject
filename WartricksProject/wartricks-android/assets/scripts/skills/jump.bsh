@@ -1,5 +1,5 @@
 creature = game.world.getEntity(caster);
-bolafuego = EntityFactory.createSkill(game.world, "bolafuego", 2, 2, 5, 300, 5, "", "");
+bolafuego = EntityFactory.createSkill(game.world, "bolafuego", 2, 2, 5, 300, 5);
 bolafuego.addToWorld();
 creature.addComponent(new ActionSequenceOnEndTurn(new Action(caster, bolafuego.getId(), origin, new Pair(origin.x, origin.y - 1))));
 creature.changedInWorld();
