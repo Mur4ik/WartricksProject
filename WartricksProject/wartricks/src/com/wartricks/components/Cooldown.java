@@ -15,9 +15,9 @@ public class Cooldown extends Component {
     public Cooldown(int maxCooldown) {
         super();
         maxCooldownBase = maxCooldown;
-        setCurrentCooldown(maxCooldown);
-        setMaxCooldownModifier(0);
-        this.setModifierRegenCooldown(0);
+        this.setCurrentCooldown(maxCooldown);
+        this.setMaxCooldownModifier(0);
+        this.setModifierRegenCooldown(1);
     }
 
     public int getModifierRegenCooldown() {
@@ -29,8 +29,8 @@ public class Cooldown extends Component {
     }
 
     public int refreshOnce() {
-        setCurrentCooldown(getCurrentCooldown() + (1 + getMaxCooldownModifier()));
-        return getCurrentCooldown();
+        this.setCurrentCooldown(this.getCurrentCooldown() + this.getMaxCooldownModifier());
+        return this.getCurrentCooldown();
     }
 
     public int getMaxCooldownBase() {
@@ -43,6 +43,9 @@ public class Cooldown extends Component {
 
     public void setCurrentCooldown(int currentCooldown) {
         this.currentCooldown = currentCooldown;
+        if (currentCooldown > this.getMaxCooldownAfterModifiers()) {
+            currentCooldown = this.getMaxCooldownAfterModifiers();
+        }
     }
 
     public int getMaxCooldownModifier() {
@@ -51,5 +54,21 @@ public class Cooldown extends Component {
 
     public void setMaxCooldownModifier(int maxCooldownModifier) {
         this.maxCooldownModifier = maxCooldownModifier;
+    }
+
+    public boolean isReady() {
+        return currentCooldown >= this.getMaxCooldownAfterModifiers();
+    }
+
+    public int modifyCooldownBy(int value) {
+        currentCooldown -= value;
+        if (currentCooldown > this.getMaxCooldownAfterModifiers()) {
+            currentCooldown = this.getMaxCooldownAfterModifiers();
+        }
+        return currentCooldown;
+    }
+
+    public int getMaxCooldownAfterModifiers() {
+        return maxCooldownBase + maxCooldownModifier;
     }
 }

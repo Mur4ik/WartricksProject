@@ -46,4 +46,13 @@ public class Health extends Component {
     public float getMaxHealthAfterModifiers() {
         return maxHealthModifier + maxHealthBase;
     }
+
+    public float modifyHealthBy(float value) {
+        currentHealth += value;
+        return currentHealth;
+    }
+
+    public boolean isDead() {
+        return currentHealth > 0;
+    }
 }

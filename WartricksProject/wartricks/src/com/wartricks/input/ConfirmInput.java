@@ -2,11 +2,8 @@
 package com.wartricks.input;
 
 import com.artemis.ComponentMapper;
-import com.artemis.Entity;
-import com.artemis.managers.TagManager;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
 import com.wartricks.components.Cost;
 import com.wartricks.components.EnergyBar;
@@ -63,36 +60,7 @@ public class ConfirmInput implements InputProcessor {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if ((game.state.getCurrentState() == GameState.CHOOSING_CONFIRM) && (button == 0)) {
-            final Entity creature = game.world.getEntity(game.state.getSelectedCreature());
-            final MapPosition position = mm.get(creature);
-            final ActionSequence sequence = asm.get(creature);
-            sequence.onCastActions.add(new Action(game.state.getSelectedCreature(), game.state
-                    .getSelectedSkill(), position.getPosition(), game.state.getSelectedHex()));
-            creature.changedInWorld();
-            final Entity player = game.world.getManager(TagManager.class).getEntity(
-                    game.state.getActivePlayer().toString());
-            final Entity skill = game.world.getEntity(game.state.getSelectedSkill());
-            final Cost cost = com.get(skill);
-            final EnergyBar bar = ebm.get(player);
-            bar.setCurrentEnergy(bar.getCurrentEnergy() - cost.getCostAfterModifiers());
-            player.changedInWorld();
-            // TODO incorrect
-            // game.state.getSelectedIds().add(game.state.getSelectedCreature());
-            // TODO removed autoturns
-            // String group;
-            // if (game.state.getActivePlayer() == Players.ONE) {
-            // group = Groups.PLAYER_ONE_CREATURE;
-            // } else {
-            // group = Groups.PLAYER_TWO_CREATURE;
-            // }
-            //
-            // if (game.state.getSelectedIds().size >= game.world.getManager(GroupManager.class)
-            // .getEntities(group).size()) {
-            // game.state.setCurrentState(GameState.PLAYER_FINISHED);
-            // } else {
-            game.state.setCurrentState(GameState.CHOOSING_CHARACTER);
-            // }
-            return true;
+            return game.confirmAction();
         }
         return false;
     }

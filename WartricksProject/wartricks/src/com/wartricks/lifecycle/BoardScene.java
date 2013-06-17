@@ -83,13 +83,16 @@ public class BoardScene extends AbstractScreen {
         skillRenderSystem = gameWorld.setSystem(new SkillRenderSystem(hudCamera, spriteBatch,
                 versusGame), true);
         gameWorld.initialize();
+        // TODO creating players
+        EntityFactory.createPlayer(world, gameMap, Players.ONE, 10).addToWorld();
+        EntityFactory.createPlayer(world, gameMap, Players.TWO, 10).addToWorld();
         // TODO creating skills
-        EntityFactory.createSkill(gameWorld, "move", 2, 1, 2, 700, 5).addToWorld();
-        EntityFactory.createSkill(gameWorld, "attack", 2, 1, 1, 600, 5).addToWorld();
-        EntityFactory.createSkill(gameWorld, "jump", 2, 1, 1, 500, 5).addToWorld();
-        EntityFactory.createSkill(gameWorld, "impactrueno", 2, 1, 1, 400, 5).addToWorld();
-        EntityFactory.createSkill(gameWorld, "gorro del amor", 2, 1, 1, 300, 5).addToWorld();
-        EntityFactory.createSkill(gameWorld, "piruloNOjutsu", 2, 1, 1, 200, 5).addToWorld();
+        EntityFactory.createSkill(gameWorld, "move", 2, 1, 2, 700, 0).addToWorld();
+        EntityFactory.createSkill(gameWorld, "attack", 2, 1, 1, 600, 2).addToWorld();
+        EntityFactory.createSkill(gameWorld, "jump", 2, 1, 1, 500, 1).addToWorld();
+        EntityFactory.createSkill(gameWorld, "impactrueno", 2, 1, 1, 400, 2).addToWorld();
+        EntityFactory.createSkill(gameWorld, "gorro del amor", 2, 1, 1, 300, 1).addToWorld();
+        EntityFactory.createSkill(gameWorld, "piruloNOjutsu", 2, 1, 1, 200, 0).addToWorld();
         // TODO creating creatures
         EntityFactory.createCreature(world, gameMap, "dash", Players.ONE,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 5,
@@ -114,8 +117,6 @@ public class BoardScene extends AbstractScreen {
                 5, 100, 5, new Array<String>(new String[] {
                         "move", "impactrueno", "gorro del amor", "piruloNOjutsu"
                 })).addToWorld();
-        EntityFactory.createPlayer(world, gameMap, Players.ONE, 10).addToWorld();
-        EntityFactory.createPlayer(world, gameMap, Players.TWO, 10).addToWorld();
         versusGame.startLogic();
     }
 

@@ -10,23 +10,23 @@ public class Initiative extends Component {
 
     public Initiative(int baseInitiative) {
         super();
-        this.initiativeBase = baseInitiative;
-        this.setModifierInitiative(0);
+        initiativeBase = baseInitiative;
+        this.setInitiativeModifier(0);
     }
 
     public int getInitiativeAfterModifiers() {
-        return this.getBaseInitiative() + this.getModifierInitiative();
+        return this.getInitiativeBase() + this.getInitiativeModifier();
     }
 
-    public int getBaseInitiative() {
+    public int getInitiativeBase() {
         return initiativeBase;
     }
 
-    public int getModifierInitiative() {
+    public int getInitiativeModifier() {
         return initiativeModifier;
     }
 
-    public void setModifierInitiative(int modifierInitiative) {
-        this.initiativeModifier = modifierInitiative;
+    public void setInitiativeModifier(int modifierInitiative) {
+        initiativeModifier = modifierInitiative;
     }
 }
