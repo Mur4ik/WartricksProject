@@ -9,7 +9,9 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.annotations.Mapper;
+import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
+import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -17,6 +19,7 @@ import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
 import com.wartricks.components.Cost;
 import com.wartricks.components.EnergyBar;
+import com.wartricks.components.EnergyRegen;
 import com.wartricks.components.MapPosition;
 import com.wartricks.components.Owner;
 import com.wartricks.components.Range;
@@ -31,6 +34,7 @@ import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.systems.OnBeginTurnSystem;
 import com.wartricks.systems.OnEndTurnSystem;
 import com.wartricks.systems.OnExecuteTurnSystem;
+import com.wartricks.utils.Constants.Groups;
 import com.wartricks.utils.Constants.Players;
 import com.wartricks.utils.MapTools.Shapes;
 
@@ -78,6 +82,9 @@ public class VersusGame implements Observer {
     @Mapper
     ComponentMapper<Owner> om;
 
+    @Mapper
+    ComponentMapper<EnergyRegen> erm;
+
     public VersusGame(GameMap gameMap, World gameWorld, OrthographicCamera camera) {
         super();
         map = gameMap;
@@ -89,6 +96,7 @@ public class VersusGame implements Observer {
         ebm = world.getMapper(EnergyBar.class);
         com = world.getMapper(Cost.class);
         om = world.getMapper(Owner.class);
+        erm = world.getMapper(EnergyRegen.class);
         onExecuteTurnSystem = gameWorld.setSystem(new OnExecuteTurnSystem(this), true);
         onBeginTurnSystem = gameWorld.setSystem(new OnBeginTurnSystem(this), true);
         onEndTurnSystem = gameWorld.setSystem(new OnEndTurnSystem(this), true);
@@ -121,6 +129,7 @@ public class VersusGame implements Observer {
             switch (gameState) {
                 case BEGIN_TURN:
                     onBeginTurnSystem.process();
+                    this.onBeginTurn();
                     state.setActivePlayer(Players.ONE);
                     state.setCurrentState(GameState.CHOOSING_CHARACTER);
                 case CHOOSING_CHARACTER:
@@ -145,6 +154,7 @@ public class VersusGame implements Observer {
                     }
                     break;
                 case END_TURN:
+                    this.onEndTurn();
                     onEndTurnSystem.process();
                     state.setCurrentState(GameState.BEGIN_TURN);
                     break;
@@ -152,16 +162,27 @@ public class VersusGame implements Observer {
         }
     }
 
+    private boolean onEndTurn() {
+        return false;
+    }
+
+    private boolean onBeginTurn() {
+        this.restoreEnergy(Players.ONE);
+        this.restoreEnergy(Players.TWO);
+        return false;
+        // TODO Auto-generated method stub
+    }
+
     public boolean selectSkill(int skillId) {
         if (skillId > -1) {
             final Entity skill = world.getEntity(skillId);
             final Entity player = world.getManager(TagManager.class).getEntity(
                     state.getActivePlayer().toString());
-            final Cost cost = com.get(skill);
-            final EnergyBar bar = ebm.get(player);
+            final Cost cost = com.getSafe(skill);
+            final EnergyBar bar = ebm.getSafe(player);
             if ((bar.currentEnergy - cost.getCostAfterModifiers()) >= 0) {
-                final MapPosition origin = mm.get(world.getEntity(state.getSelectedCreature()));
-                final Range range = rm.get(skill);
+                final MapPosition origin = mm.getSafe(world.getEntity(state.getSelectedCreature()));
+                final Range range = rm.getSafe(skill);
                 map.addHighlightedShape(Shapes.CIRCLE, range.minRange, range.maxRange,
                         origin.position, new FloatPair(1, 1));
                 state.setSelectedSkill(skillId);
@@ -177,7 +198,7 @@ public class VersusGame implements Observer {
     public boolean selectCreature(int entityId) {
         if ((entityId > -1) && !state.getSelectedIds().contains(entityId, false)) {
             final Entity e = world.getEntity(entityId);
-            final Owner owner = om.get(e);
+            final Owner owner = om.getSafe(e);
             if (owner.owner == state.getActivePlayer()) {
                 state.setSelectedCreature(entityId);
                 state.setCurrentState(GameState.CHOOSING_SKILL);
@@ -195,10 +216,8 @@ public class VersusGame implements Observer {
                 final Entity player = world.getManager(TagManager.class).getEntity(
                         state.getActivePlayer().toString());
                 final Entity skill = world.getEntity(removed.skillId);
-                final ComponentMapper<EnergyBar> ebm = world.getMapper(EnergyBar.class);
-                final ComponentMapper<Cost> com = world.getMapper(Cost.class);
-                final Cost cost = com.get(skill);
-                final EnergyBar bar = ebm.get(player);
+                final Cost cost = com.getSafe(skill);
+                final EnergyBar bar = ebm.getSafe(player);
                 bar.currentEnergy += cost.getCostAfterModifiers();
                 player.changedInWorld();
             } catch (final NoSuchElementException e) {
@@ -215,5 +234,19 @@ public class VersusGame implements Observer {
             return true;
         }
         return false;
+    }
+
+    private void restoreEnergy(Players player) {
+        final Entity playerEntity = world.getManager(TagManager.class).getEntity(player.toString());
+        final EnergyBar bar = ebm.getSafe(playerEntity);
+        final String creatureGroup = player.equals(Players.ONE) ? Groups.PLAYER_ONE_CREATURE
+                : Groups.PLAYER_TWO_CREATURE;
+        final ImmutableBag<Entity> creatures = world.getManager(GroupManager.class).getEntities(
+                creatureGroup);
+        for (int i = 0; i < creatures.size(); i++) {
+            final EnergyRegen regen = erm.getSafe(creatures.get(i));
+            bar.currentEnergy += regen.getEnergyRegenAfterModifiers();
+        }
+        playerEntity.changedInWorld();
     }
 }

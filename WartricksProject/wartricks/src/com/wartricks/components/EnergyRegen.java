@@ -11,4 +11,8 @@ public class EnergyRegen extends Component {
         this.regen = regen;
         modifierRegen = 0;
     }
+
+    public int getEnergyRegenAfterModifiers() {
+        return regen + modifierRegen;
+    }
 }
