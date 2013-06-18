@@ -168,6 +168,7 @@ public class MapTools {
         final PositionArray visited = new PositionArray(gameMap);
         final Pair start = new Pair(x, y);
         unvisited.add(start);
+        visited.add(start);
         while (unvisited.size > 0) {
             final Pair current = unvisited.pop();
             for (final Pair neighbor : this.getNeighbors(current.x, current.y)) {

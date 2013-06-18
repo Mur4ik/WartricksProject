@@ -3,7 +3,6 @@ package com.wartricks.lifecycle;
 
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -94,36 +93,36 @@ public class BoardScene extends AbstractScreen {
         // EntityFactory.createSkill(gameWorld, "gorro del amor", 2, 1, 1, 300, 1);
         // EntityFactory.createSkill(gameWorld, "piruloNOjutsu", 2, 1, 1, 200, 0);
         // TODO creating creatures
-        // final Array<String> characters = new Array<String>(new String[] {
-        // "dash", "kirby", "apple", "pinkie"
-        // });
-        // final Array<Integer> loadCharacters = EntityFactory.loadEntities(characters, gameWorld);
-        // print out the result from the lua function
-        EntityFactory.createCreature(world, gameMap, "dash", Players.ONE,
-                new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 5,
-                3, 100, 5, new Array<String>(new String[] {
-                        "piruloNOjutsu", "move"
-                }));
-        EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
-                new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,
-                4, 100, 5, new Array<String>(new String[] {
-                        "jump", "move"
-                }));
-        EntityFactory.createCreature(world, gameMap, "apple", Players.ONE,
-                new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 0,
-                1, 100, 5, new Array<String>(new String[] {
-                        "move", "impactrueno"
-                }));
-        EntityFactory.createCreature(world, gameMap, "pinkie", Players.ONE,
-                new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 3,
-                6, 100, 5, new Array<String>(new String[] {
-                        "move", "gorro del amor", "error"
-                }));
-        EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
-                new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,
-                5, 100, 5, new Array<String>(new String[] {
-                        "move", "impactrueno", "gorro del amor", "piruloNOjutsu"
-                }));
+        final Array<String> characters = new Array<String>(new String[] {
+            "apple"
+        });
+        final Array<Integer> creatures = versusGame.api.loadCreatures(characters);
+        versusGame.api.assignCreatureToPlayer(creatures.first(), Players.ONE, 0, 0);
+        // EntityFactory.createCreature(world, gameMap, "dash", Players.ONE,
+        // new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 5,
+        // 3, 100, 5, new Array<String>(new String[] {
+        // "piruloNOjutsu", "move"
+        // }));
+        // EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
+        // new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,
+        // 4, 100, 5, new Array<String>(new String[] {
+        // "jump", "move"
+        // }));
+        // EntityFactory.createCreature(world, gameMap, "apple", Players.ONE,
+        // new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 0,
+        // 1, 100, 5, new Array<String>(new String[] {
+        // "move", "impactrueno"
+        // }));
+        // EntityFactory.createCreature(world, gameMap, "pinkie", Players.ONE,
+        // new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 3,
+        // 6, 100, 5, new Array<String>(new String[] {
+        // "move", "gorro del amor", "error"
+        // }));
+        // EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
+        // new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,
+        // 5, 100, 5, new Array<String>(new String[] {
+        // "move", "impactrueno", "gorro del amor", "piruloNOjutsu"
+        // }));
         versusGame.startLogic();
     }
 

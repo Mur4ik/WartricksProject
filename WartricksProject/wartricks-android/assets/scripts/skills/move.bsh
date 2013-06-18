@@ -1,20 +1,25 @@
- create() {
-     return EntityFactory.createSkill(world, name, 3, 1,
-             1, 1, 0).getId();
+int skillId = -1;
+
+Array affected;
+
+create() {
+    name = "move";
+    cost = 1;
+    minRange = 1;
+    maxRange = 2;
+    initiative = 600;
+    cooldown = 0;
+    skillId = game.createSkill(name, cost, minRange, maxRange, initiative, cooldown);
+    return skillId;
+ }
+
+ affected()
+ {
+     affected = game.skillGetHexesForArea(Shapes.CIRCLE, 0, 0, origin.x, origin.y, target.x, target.y);
+     return affected;
  }
  
  execute() {
-     if (!game.map.cellOccupied(target.x, target.y)) {
-         game.map.moveEntity(caster, target);
-         mm = game.world.getMapper(MapPosition.class);
-         creature = game.world.getEntity(caster);
-         mapPosition = mm.get(creature);
-         mapPosition.setPosition(target);
-         creature.changedInWorld();
-         } else {
-         asq = game.world.getMapper(ActionSequence.class);
-         seq = asq.get(game.world.getEntity(caster));
-         seq.onCastActions.clear();
-        }
+     return game.creatureMoveTo(caster, target.x, target.y);
  }
  

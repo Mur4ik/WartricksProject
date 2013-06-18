@@ -1,0 +1,12 @@
+int creatureId = -1;
+
+create()
+{
+    name = "kirby";
+    health = 100;
+    energyPerTurn = 3;
+    skillSet = new Array();
+    skillSet.add("move");
+    creatureId = game.createCreature(name, health, energyPerTurn, skillSet);
+    return creatureId;
+}

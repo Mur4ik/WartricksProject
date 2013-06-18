@@ -25,10 +25,11 @@ import com.wartricks.components.EnergyBar;
 import com.wartricks.components.EnergyRegen;
 import com.wartricks.components.Initiative;
 import com.wartricks.components.MapPosition;
-import com.wartricks.components.ScriptExecutable;
 import com.wartricks.components.Owner;
 import com.wartricks.components.Range;
+import com.wartricks.components.ScriptExecutable;
 import com.wartricks.custom.Pair;
+import com.wartricks.custom.PositionArray;
 import com.wartricks.input.ConfirmInput;
 import com.wartricks.input.CreatureSelectInput;
 import com.wartricks.input.GeneralInput;
@@ -167,6 +168,7 @@ public class VersusGame implements Observer {
                 case PLAYER_FINISHED:
                     state.clearSelection();
                     map.clearHighlights();
+                    state.clearSelectedIds();
                     if (Players.ONE == state.getActivePlayer()) {
                         state.setActivePlayer(Players.TWO);
                         state.setCurrentState(GameState.CHOOSING_CHARACTER);
@@ -261,11 +263,12 @@ public class VersusGame implements Observer {
             map.clearHighlights();
             final ScriptExecutable cast = ocm.getSafe(skill);
             try {
-                cast.interpreter.set("game", this);
+                cast.interpreter.set("game", api);
                 cast.interpreter.set("caster", state.getSelectedCreature());
                 cast.interpreter.set("origin", origin.getPosition());
                 cast.interpreter.set("target", state.getSelectedHex());
-                cast.interpreter.eval("affected()");
+                final PositionArray highlights = (PositionArray)cast.interpreter.eval("affected()");
+                map.addHighlights(highlights);
             } catch (final EvalError e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

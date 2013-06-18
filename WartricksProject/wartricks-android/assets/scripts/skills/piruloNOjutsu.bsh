@@ -1,0 +1,25 @@
+PositionArray highlights;
+
+create() {
+     return EntityFactory.createSkill(world, name, 3, 1,
+             1, 1, 0).getId();
+ }
+ 
+ affected(){
+     game.map.addHighlightedShape(Shapes.CONE, 1, 3, origin, target);
+ }
+ 
+ execute() {
+     if (!game.map.cellOccupied(target.x, target.y)) {
+         game.map.moveEntity(caster, target);
+         mm = game.world.getMapper(MapPosition.class);
+         creature = game.world.getEntity(caster);
+         mapPosition = mm.get(creature);
+         mapPosition.setPosition(target);
+         creature.changedInWorld();
+         } else {
+         asq = game.world.getMapper(ActionSequence.class);
+         seq = asq.get(game.world.getEntity(caster));
+         seq.onCastActions.clear();
+        }
+ }

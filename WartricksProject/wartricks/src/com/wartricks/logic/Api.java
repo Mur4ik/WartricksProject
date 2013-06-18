@@ -44,6 +44,8 @@ public class Api {
         this.game = game;
     }
 
+    // CREATION
+    // ///////////////////////////////////
     public boolean addEntityToWorld(int entityId) {
         game.world.addEntity(game.world.getEntity(entityId));
         return true;
@@ -54,11 +56,12 @@ public class Api {
         for (final String script : scriptNames) {
             int entityId = -1;
             final WartricksInterpreter interp = new WartricksInterpreter();
-            final FileHandle scriptFile = Gdx.files
-                    .internal("scripts/creatures/" + script + ".bsh");
+            final FileHandle scriptFile = Gdx.files.internal("scripts/characters/" + script
+                    + ".bsh");
             if (scriptFile.exists()) {
                 try {
                     interp.eval(scriptFile.readString());
+                    interp.set("game", this);
                     interp.set("name", script);
                     entityId = (Integer)interp.eval("create()");
                 } catch (final EvalError error) {
@@ -81,6 +84,7 @@ public class Api {
             if (scriptFile.exists()) {
                 try {
                     interp.eval(scriptFile.readString());
+                    interp.set("game", this);
                     interp.set("name", script);
                     skillId = (Integer)interp.eval("create()");
                 } catch (final EvalError error) {
@@ -105,6 +109,7 @@ public class Api {
         game.world.getManager(TagManager.class).register(name, creature);
         game.world.getManager(GroupManager.class).add(creature, Constants.Groups.CREATURE);
         creature.addToWorld();
+        game.world.process();
         return creature.getId();
     }
 
@@ -118,6 +123,7 @@ public class Api {
         game.world.getManager(TagManager.class).register(name, skill);
         game.world.getManager(GroupManager.class).add(skill, Constants.Groups.PLAYER_SKILL);
         skill.addToWorld();
+        game.world.process();
         return skill.getId();
     }
 
@@ -138,11 +144,15 @@ public class Api {
             final EnergyBar energyBar = game.world.getMapper(EnergyBar.class).get(player);
             energyBar.setMaxEnergyModifier(energyBar.getMaxEnergyModifier()
                     + regen.getEnergyRegenAfterModifiers());
+            creature.changedInWorld();
+            game.map.addEntity(creatureId, x, y);
             return true;
         }
         return false;
     }
 
+    // CREATURES
+    // ///////////////////////////////////
     public boolean creatureMoveTo(int creatureId, int x, int y) {
         final Entity creature = game.world.getEntity(creatureId);
         if ((null != creature) && !game.map.cellOccupied(x, y)) {
@@ -191,6 +201,12 @@ public class Api {
         return false;
     }
 
+    public int creatureGetAt(int x, int y) {
+        return game.map.getEntityAt(x, y);
+    }
+
+    // SKILLS
+    // ///////////////////////////////////
     public boolean skillActivateBeginTurn(int skillId, int casterId, int originx, int originy,
             int targetx, int targety) {
         final Pair origin = new Pair(originx, originy);
@@ -199,6 +215,7 @@ public class Api {
         if (null != skill) {
             skill.addComponent(new ActionSequenceOnBeginTurn(new Action(casterId, skillId, origin,
                     target)));
+            skill.changedInWorld();
             return true;
         }
         return false;
@@ -208,6 +225,7 @@ public class Api {
         final Entity skill = game.world.getEntity(skillId);
         if (null != skill) {
             skill.removeComponent(new ActionSequenceOnBeginTurn());
+            skill.changedInWorld();
             return true;
         }
         return false;
@@ -221,6 +239,7 @@ public class Api {
         if (null != skill) {
             skill.addComponent(new ActionSequenceOnEndTurn(new Action(casterId, skillId, origin,
                     target)));
+            skill.changedInWorld();
             return true;
         }
         return false;
@@ -230,6 +249,7 @@ public class Api {
         final Entity skill = game.world.getEntity(skillId);
         if (null != skill) {
             skill.removeComponent(new ActionSequenceOnEndTurn());
+            skill.changedInWorld();
             return true;
         }
         return false;
@@ -243,7 +263,7 @@ public class Api {
         final PositionArray targetHexes = new PositionArray(game.map);
         switch (shape) {
             case CIRCLE:
-                targetHexes.addAll(game.map.tools.getCircularRange(origin, minRange, maxRange));
+                targetHexes.addAll(game.map.tools.getCircularRange(target, minRange, maxRange));
                 break;
             case CONE:
                 targetHexes.addAll(game.map.tools
@@ -261,5 +281,22 @@ public class Api {
                 break;
         }
         return targetHexes;
+    }
+
+    public Array<Integer> skillGetCreaturesForArea(Shapes shape, int minRange, int maxRange,
+            int originx, int originy, int targetx, int targety) {
+        return this.skillGetCreaturesInPositionArray(this.skillGetHexesForArea(shape, minRange,
+                maxRange, originx, originy, targetx, targety));
+    }
+
+    public Array<Integer> skillGetCreaturesInPositionArray(PositionArray positionArray) {
+        final Array<Integer> creatures = new Array<Integer>();
+        for (final Pair position : positionArray) {
+            final int entityId = game.map.getEntityAt(position.x, position.y);
+            if (entityId > -1) {
+                creatures.add(entityId);
+            }
+        }
+        return creatures;
     }
 }
