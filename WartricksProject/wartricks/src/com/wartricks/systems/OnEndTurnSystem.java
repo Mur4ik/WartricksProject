@@ -28,7 +28,7 @@ public class OnEndTurnSystem extends EntityProcessingSystem {
         if (sequence.onEndTurnActions.size() > 0) {
             for (final Action action : sequence.onEndTurnActions) {
                 game.executor.execute(action.creatureId, action.skillId, action.origin,
-                        action.target, "onEndTurn");
+                        action.target, "endTurn");
             }
         }
     }

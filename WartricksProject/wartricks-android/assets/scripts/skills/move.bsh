@@ -19,7 +19,22 @@ create() {
      return affected;
  }
  
- execute() {
+ execute() 
+ {
+     game.skillActivateBeginTurn(skillId, caster, origin.x, origin.y, target.x, target.y);
+     game.skillActivateEndTurn(skillId, caster, origin.x, origin.y, target.x, target.y);
      return game.creatureMoveTo(caster, target.x, target.y);
+ }
+ 
+ beginTurn()
+ {
+     game.skillDeactivateBeginTurn(skillId);
+     return game.creatureMoveBy(caster, 2, 0);
+ }
+ 
+ endTurn()
+ {
+     game.skillDeactivateEndTurn(skillId);
+     return game.creatureMoveBy(caster, 0, 2);
  }
  

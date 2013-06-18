@@ -157,8 +157,8 @@ public class Api {
         final Entity creature = game.world.getEntity(creatureId);
         if ((null != creature) && !game.map.cellOccupied(x, y)) {
             final MapPosition mapPosition = game.world.getMapper(MapPosition.class).get(creature);
-            game.map.moveEntity(creatureId, x, y);
             mapPosition.setPosition(x, y);
+            game.map.moveEntity(creatureId, x, y);
             creature.changedInWorld();
             return true;
         }
@@ -172,7 +172,7 @@ public class Api {
                     .getPosition();
             mapPosition.x += x;
             mapPosition.y += y;
-            game.map.moveEntity(creatureId, x, y);
+            game.map.moveEntity(creatureId, mapPosition.x, mapPosition.y);
             creature.changedInWorld();
             return true;
         }
