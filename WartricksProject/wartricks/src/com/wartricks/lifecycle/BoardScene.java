@@ -87,12 +87,12 @@ public class BoardScene extends AbstractScreen {
         EntityFactory.createPlayer(world, gameMap, Players.ONE, 10);
         EntityFactory.createPlayer(world, gameMap, Players.TWO, 10);
         // TODO creating skills
-        EntityFactory.createSkill(gameWorld, "move", 2, 1, 2, 700, 0);
-        EntityFactory.createSkill(gameWorld, "attack", 2, 1, 1, 600, 2);
-        EntityFactory.createSkill(gameWorld, "jump", 2, 1, 1, 500, 1);
-        EntityFactory.createSkill(gameWorld, "impactrueno", 2, 1, 1, 400, 2);
-        EntityFactory.createSkill(gameWorld, "gorro del amor", 2, 1, 1, 300, 1);
-        EntityFactory.createSkill(gameWorld, "piruloNOjutsu", 2, 1, 1, 200, 0);
+        // EntityFactory.createSkill(gameWorld, "move", 2, 1, 2, 700, 0);
+        // EntityFactory.createSkill(gameWorld, "attack", 2, 1, 1, 600, 2);
+        // EntityFactory.createSkill(gameWorld, "jump", 2, 1, 1, 500, 1);
+        // EntityFactory.createSkill(gameWorld, "impactrueno", 2, 1, 1, 400, 2);
+        // EntityFactory.createSkill(gameWorld, "gorro del amor", 2, 1, 1, 300, 1);
+        // EntityFactory.createSkill(gameWorld, "piruloNOjutsu", 2, 1, 1, 200, 0);
         // TODO creating creatures
         EntityFactory.createCreature(world, gameMap, "dash", Players.ONE,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 5,

@@ -5,7 +5,6 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
-import com.artemis.managers.TagManager;
 import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -85,21 +84,18 @@ public class SkillRenderSystem extends EntityProcessingSystem {
             final SkillSet skills = sm.get(e);
             final int margin = 15;
             for (int i = 0; i < skills.skillSet.size; i++) {
-                final String skillName = skills.skillSet.get(i);
-                final Entity skill = world.getManager(TagManager.class).getEntity(skillName);
+                final int skillId = skills.skillSet.get(i);
+                final Entity skill = world.getEntity(skillId);
                 if (null != skill) {
                     final Range range = rm.getSafe(skill);
                     final Cost cost = cm.getSafe(skill);
                     final Cooldown cooldown = cdm.getSafe(skill);
                     final Initiative initiative = im.getSafe(skill);
                     String skillDescription = "%s: Cost %d Range %d-%d Cooldown %d/%d Initiative %d";
-                    skillDescription = String
-                            .format(skillDescription, skillName, cost.getCostBase(),
-                                    range.getMinRangeAfterModifiers(),
-                                    range.getMaxRangeAfterModifiers(),
-                                    cooldown.getCurrentCooldown(),
-                                    cooldown.getMaxCooldownAfterModifiers(),
-                                    initiative.getInitiativeBase());
+                    skillDescription = String.format(skillDescription, skillId, cost.getCostBase(),
+                            range.getMinRangeAfterModifiers(), range.getMaxRangeAfterModifiers(),
+                            cooldown.getCurrentCooldown(), cooldown.getMaxCooldownAfterModifiers(),
+                            initiative.getInitiativeBase());
                     font.draw(spriteBatch, skillDescription, 20, 100 + (margin * i));
                 }
             }

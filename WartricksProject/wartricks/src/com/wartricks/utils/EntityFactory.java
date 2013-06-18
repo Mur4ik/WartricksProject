@@ -1,10 +1,15 @@
 
 package com.wartricks.utils;
 
+import bsh.EvalError;
+import bsh.Interpreter;
+
 import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
@@ -49,11 +54,7 @@ public class EntityFactory {
         e.addComponent(new Health(maxHealth));
         e.addComponent(new EnergyRegen(energyRegen));
         e.addComponent(new ActionSequence(uiColor));
-        final Array<Integer> skillIds = new Array<Integer>();
-        for (final String skill : skillSet) {
-            // TODO load values from script
-        }
-        e.addComponent(new SkillSet(skillSet));
+        e.addComponent(new SkillSet(loadSkillset(skillSet, world)));
         e.addComponent(new Owner(owner));
         world.getManager(TagManager.class).register(sprite, e);
         world.getManager(GroupManager.class).add(e, Constants.Groups.CREATURE);
@@ -66,6 +67,25 @@ public class EntityFactory {
         energyBar.setMaxEnergyModifier(energyBar.getMaxEnergyModifier() + energyRegen);
         e.addToWorld();
         return e;
+    }
+
+    private static Array<Integer> loadSkillset(Array<String> skillSet, World world) {
+        final Array<Integer> skillIds = new Array<Integer>();
+        for (final String skill : skillSet) {
+            final Interpreter interp = new Interpreter();
+            final FileHandle script = Gdx.files.internal("scripts/skills/" + skill + ".bsh");
+            if (script.exists()) {
+                try {
+                    interp.eval(script.readString());
+                    interp.set("world", world);
+                    interp.set("name", skill);
+                    skillIds.add((Integer)interp.eval("create()"));
+                } catch (final EvalError error) {
+                    error.printStackTrace();
+                }
+            }
+        }
+        return skillIds;
     }
 
     public static Entity createSkill(World world, String name, int baseCost, int minRange,

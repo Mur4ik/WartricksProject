@@ -4,3 +4,5 @@ import com.wartricks.components.ActionSequenceOnEndTurn;
 import com.wartricks.components.Action;
 import com.wartricks.custom.Pair;
 import com.wartricks.utils.EntityFactory;
+import com.artemis.Entity;
+

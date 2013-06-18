@@ -1,9 +1,9 @@
 
 package com.wartricks.input;
 
-import com.artemis.managers.TagManager;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.wartricks.components.SkillSet;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
 
@@ -46,7 +46,8 @@ public class SkillSelectInput implements InputProcessor {
         if (game.state.getCurrentState() == GameState.CHOOSING_SKILL) {
             final int randSkill = (int)(Math.random() * 100);
             // TODO always same skill
-            final int skillId = game.world.getManager(TagManager.class).getEntity("move").getId();
+            final int skillId = game.world.getEntity(game.state.getSelectedCreature())
+                    .getComponent(SkillSet.class).skillSet.first();
             return game.selectSkill(skillId);
         }
         return false;
