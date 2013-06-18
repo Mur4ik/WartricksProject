@@ -12,6 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
+import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
 import com.wartricks.components.ActionSequenceOnBeginTurn;
 import com.wartricks.components.ActionSequenceOnEndTurn;
@@ -22,15 +23,18 @@ import com.wartricks.components.EnergyRegen;
 import com.wartricks.components.Health;
 import com.wartricks.components.Initiative;
 import com.wartricks.components.MapPosition;
-import com.wartricks.components.OnCast;
 import com.wartricks.components.Owner;
 import com.wartricks.components.Range;
+import com.wartricks.components.ScriptExecutable;
 import com.wartricks.components.SkillSet;
 import com.wartricks.components.Sprite;
+import com.wartricks.custom.FloatPair;
 import com.wartricks.custom.Pair;
+import com.wartricks.custom.PositionArray;
 import com.wartricks.custom.WartricksInterpreter;
 import com.wartricks.utils.Constants;
 import com.wartricks.utils.Constants.Players;
+import com.wartricks.utils.MapTools.Shapes;
 
 public class Api {
     private VersusGame game;
@@ -85,7 +89,7 @@ public class Api {
             }
             if (skillId > -1) {
                 final Entity skill = game.world.getEntity(skillId);
-                skill.addComponent(new OnCast(script, interp));
+                skill.addComponent(new ScriptExecutable(script, interp));
                 entityIds.add(skillId);
             }
         }
@@ -187,16 +191,20 @@ public class Api {
         return false;
     }
 
-    public boolean skillActivateBeginTurn(int skillId, int value) {
+    public boolean skillActivateBeginTurn(int skillId, int casterId, int originx, int originy,
+            int targetx, int targety) {
+        final Pair origin = new Pair(originx, originy);
+        final Pair target = new Pair(targetx, targety);
         final Entity skill = game.world.getEntity(skillId);
         if (null != skill) {
-            skill.addComponent(new ActionSequenceOnBeginTurn());
+            skill.addComponent(new ActionSequenceOnBeginTurn(new Action(casterId, skillId, origin,
+                    target)));
             return true;
         }
         return false;
     }
 
-    public boolean skillDeactivateBeginTurn(int skillId, int value) {
+    public boolean skillDeactivateBeginTurn(int skillId) {
         final Entity skill = game.world.getEntity(skillId);
         if (null != skill) {
             skill.removeComponent(new ActionSequenceOnBeginTurn());
@@ -205,21 +213,53 @@ public class Api {
         return false;
     }
 
-    public boolean skillActivateEndTurn(int skillId, int value) {
+    public boolean skillActivateEndTurn(int skillId, int casterId, int originx, int originy,
+            int targetx, int targety) {
+        final Pair origin = new Pair(originx, originy);
+        final Pair target = new Pair(targetx, targety);
         final Entity skill = game.world.getEntity(skillId);
         if (null != skill) {
-            skill.addComponent(new ActionSequenceOnEndTurn());
+            skill.addComponent(new ActionSequenceOnEndTurn(new Action(casterId, skillId, origin,
+                    target)));
             return true;
         }
         return false;
     }
 
-    public boolean skillDeactivateEndTurn(int skillId, int value) {
+    public boolean skillDeactivateEndTurn(int skillId) {
         final Entity skill = game.world.getEntity(skillId);
         if (null != skill) {
             skill.removeComponent(new ActionSequenceOnEndTurn());
             return true;
         }
         return false;
+    }
+
+    public PositionArray skillGetHexesForArea(Shapes shape, int minRange, int maxRange,
+            int originx, int originy, int targetx, int targety) {
+        final Pair origin = new Pair(originx, originy);
+        final Pair target = new Pair(targetx, targety);
+        final FloatPair direction = game.map.tools.getDirectionVector(origin, target);
+        final PositionArray targetHexes = new PositionArray(game.map);
+        switch (shape) {
+            case CIRCLE:
+                targetHexes.addAll(game.map.tools.getCircularRange(origin, minRange, maxRange));
+                break;
+            case CONE:
+                targetHexes.addAll(game.map.tools
+                        .getArcRange(origin, direction, minRange, maxRange));
+                break;
+            case FLOWER:
+                targetHexes.addAll(game.map.tools.getFlowerRange(origin, minRange, maxRange));
+                break;
+            case REVERSEFLOWER:
+                targetHexes
+                        .addAll(game.map.tools.getReverseFlowerRange(origin, minRange, maxRange));
+                break;
+            case WAVE:
+                targetHexes.addAll(game.map.tools.getWaveRange(origin, target));
+                break;
+        }
+        return targetHexes;
     }
 }

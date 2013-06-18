@@ -27,7 +27,8 @@ public class OnBeginTurnSystem extends EntityProcessingSystem {
         final ActionSequenceOnBeginTurn sequence = asm.get(e);
         if (sequence.onBeginTurnActions.size() > 0) {
             for (final Action action : sequence.onBeginTurnActions) {
-                game.executor.execute(action, "onBeginTurn");
+                game.executor.execute(action.creatureId, action.skillId, action.origin,
+                        action.target, "onBeginTurn");
             }
         }
     }

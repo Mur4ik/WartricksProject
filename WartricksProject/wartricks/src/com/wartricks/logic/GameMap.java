@@ -6,12 +6,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.wartricks.custom.FloatPair;
 import com.wartricks.custom.Pair;
 import com.wartricks.custom.PositionArray;
 import com.wartricks.utils.BoardGenerator;
 import com.wartricks.utils.MapTools;
-import com.wartricks.utils.MapTools.Shapes;
 
 public class GameMap {
     private int[][] map;
@@ -150,23 +148,5 @@ public class GameMap {
 
     public void clearHighlights() {
         highlighted.clear();
-    }
-
-    public void addHighlightedShape(Shapes shape, int minRange, int maxRange, Pair origin,
-            FloatPair direction) {
-        switch (shape) {
-            case CIRCLE:
-                this.addHighlights((tools.getCircularRange(origin, minRange, maxRange)));
-                break;
-            case CONE:
-                this.addHighlights((tools.getArcRange(origin, direction, minRange, minRange)));
-                break;
-            case FLOWER:
-                break;
-            case REVERSEFLOWER:
-                break;
-            case WAVE:
-                break;
-        }
     }
 }

@@ -2,7 +2,6 @@
 package com.wartricks.utils;
 
 import bsh.EvalError;
-import bsh.Interpreter;
 
 import com.artemis.Entity;
 import com.artemis.World;
@@ -13,7 +12,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import com.wartricks.components.ActionSequence;
 import com.wartricks.components.ColorAnimation;
 import com.wartricks.components.Cooldown;
 import com.wartricks.components.Cost;
@@ -24,7 +22,7 @@ import com.wartricks.components.Health;
 import com.wartricks.components.Initiative;
 import com.wartricks.components.Label;
 import com.wartricks.components.MapPosition;
-import com.wartricks.components.OnCast;
+import com.wartricks.components.ScriptExecutable;
 import com.wartricks.components.Owner;
 import com.wartricks.components.Position;
 import com.wartricks.components.Range;
@@ -32,10 +30,30 @@ import com.wartricks.components.ScaleAnimation;
 import com.wartricks.components.SkillSet;
 import com.wartricks.components.Sprite;
 import com.wartricks.components.Velocity;
+import com.wartricks.custom.WartricksInterpreter;
 import com.wartricks.logic.GameMap;
 import com.wartricks.utils.Constants.Players;
 
 public class EntityFactory {
+    public static Array<Integer> loadEntities(Array<String> scriptNames, World world) {
+        final Array<Integer> entityIds = new Array<Integer>();
+        final WartricksInterpreter interp = new WartricksInterpreter();
+        for (final String script : scriptNames) {
+            final FileHandle scriptFile = Gdx.files.internal("scripts/skills/" + script + ".bsh");
+            if (scriptFile.exists()) {
+                try {
+                    interp.eval(scriptFile.readString());
+                    interp.set("world", world);
+                    interp.set("name", script);
+                    entityIds.add((Integer)interp.eval("create()"));
+                } catch (final EvalError error) {
+                    error.printStackTrace();
+                }
+            }
+        }
+        return entityIds;
+    }
+
     public static Entity createPlayer(World world, GameMap map, Players owner, int maxEnergy) {
         final Entity e = world.createEntity();
         e.addComponent(new EnergyBar(maxEnergy));
@@ -53,8 +71,7 @@ public class EntityFactory {
         e.addComponent(new Sprite(sprite, Sprite.Layer.ACTORS_3));
         e.addComponent(new Health(maxHealth));
         e.addComponent(new EnergyRegen(energyRegen));
-        e.addComponent(new ActionSequence(uiColor));
-        e.addComponent(new SkillSet(loadSkillset(skillSet, world)));
+        e.addComponent(new SkillSet(loadEntities(skillSet, world)));
         e.addComponent(new Owner(owner));
         world.getManager(TagManager.class).register(sprite, e);
         world.getManager(GroupManager.class).add(e, Constants.Groups.CREATURE);
@@ -69,34 +86,6 @@ public class EntityFactory {
         return e;
     }
 
-    private static Array<Integer> loadSkillset(Array<String> skillSet, World world) {
-        final Array<Integer> skillIds = new Array<Integer>();
-        final Interpreter interp = new Interpreter();
-        final FileHandle file = Gdx.files.internal("scripts/init.bsh");
-        if (file.exists()) {
-            try {
-                interp.eval(file.readString());
-            } catch (final EvalError e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        for (final String skill : skillSet) {
-            final FileHandle script = Gdx.files.internal("scripts/skills/" + skill + ".bsh");
-            if (script.exists()) {
-                try {
-                    interp.eval(script.readString());
-                    interp.set("world", world);
-                    interp.set("name", skill);
-                    skillIds.add((Integer)interp.eval("create()"));
-                } catch (final EvalError error) {
-                    error.printStackTrace();
-                }
-            }
-        }
-        return skillIds;
-    }
-
     public static Entity createSkill(World world, String name, int baseCost, int minRange,
             int maxRange, int baseInitiative, int cooldown) {
         final Entity e = world.createEntity();
@@ -104,7 +93,7 @@ public class EntityFactory {
         e.addComponent(new Range(minRange, maxRange));
         e.addComponent(new Cost(baseCost));
         e.addComponent(new Initiative(baseInitiative));
-        e.addComponent(new OnCast(name));
+        e.addComponent(new ScriptExecutable(name));
         world.getManager(TagManager.class).register(name, e);
         world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_SKILL);
         e.addToWorld();

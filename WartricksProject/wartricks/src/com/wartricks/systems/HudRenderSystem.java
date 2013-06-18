@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.wartricks.components.OnCast;
+import com.wartricks.components.ScriptExecutable;
 import com.wartricks.components.Sprite;
 import com.wartricks.lifecycle.BoardGame;
 import com.wartricks.logic.VersusGame;
@@ -31,7 +31,7 @@ public class HudRenderSystem extends VoidEntitySystem {
     private ComponentMapper<Sprite> sm;
 
     @Mapper
-    private ComponentMapper<OnCast> om;
+    private ComponentMapper<ScriptExecutable> om;
 
     public HudRenderSystem(OrthographicCamera camera, SpriteBatch batch, VersusGame game) {
         spriteBatch = batch;
@@ -78,7 +78,7 @@ public class HudRenderSystem extends VoidEntitySystem {
             final Sprite sprite = sm.get(game.world.getEntity(selectedCreature));
             font.draw(spriteBatch, "SelectedCreature: " + sprite.name, 20, screenHeight - 160);
             if (selectedSkill > -1) {
-                final OnCast script = om.get(game.world.getEntity(selectedSkill));
+                final ScriptExecutable script = om.get(game.world.getEntity(selectedSkill));
                 font.draw(spriteBatch, "SelectedSkill: " + script.name, 20, screenHeight - 180);
             }
         }

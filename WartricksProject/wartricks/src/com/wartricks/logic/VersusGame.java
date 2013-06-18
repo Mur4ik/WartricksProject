@@ -5,6 +5,8 @@ import java.util.NoSuchElementException;
 import java.util.Observable;
 import java.util.Observer;
 
+import bsh.EvalError;
+
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.World;
@@ -23,9 +25,9 @@ import com.wartricks.components.EnergyBar;
 import com.wartricks.components.EnergyRegen;
 import com.wartricks.components.Initiative;
 import com.wartricks.components.MapPosition;
+import com.wartricks.components.ScriptExecutable;
 import com.wartricks.components.Owner;
 import com.wartricks.components.Range;
-import com.wartricks.custom.FloatPair;
 import com.wartricks.custom.Pair;
 import com.wartricks.input.ConfirmInput;
 import com.wartricks.input.CreatureSelectInput;
@@ -38,7 +40,6 @@ import com.wartricks.systems.OnEndTurnSystem;
 import com.wartricks.systems.OnExecuteTurnSystem;
 import com.wartricks.utils.Constants.Groups;
 import com.wartricks.utils.Constants.Players;
-import com.wartricks.utils.MapTools.Shapes;
 
 public class VersusGame implements Observer {
     private OrthographicCamera camera;
@@ -52,6 +53,8 @@ public class VersusGame implements Observer {
     public StateMachine state;
 
     public InputMultiplexer inputSystem;
+
+    public Api api;
 
     private TargetSelectInput targetSelectInput;
 
@@ -96,11 +99,15 @@ public class VersusGame implements Observer {
     @Mapper
     private ComponentMapper<Cooldown> cdm;
 
+    @Mapper
+    private ComponentMapper<ScriptExecutable> ocm;
+
     public VersusGame(GameMap gameMap, World gameWorld, OrthographicCamera camera) {
         super();
         map = gameMap;
         world = gameWorld;
         this.camera = camera;
+        api = new Api(this);
         executor = new ActionExecutor(this);
         rm = world.getMapper(Range.class);
         mm = world.getMapper(MapPosition.class);
@@ -111,6 +118,7 @@ public class VersusGame implements Observer {
         asm = world.getMapper(ActionSequence.class);
         im = world.getMapper(Initiative.class);
         cdm = world.getMapper(Cooldown.class);
+        ocm = world.getMapper(ScriptExecutable.class);
         onExecuteTurnSystem = gameWorld.setSystem(new OnExecuteTurnSystem(this), true);
         onBeginTurnSystem = gameWorld.setSystem(new OnBeginTurnSystem(this), true);
         onEndTurnSystem = gameWorld.setSystem(new OnEndTurnSystem(this), true);
@@ -199,9 +207,8 @@ public class VersusGame implements Observer {
                     && ((bar.getCurrentEnergy() - cost.getCostAfterModifiers()) >= 0)) {
                 final MapPosition origin = mm.getSafe(world.getEntity(state.getSelectedCreature()));
                 final Range range = rm.getSafe(skill);
-                map.addHighlightedShape(Shapes.CIRCLE, range.getMinRangeAfterModifiers(),
-                        range.getMaxRangeAfterModifiers(), origin.getPosition(),
-                        new FloatPair(1, 1));
+                map.addHighlights(map.tools.getCircularRange(origin.getPosition(),
+                        range.getMinRangeAfterModifiers(), range.getMaxRangeAfterModifiers()));
                 state.setSelectedSkill(skillId);
                 state.setCurrentState(GameState.CHOOSING_TARGET);
                 return true;
@@ -225,6 +232,8 @@ public class VersusGame implements Observer {
         return false;
     }
 
+    // TODO unused ATM
+    // TODO remove player from state.selectedIds
     public boolean undoLatestAction(int creatureId) {
         if (creatureId > -1) {
             try {
@@ -247,6 +256,20 @@ public class VersusGame implements Observer {
     public boolean selectHexagon(Pair coords) {
         if (map.highlighted.contains(coords, false)) {
             state.setSelectedHex(coords);
+            final Entity skill = world.getEntity(state.getSelectedSkill());
+            final MapPosition origin = mm.getSafe(world.getEntity(state.getSelectedCreature()));
+            map.clearHighlights();
+            final ScriptExecutable cast = ocm.getSafe(skill);
+            try {
+                cast.interpreter.set("game", this);
+                cast.interpreter.set("caster", state.getSelectedCreature());
+                cast.interpreter.set("origin", origin.getPosition());
+                cast.interpreter.set("target", state.getSelectedHex());
+                cast.interpreter.eval("affected()");
+            } catch (final EvalError e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             state.setCurrentState(GameState.CHOOSING_CONFIRM);
             return true;
         }
@@ -293,8 +316,7 @@ public class VersusGame implements Observer {
         final Cooldown cooldown = cdm.getSafe(skill);
         cooldown.setCurrentCooldown(0);
         skill.changedInWorld();
-        // TODO incorrect
-        // state.getSelectedIds().add(state.getSelectedCreature());
+        state.getSelectedIds().add(state.getSelectedCreature());
         // TODO removed autoturns
         // String group;
         // if (state.getActivePlayer() == Players.ONE) {

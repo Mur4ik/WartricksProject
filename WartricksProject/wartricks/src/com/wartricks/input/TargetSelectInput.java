@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.wartricks.components.OnCast;
+import com.wartricks.components.ScriptExecutable;
 import com.wartricks.custom.Pair;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
@@ -27,7 +27,7 @@ public class TargetSelectInput implements InputProcessor {
             case Input.Keys.R:
                 final int skillId = game.state.getSelectedSkill();
                 if (skillId > -1) {
-                    game.world.getEntity(skillId).getComponent(OnCast.class).reload();
+                    game.world.getEntity(skillId).getComponent(ScriptExecutable.class).reload();
                     return true;
                 }
                 break;

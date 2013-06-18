@@ -94,10 +94,15 @@ public class BoardScene extends AbstractScreen {
         // EntityFactory.createSkill(gameWorld, "gorro del amor", 2, 1, 1, 300, 1);
         // EntityFactory.createSkill(gameWorld, "piruloNOjutsu", 2, 1, 1, 200, 0);
         // TODO creating creatures
+        // final Array<String> characters = new Array<String>(new String[] {
+        // "dash", "kirby", "apple", "pinkie"
+        // });
+        // final Array<Integer> loadCharacters = EntityFactory.loadEntities(characters, gameWorld);
+        // print out the result from the lua function
         EntityFactory.createCreature(world, gameMap, "dash", Players.ONE,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 5,
                 3, 100, 5, new Array<String>(new String[] {
-                        "move", "piruloNOjutsu"
+                        "piruloNOjutsu", "move"
                 }));
         EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,

@@ -2,45 +2,35 @@
 package com.wartricks.logic;
 
 import bsh.EvalError;
-import bsh.Interpreter;
 
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Mapper;
-import com.wartricks.components.Action;
-import com.wartricks.components.OnCast;
+import com.wartricks.components.ScriptExecutable;
 import com.wartricks.custom.Pair;
+import com.wartricks.custom.WartricksInterpreter;
 
 public class ActionExecutor {
     private VersusGame game;
 
     @Mapper
-    ComponentMapper<OnCast> ocm;
+    ComponentMapper<ScriptExecutable> ocm;
 
     public ActionExecutor(VersusGame game) {
         super();
         this.game = game;
-        ocm = game.world.getMapper(OnCast.class);
+        ocm = game.world.getMapper(ScriptExecutable.class);
     }
 
-    public boolean execute(Action action, String method) {
-        final OnCast executable = ocm.getSafe(game.world.getEntity(action.skillId));
+    public boolean execute(int casterId, int skillId, Pair origin, Pair target, String method) {
+        final ScriptExecutable executable = ocm.getSafe(game.world.getEntity(skillId));
         if (null != executable) {
-            this.execute(executable.interpreter, game, action.creatureId, action.skillId,
-                    action.origin, action.target, method);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean execute(Interpreter interp, VersusGame game, int caster, int skill,
-            Pair origin, Pair target, String method) {
-        if (null != interp) {
             try {
-                interp.set("game", game);
-                interp.set("caster", caster);
+                final WartricksInterpreter interp = executable.interpreter;
+                interp.set("game", game.api);
+                interp.set("caster", casterId);
                 interp.set("origin", origin);
                 interp.set("target", target);
-                interp.set("skill", skill);
+                interp.set("skill", skillId);
                 interp.eval(method + "()");
             } catch (final EvalError e) {
                 e.printStackTrace();
