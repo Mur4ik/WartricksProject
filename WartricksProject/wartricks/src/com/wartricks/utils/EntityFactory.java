@@ -37,6 +37,7 @@ public class EntityFactory {
         e.addComponent(new Owner(owner));
         world.getManager(TagManager.class).register(owner.toString(), e);
         world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER);
+        e.addToWorld();
         return e;
     }
 
@@ -48,6 +49,10 @@ public class EntityFactory {
         e.addComponent(new Health(maxHealth));
         e.addComponent(new EnergyRegen(energyRegen));
         e.addComponent(new ActionSequence(uiColor));
+        final Array<Integer> skillIds = new Array<Integer>();
+        for (final String skill : skillSet) {
+            // TODO load values from script
+        }
         e.addComponent(new SkillSet(skillSet));
         e.addComponent(new Owner(owner));
         world.getManager(TagManager.class).register(sprite, e);
@@ -59,6 +64,7 @@ public class EntityFactory {
         final Entity player = world.getManager(TagManager.class).getEntity(owner.toString());
         final EnergyBar energyBar = world.getMapper(EnergyBar.class).get(player);
         energyBar.setMaxEnergyModifier(energyBar.getMaxEnergyModifier() + energyRegen);
+        e.addToWorld();
         return e;
     }
 
@@ -72,6 +78,7 @@ public class EntityFactory {
         e.addComponent(new OnCast(name));
         world.getManager(TagManager.class).register(name, e);
         world.getManager(GroupManager.class).add(e, Constants.Groups.PLAYER_SKILL);
+        e.addToWorld();
         return e;
     }
 
