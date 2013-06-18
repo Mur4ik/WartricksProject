@@ -1,5 +1,34 @@
+int id = -1;
+
+create() {
+    id = EntityFactory.createSkill(world, name, 3, 1,
+            1, 1, 0).getId();
+    return id;
+ }
+
+execute(){
 creature = game.world.getEntity(caster);
-bolafuego = EntityFactory.createSkill(game.world, "bolafuego", 2, 2, 5, 300, 5);
-bolafuego.addToWorld();
-creature.addComponent(new ActionSequenceOnEndTurn(new Action(caster, bolafuego.getId(), origin, new Pair(origin.x, origin.y - 1))));
+id = 2;
+creature.addComponent(new ActionSequenceOnEndTurn(new Action(caster, skill, origin, new Pair(origin.x, origin.y))));
 creature.changedInWorld();
+}
+
+onEndTurn(){
+    newTarget = new Pair(5, id);
+    if (!game.map.cellOccupied(newTarget.x, newTarget.y)) {
+        game.map.moveEntity(caster, newTarget);
+        mm = game.world.getMapper(MapPosition.class);
+        creature = game.world.getEntity(caster);
+        mapPosition = mm.get(creature);
+        mapPosition.setPosition(newTarget);
+        creature.changedInWorld();
+        } else {
+        asq = game.world.getMapper(ActionSequence.class);
+        seq = asq.get(game.world.getEntity(caster));
+        seq.onCastActions.clear();
+       }
+}
+
+onBeginTurn(){
+
+}

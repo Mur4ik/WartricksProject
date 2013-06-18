@@ -1,8 +1,20 @@
 
 package com.wartricks.components;
 
-public class OnCast extends AbstractScriptAction {
+import com.artemis.Component;
+import com.wartricks.custom.WartricksInterpreter;
+
+public class OnCast extends Component {
+    public final WartricksInterpreter interpreter;
+
+    public String name;
+
     public OnCast(String scriptName) {
-        super(scriptName);
+        name = scriptName;
+        interpreter = new WartricksInterpreter(name);
+    }
+
+    public void reload() {
+        interpreter.reload();
     }
 }

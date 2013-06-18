@@ -1,14 +1,9 @@
- import com.wartricks.components.MapPosition;
- import com.wartricks.components.ActionSequence;
- import com.wartricks.utils.EntityFactory;
- import com.artemis.Entity;
- 
  create() {
      return EntityFactory.createSkill(world, name, 3, 1,
              1, 1, 0).getId();
  }
  
- execute(){
+ execute() {
      if (!game.map.cellOccupied(target.x, target.y)) {
          game.map.moveEntity(caster, target);
          mm = game.world.getMapper(MapPosition.class);
@@ -17,7 +12,7 @@
          mapPosition.setPosition(target);
          creature.changedInWorld();
          } else {
-         ActionSequence asq = game.world.getMapper(ActionSequence.class);
+         asq = game.world.getMapper(ActionSequence.class);
          seq = asq.get(game.world.getEntity(caster));
          seq.onCastActions.clear();
         }

@@ -6,16 +6,12 @@ import bsh.Interpreter;
 
 import com.artemis.ComponentMapper;
 import com.artemis.annotations.Mapper;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.wartricks.components.Action;
 import com.wartricks.components.OnCast;
 import com.wartricks.custom.Pair;
 
 public class ActionExecutor {
-    VersusGame game;
-
-    String initScript;
+    private VersusGame game;
 
     @Mapper
     ComponentMapper<OnCast> ocm;
@@ -24,31 +20,28 @@ public class ActionExecutor {
         super();
         this.game = game;
         ocm = game.world.getMapper(OnCast.class);
-        final FileHandle file = Gdx.files.internal("scripts/init.bsh");
-        if (file.exists()) {
-            initScript = file.readString();
-        }
     }
 
-    public boolean execute(Action action) {
+    public boolean execute(Action action, String method) {
         final OnCast executable = ocm.getSafe(game.world.getEntity(action.skillId));
         if (null != executable) {
-            this.execute(executable.script, game, action.creatureId, action.origin, action.target);
+            this.execute(executable.interpreter, game, action.creatureId, action.skillId,
+                    action.origin, action.target, method);
             return true;
         }
         return false;
     }
 
-    private boolean execute(String script, VersusGame game, int caster, Pair origin, Pair target) {
-        if (null != script) {
+    private boolean execute(Interpreter interp, VersusGame game, int caster, int skill,
+            Pair origin, Pair target, String method) {
+        if (null != interp) {
             try {
-                final Interpreter interp = new Interpreter();
-                interp.eval(initScript);
                 interp.set("game", game);
                 interp.set("caster", caster);
                 interp.set("origin", origin);
                 interp.set("target", target);
-                interp.eval(script);
+                interp.set("skill", skill);
+                interp.eval(method + "()");
             } catch (final EvalError e) {
                 e.printStackTrace();
             }

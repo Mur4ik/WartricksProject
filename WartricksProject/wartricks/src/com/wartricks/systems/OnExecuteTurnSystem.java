@@ -39,7 +39,7 @@ public class OnExecuteTurnSystem extends VoidEntitySystem {
             }
             turn.sort(new ActionComparator(game.world));
             for (final Action action : turn) {
-                game.executor.execute(action);
+                game.executor.execute(action, "execute");
             }
             turn.clear();
         } while (turn.size > 0);

@@ -71,8 +71,17 @@ public class EntityFactory {
 
     private static Array<Integer> loadSkillset(Array<String> skillSet, World world) {
         final Array<Integer> skillIds = new Array<Integer>();
+        final Interpreter interp = new Interpreter();
+        final FileHandle file = Gdx.files.internal("scripts/init.bsh");
+        if (file.exists()) {
+            try {
+                interp.eval(file.readString());
+            } catch (final EvalError e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
         for (final String skill : skillSet) {
-            final Interpreter interp = new Interpreter();
             final FileHandle script = Gdx.files.internal("scripts/skills/" + skill + ".bsh");
             if (script.exists()) {
                 try {

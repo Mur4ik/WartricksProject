@@ -101,7 +101,9 @@ public class BoardScene extends AbstractScreen {
                 }));
         EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,
-                4, 100, 5, new Array<String>(new String[] {}));
+                4, 100, 5, new Array<String>(new String[] {
+                        "jump", "move"
+                }));
         EntityFactory.createCreature(world, gameMap, "apple", Players.ONE,
                 new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 0,
                 1, 100, 5, new Array<String>(new String[] {
