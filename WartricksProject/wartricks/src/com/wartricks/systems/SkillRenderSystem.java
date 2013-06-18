@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.wartricks.components.Cooldown;
 import com.wartricks.components.Cost;
 import com.wartricks.components.Initiative;
+import com.wartricks.components.OnCast;
 import com.wartricks.components.Range;
 import com.wartricks.components.SkillSet;
 import com.wartricks.logic.VersusGame;
@@ -45,6 +46,9 @@ public class SkillRenderSystem extends EntityProcessingSystem {
 
     @Mapper
     ComponentMapper<Initiative> im;
+
+    @Mapper
+    ComponentMapper<OnCast> ocm;
 
     @SuppressWarnings("unchecked")
     public SkillRenderSystem(OrthographicCamera camera, SpriteBatch batch, VersusGame game) {
@@ -91,11 +95,15 @@ public class SkillRenderSystem extends EntityProcessingSystem {
                     final Cost cost = cm.getSafe(skill);
                     final Cooldown cooldown = cdm.getSafe(skill);
                     final Initiative initiative = im.getSafe(skill);
-                    String skillDescription = "%s: Cost %d Range %d-%d Cooldown %d/%d Initiative %d";
-                    skillDescription = String.format(skillDescription, skillId, cost.getCostBase(),
-                            range.getMinRangeAfterModifiers(), range.getMaxRangeAfterModifiers(),
-                            cooldown.getCurrentCooldown(), cooldown.getMaxCooldownAfterModifiers(),
-                            initiative.getInitiativeBase());
+                    final OnCast onCast = ocm.getSafe(skill);
+                    String skillDescription = "%s (%d): Cost %d Range %d-%d Cooldown %d/%d Initiative %d";
+                    skillDescription = String
+                            .format(skillDescription, onCast.name, skillId, cost.getCostBase(),
+                                    range.getMinRangeAfterModifiers(),
+                                    range.getMaxRangeAfterModifiers(),
+                                    cooldown.getCurrentCooldown(),
+                                    cooldown.getMaxCooldownAfterModifiers(),
+                                    initiative.getInitiativeBase());
                     font.draw(spriteBatch, skillDescription, 20, 100 + (margin * i));
                 }
             }
