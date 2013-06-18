@@ -14,6 +14,11 @@ public class WartricksInterpreter extends Interpreter {
 
     private static final long serialVersionUID = 532787351354649447L;
 
+    public WartricksInterpreter() {
+        scriptName = "";
+        this.reload();
+    }
+
     public WartricksInterpreter(String scriptName) {
         this.scriptName = scriptName;
         this.reload();
@@ -25,9 +30,11 @@ public class WartricksInterpreter extends Interpreter {
             if (file.exists()) {
                 this.eval(file.readString());
             }
-            file = Gdx.files.internal("scripts/skills/" + scriptName + ".bsh");
-            if (file.exists()) {
-                this.eval(file.readString());
+            if (!scriptName.isEmpty()) {
+                file = Gdx.files.internal("scripts/skills/" + scriptName + ".bsh");
+                if (file.exists()) {
+                    this.eval(file.readString());
+                }
             }
         } catch (final EvalError e) {
             e.printStackTrace();
