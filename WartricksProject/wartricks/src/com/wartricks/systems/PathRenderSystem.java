@@ -16,13 +16,17 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
+import com.wartricks.components.ScriptExecutable;
 import com.wartricks.custom.FloatPair;
-import com.wartricks.logic.GameMap;
+import com.wartricks.logic.VersusGame;
 import com.wartricks.utils.PlatformUtils;
 
 public class PathRenderSystem extends EntitySystem {
     @Mapper
     ComponentMapper<ActionSequence> mm;
+
+    @Mapper
+    private ComponentMapper<ScriptExecutable> sem;
 
     private OrthographicCamera camera;
 
@@ -31,14 +35,14 @@ public class PathRenderSystem extends EntitySystem {
     // private Texture feet;
     private BitmapFont font;
 
-    private GameMap gameMap;
+    private VersusGame game;
 
     @SuppressWarnings("unchecked")
-    public PathRenderSystem(OrthographicCamera camera, SpriteBatch batch, GameMap map) {
+    public PathRenderSystem(OrthographicCamera camera, SpriteBatch batch, VersusGame game) {
         super(Aspect.getAspectForAll(ActionSequence.class));
         this.camera = camera;
         spriteBatch = batch;
-        gameMap = map;
+        this.game = game;
     }
 
     @Override
@@ -82,12 +86,11 @@ public class PathRenderSystem extends EntitySystem {
             for (int i = 0; i < moves.onCastActions.size(); i++) {
                 move = moves.onCastActions.get(i);
                 if (!move.origin.equals(move.target)) {
-                    final FloatPair coordsOrigin = gameMap.tools.world2window(move.target.x,
+                    final ScriptExecutable script = sem.getSafe(game.world.getEntity(move.skillId));
+                    final FloatPair coordsOrigin = game.map.tools.world2window(move.target.x,
                             move.target.y);
-                    font.draw(spriteBatch, String.valueOf(i), coordsOrigin.x - 10,
+                    font.draw(spriteBatch, script.name, coordsOrigin.x - (game.map.colSize / 2),
                             coordsOrigin.y - 10);
-                    // spriteBatch.draw(feet, coordsOrigin.x - (feet.getWidth() / 2), coordsOrigin.y
-                    // - (feet.getHeight() / 2));
                 }
             }
         }

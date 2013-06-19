@@ -68,8 +68,8 @@ public class BoardScene extends AbstractScreen {
                 versusGame), true);
         mapRenderSystem = gameWorld.setSystem(new MapRenderSystem(camera, gameMap, spriteBatch),
                 true);
-        pathRenderSystem = gameWorld.setSystem(new PathRenderSystem(camera, spriteBatch, gameMap),
-                true);
+        pathRenderSystem = gameWorld.setSystem(
+                new PathRenderSystem(camera, spriteBatch, versusGame), true);
         mapHighlightRenderSystem = gameWorld.setSystem(new MapHighlightRenderSystem(camera,
                 gameMap, spriteBatch), true);
         hudRenderSystem = gameWorld.setSystem(new HudRenderSystem(hudCamera, spriteBatch,
