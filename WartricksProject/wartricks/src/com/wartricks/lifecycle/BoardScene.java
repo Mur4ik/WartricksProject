@@ -112,7 +112,7 @@ public class BoardScene extends AbstractScreen {
     public void resize(final int width, final int height) {
         super.resize(width, height);
         camera.zoom = 0.6f;
-        final Vector3 origin = new Vector3(-200, -50, 0);
+        final Vector3 origin = new Vector3(-220, -60, 0);
         camera.translate(origin);
         hudCamera.setToOrtho(false, width, height);
         Gdx.app.debug(this.toString(), "resize");

@@ -66,7 +66,7 @@ public class SkillRenderSystem extends EntityProcessingSystem {
         final TextureRegion fontRegion = new TextureRegion(fontTexture);
         font = new BitmapFont(Gdx.files.internal(PlatformUtils
                 .getPath("resources/fonts/normal.fnt")), fontRegion, false);
-        font.setColor(Color.DARK_GRAY);
+        font.setColor(Color.BLUE);
         font.setUseIntegerPositions(false);
     }
 
@@ -104,7 +104,7 @@ public class SkillRenderSystem extends EntityProcessingSystem {
                                     cooldown.getCurrentCooldown(),
                                     cooldown.getMaxCooldownAfterModifiers(),
                                     initiative.getInitiativeBase());
-                    font.draw(spriteBatch, skillDescription, 20, 100 + (margin * i));
+                    font.draw(spriteBatch, skillDescription, 400, 20 + (margin * i));
                 }
             }
         }

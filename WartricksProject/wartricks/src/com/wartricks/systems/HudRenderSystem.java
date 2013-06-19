@@ -47,7 +47,7 @@ public class HudRenderSystem extends VoidEntitySystem {
         final TextureRegion fontRegion = new TextureRegion(fontTexture);
         font = new BitmapFont(Gdx.files.internal(PlatformUtils
                 .getPath("resources/fonts/normal.fnt")), fontRegion, false);
-        font.setColor(Color.DARK_GRAY);
+        font.setColor(Color.RED);
         font.setUseIntegerPositions(false);
     }
 
