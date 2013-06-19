@@ -377,18 +377,18 @@ public class VersusGame implements Observer {
                 skill.changedInWorld();
                 state.getSelectedIds().add(state.getSelectedCreature());
                 // TODO removed autoturns
-                String group;
-                if (state.getActivePlayer() == Players.ONE) {
-                    group = Groups.PLAYER_ONE_CREATURE;
-                } else {
-                    group = Groups.PLAYER_TWO_CREATURE;
-                }
-                if (state.getSelectedIds().size >= world.getManager(GroupManager.class)
-                        .getEntities(group).size()) {
-                    state.setCurrentState(GameState.PLAYER_FINISHED);
-                } else {
-                    state.setCurrentState(GameState.CHOOSING_CHARACTER);
-                }
+                // String group;
+                // if (state.getActivePlayer() == Players.ONE) {
+                // group = Groups.PLAYER_ONE_CREATURE;
+                // } else {
+                // group = Groups.PLAYER_TWO_CREATURE;
+                // }
+                // if (state.getSelectedIds().size >= world.getManager(GroupManager.class)
+                // .getEntities(group).size()) {
+                // state.setCurrentState(GameState.PLAYER_FINISHED);
+                // } else {
+                state.setCurrentState(GameState.CHOOSING_CHARACTER);
+                // }
                 return true;
             }
         }
