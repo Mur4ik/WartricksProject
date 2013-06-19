@@ -199,16 +199,7 @@ public class VersusGame implements Observer {
                     this.onConfirm();
                     break;
                 case PLAYER_FINISHED:
-                    state.clearSelection();
-                    map.clearHighlights();
-                    state.clearSelectedIds();
-                    if (Players.ONE == state.getActivePlayer()) {
-                        state.setActivePlayer(Players.TWO);
-                        state.setCurrentState(GameState.CHOOSING_CHARACTER);
-                    } else if (Players.TWO == state.getActivePlayer()) {
-                        onExecuteTurnSystem.process();
-                        state.setCurrentState(GameState.END_TURN);
-                    }
+                    this.onPlayerFinished();
                     break;
                 case END_TURN:
                     this.onEndTurn();
@@ -287,6 +278,19 @@ public class VersusGame implements Observer {
         confirm.addToStage(stage, 30, stage.getHeight() - 400);
     }
 
+    private void onPlayerFinished() {
+        state.clearSelection();
+        map.clearHighlights();
+        state.clearSelectedIds();
+        if (Players.ONE == state.getActivePlayer()) {
+            state.setActivePlayer(Players.TWO);
+            state.setCurrentState(GameState.CHOOSING_CHARACTER);
+        } else if (Players.TWO == state.getActivePlayer()) {
+            onExecuteTurnSystem.process();
+            state.setCurrentState(GameState.END_TURN);
+        }
+    }
+
     private boolean onEndTurn() {
         return false;
     }
@@ -356,7 +360,6 @@ public class VersusGame implements Observer {
         if (state.getSelectedCreature() > -1) {
             final Entity creature = world.getEntity(state.getSelectedCreature());
             if (null != creature) {
-                state.getSelectedIds().add(state.getSelectedCreature());
                 final MapPosition position = mm.get(creature);
                 final ActionSequence sequence = asm.get(creature);
                 sequence.onCastActions.add(new Action(state.getSelectedCreature(), state
