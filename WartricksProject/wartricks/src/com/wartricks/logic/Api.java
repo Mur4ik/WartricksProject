@@ -170,11 +170,14 @@ public class Api {
         if (null != creature) {
             final Pair mapPosition = game.world.getMapper(MapPosition.class).get(creature)
                     .getPosition();
-            mapPosition.x += x;
-            mapPosition.y += y;
-            game.map.moveEntity(creatureId, mapPosition.x, mapPosition.y);
-            creature.changedInWorld();
-            return true;
+            if (((mapPosition.x + x) < game.map.width) && ((mapPosition.y + y) < game.map.height)
+                    && ((mapPosition.x + x) >= 0) && ((mapPosition.y + y) >= 0)) {
+                mapPosition.x += x;
+                mapPosition.y += y;
+                game.map.moveEntity(creatureId, mapPosition.x, mapPosition.y);
+                creature.changedInWorld();
+                return true;
+            }
         }
         return false;
     }
@@ -267,14 +270,14 @@ public class Api {
                 break;
             case CONE:
                 targetHexes.addAll(game.map.tools
-                        .getArcRange(origin, direction, minRange, maxRange));
+                        .getArcRange(target, direction, minRange, maxRange));
                 break;
             case FLOWER:
-                targetHexes.addAll(game.map.tools.getFlowerRange(origin, minRange, maxRange));
+                targetHexes.addAll(game.map.tools.getFlowerRange(target, minRange, maxRange));
                 break;
             case REVERSEFLOWER:
                 targetHexes
-                        .addAll(game.map.tools.getReverseFlowerRange(origin, minRange, maxRange));
+                        .addAll(game.map.tools.getReverseFlowerRange(target, minRange, maxRange));
                 break;
             case WAVE:
                 targetHexes.addAll(game.map.tools.getWaveRange(origin, target));
@@ -298,5 +301,22 @@ public class Api {
             }
         }
         return creatures;
+    }
+
+    public Pair skillGetDirection(int originx, int originy, int targetx, int targety) {
+        final FloatPair directionFloat = game.map.tools.getDirectionVector(originx, originy,
+                targetx, targety);
+        final Pair direction = new Pair(0, 0);
+        if (directionFloat.x > 0) {
+            direction.x = 1;
+        } else if (directionFloat.x < 0) {
+            direction.x = -1;
+        }
+        if (directionFloat.y > 0) {
+            direction.y = 1;
+        } else if (directionFloat.y < 0) {
+            direction.y = -1;
+        }
+        return direction;
     }
 }

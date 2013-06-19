@@ -107,9 +107,11 @@ public class GameMap {
     }
 
     public void moveEntity(int id, int x, int y) {
-        final Pair old = coordByEntity.put(id, new Pair(x, y));
-        entityByCoord[old.x][old.y] = -1;
-        entityByCoord[x][y] = id;
+        if ((x >= 0) && (y >= 0) && (x < width) && (y < height)) {
+            final Pair old = coordByEntity.put(id, new Pair(x, y));
+            entityByCoord[old.x][old.y] = -1;
+            entityByCoord[x][y] = id;
+        }
     }
 
     public int getPositionAt(int x, int y) {

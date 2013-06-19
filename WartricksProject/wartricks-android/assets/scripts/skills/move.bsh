@@ -4,7 +4,7 @@ Array affected;
 
 create() {
     name = "move";
-    cost = 1;
+    cost = 2;
     minRange = 1;
     maxRange = 2;
     initiative = 600;
