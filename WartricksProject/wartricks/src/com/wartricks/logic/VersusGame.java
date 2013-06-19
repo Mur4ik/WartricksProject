@@ -16,7 +16,13 @@ import com.artemis.managers.TagManager;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Array;
 import com.wartricks.components.Action;
 import com.wartricks.components.ActionSequence;
 import com.wartricks.components.Cooldown;
@@ -28,22 +34,26 @@ import com.wartricks.components.MapPosition;
 import com.wartricks.components.Owner;
 import com.wartricks.components.Range;
 import com.wartricks.components.ScriptExecutable;
+import com.wartricks.components.SkillSet;
 import com.wartricks.custom.Pair;
 import com.wartricks.custom.PositionArray;
-import com.wartricks.input.ConfirmInput;
 import com.wartricks.input.CreatureSelectInput;
 import com.wartricks.input.GeneralInput;
-import com.wartricks.input.SkillSelectInput;
 import com.wartricks.input.TargetSelectInput;
 import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.systems.OnBeginTurnSystem;
 import com.wartricks.systems.OnEndTurnSystem;
 import com.wartricks.systems.OnExecuteTurnSystem;
+import com.wartricks.ui.FramedDialog;
+import com.wartricks.ui.FramedMenu;
 import com.wartricks.utils.Constants.Groups;
 import com.wartricks.utils.Constants.Players;
+import com.wartricks.utils.EntityFactory;
 
 public class VersusGame implements Observer {
     private OrthographicCamera camera;
+
+    private Stage stage;
 
     public GameMap map;
 
@@ -57,13 +67,15 @@ public class VersusGame implements Observer {
 
     public Api api;
 
+    private Skin skin;
+
+    private FramedMenu playerMenu;
+
+    private FramedDialog confirm;
+
     private TargetSelectInput targetSelectInput;
 
     private CreatureSelectInput creatureSelectInput;
-
-    private SkillSelectInput skillSelectInput;
-
-    private ConfirmInput confirmSelectInput;
 
     private GeneralInput generalInput;
 
@@ -103,11 +115,19 @@ public class VersusGame implements Observer {
     @Mapper
     private ComponentMapper<ScriptExecutable> ocm;
 
-    public VersusGame(GameMap gameMap, World gameWorld, OrthographicCamera camera) {
+    @Mapper
+    private ComponentMapper<SkillSet> ssm;
+
+    public VersusGame(GameMap gameMap, World gameWorld, OrthographicCamera camera, Stage stage) {
         super();
         map = gameMap;
         world = gameWorld;
         this.camera = camera;
+        this.stage = stage;
+        final FileHandle skinFile = Gdx.files.internal("resources/uiskin/uiskin.json");
+        skin = new Skin(skinFile);
+        playerMenu = new FramedMenu(skin, 250, 800);
+        confirm = new FramedDialog(skin, "", "Are you sure?", 300, 120);
         api = new Api(this);
         executor = new ActionExecutor(this);
         rm = world.getMapper(Range.class);
@@ -120,6 +140,7 @@ public class VersusGame implements Observer {
         im = world.getMapper(Initiative.class);
         cdm = world.getMapper(Cooldown.class);
         ocm = world.getMapper(ScriptExecutable.class);
+        ssm = world.getMapper(SkillSet.class);
         onExecuteTurnSystem = gameWorld.setSystem(new OnExecuteTurnSystem(this), true);
         onBeginTurnSystem = gameWorld.setSystem(new OnBeginTurnSystem(this), true);
         onEndTurnSystem = gameWorld.setSystem(new OnEndTurnSystem(this), true);
@@ -127,21 +148,28 @@ public class VersusGame implements Observer {
         inputSystem = new InputMultiplexer();
         generalInput = new GeneralInput(camera, this);
         creatureSelectInput = new CreatureSelectInput(camera, this);
-        skillSelectInput = new SkillSelectInput(camera, this);
         targetSelectInput = new TargetSelectInput(camera, this);
-        confirmSelectInput = new ConfirmInput(camera, this);
-        inputSystem.addProcessor(creatureSelectInput);
-        inputSystem.addProcessor(skillSelectInput);
-        inputSystem.addProcessor(targetSelectInput);
-        inputSystem.addProcessor(confirmSelectInput);
-        inputSystem.addProcessor(generalInput);
-        Gdx.input.setInputProcessor(inputSystem);
         state = new StateMachine();
+        state.addObserver(this);
     }
 
     public boolean startLogic() {
-        state.addObserver(this);
-        state.setCurrentState(GameState.CHOOSING_CHARACTER);
+        // TODO creating players
+        EntityFactory.createPlayer(world, map, Players.ONE, 10);
+        EntityFactory.createPlayer(world, map, Players.TWO, 10);
+        final Array<String> characters = new Array<String>(new String[] {
+                "apple", "dash"
+        });
+        final Array<Integer> creatures = api.loadCreatures(characters);
+        api.assignCreatureToPlayer(creatures.get(0), Players.ONE, 0, 0);
+        api.assignCreatureToPlayer(creatures.get(1), Players.TWO, 9, 6);
+        // //////////////////////////////////////////////////
+        inputSystem.addProcessor(stage);
+        inputSystem.addProcessor(creatureSelectInput);
+        inputSystem.addProcessor(targetSelectInput);
+        inputSystem.addProcessor(generalInput);
+        Gdx.input.setInputProcessor(inputSystem);
+        state.setCurrentState(GameState.BEGIN_TURN);
         return true;
     }
 
@@ -156,14 +184,15 @@ public class VersusGame implements Observer {
                     state.setActivePlayer(Players.ONE);
                     state.setCurrentState(GameState.CHOOSING_CHARACTER);
                 case CHOOSING_CHARACTER:
-                    map.clearHighlights();
-                    state.clearSelection();
-                    break;
-                case CHOOSING_CONFIRM:
+                    this.onChoosingCharacter();
                     break;
                 case CHOOSING_SKILL:
+                    this.onSkillSelect();
                     break;
                 case CHOOSING_TARGET:
+                    break;
+                case CHOOSING_CONFIRM:
+                    this.onConfirm();
                     break;
                 case PLAYER_FINISHED:
                     state.clearSelection();
@@ -186,11 +215,84 @@ public class VersusGame implements Observer {
         }
     }
 
+    private void onChoosingCharacter() {
+        map.clearHighlights();
+        state.clearSelection();
+        playerMenu.clear();
+        playerMenu.addButton("End Turn", new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                state.setCurrentState(GameState.PLAYER_FINISHED);
+            }
+        }, true);
+        playerMenu.addToStage(stage, 30, Gdx.graphics.getHeight() - 30);
+    }
+
+    private void onSkillSelect() {
+        playerMenu.addButton("Deselect", new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                state.getSelectedIds().removeValue(state.getSelectedCreature(), true);
+                state.setCurrentState(GameState.CHOOSING_CHARACTER);
+            }
+        }, true);
+        final SkillSet skillSet = ssm.getSafe(world.getEntity(state.getSelectedCreature()));
+        final Entity player = world.getManager(TagManager.class).getEntity(
+                state.getActivePlayer().toString());
+        final EnergyBar bar = ebm.getSafe(player);
+        for (final Integer skillId : skillSet.skillSet) {
+            final Entity skill = world.getEntity(skillId);
+            final Cost cost = com.getSafe(skill);
+            final String skillName = ocm.getSafe(skill).name;
+            final boolean isActive = (bar.getCurrentEnergy() - cost.getCostAfterModifiers()) >= 0;
+            playerMenu.addButton(skillName, new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    VersusGame.this.selectSkill(skillId);
+                }
+            }, isActive);
+        }
+        playerMenu.addToStage(stage, 30, Gdx.graphics.getHeight() - 30);
+    }
+
+    private void onConfirm() {
+        confirm = new FramedDialog(skin, "", "Are you sure?", 300, 150);
+        confirm.addButton("Yes", new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                VersusGame.this.confirmAction();
+            }
+        });
+        confirm.addButton("No", new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                map.clearHighlights();
+                state.setCurrentState(GameState.CHOOSING_CHARACTER);
+            }
+        });
+        confirm.addToStage(stage, 30, stage.getHeight() - 400);
+    }
+
     private boolean onBeginTurn() {
+        this.checkForVictory();
         this.restoreEnergy(Players.ONE);
         this.restoreEnergy(Players.TWO);
         this.refreshSkills();
         return false;
+    }
+
+    private void checkForVictory() {
+        String group = Groups.PLAYER_ONE_CREATURE;
+        final int creaturesP1 = world.getManager(GroupManager.class).getEntities(group).size();
+        group = Groups.PLAYER_TWO_CREATURE;
+        final int creaturesP2 = world.getManager(GroupManager.class).getEntities(group).size();
+        if ((creaturesP1 == 0) || (creaturesP2 == 0)) {
+            final FileHandle skinFile = Gdx.files.internal("resources/uiskin/uiskin.json");
+            final Skin skin = new Skin(skinFile);
+            final int winner = (creaturesP1 == 0) ? 2 : 1;
+            new FramedDialog(skin, "", "VICTORY FOR PLAYER " + winner, 300, 120).addToStage(stage,
+                    400, 250);
+        }
     }
 
     private boolean onEndTurn() {
@@ -221,12 +323,12 @@ public class VersusGame implements Observer {
         return false;
     }
 
-    public boolean selectCreature(int entityId) {
-        if ((entityId > -1) && !state.getSelectedIds().contains(entityId, false)) {
-            final Entity e = world.getEntity(entityId);
+    public boolean selectCreature(int creatureId) {
+        if ((creatureId > -1) && !state.getSelectedIds().contains(creatureId, false)) {
+            final Entity e = world.getEntity(creatureId);
             final Owner owner = om.getSafe(e);
             if (owner.getOwner() == state.getActivePlayer()) {
-                state.setSelectedCreature(entityId);
+                state.setSelectedCreature(creatureId);
                 state.setCurrentState(GameState.CHOOSING_SKILL);
             }
             return true;
@@ -303,37 +405,42 @@ public class VersusGame implements Observer {
     }
 
     public boolean confirmAction() {
-        final Entity creature = world.getEntity(state.getSelectedCreature());
-        final MapPosition position = mm.get(creature);
-        final ActionSequence sequence = asm.get(creature);
-        sequence.onCastActions.add(new Action(state.getSelectedCreature(),
-                state.getSelectedSkill(), position.getPosition(), state.getSelectedHex()));
-        creature.changedInWorld();
-        final Entity player = world.getManager(TagManager.class).getEntity(
-                state.getActivePlayer().toString());
-        final Entity skill = world.getEntity(state.getSelectedSkill());
-        final Cost cost = com.getSafe(skill);
-        final EnergyBar bar = ebm.getSafe(player);
-        bar.modifyCurrentEnergyBy(-cost.getCostAfterModifiers());
-        player.changedInWorld();
-        final Cooldown cooldown = cdm.getSafe(skill);
-        cooldown.setCurrentCooldown(0);
-        skill.changedInWorld();
-        state.getSelectedIds().add(state.getSelectedCreature());
-        // TODO removed autoturns
-        // String group;
-        // if (state.getActivePlayer() == Players.ONE) {
-        // group = Groups.PLAYER_ONE_CREATURE;
-        // } else {
-        // group = Groups.PLAYER_TWO_CREATURE;
-        // }
-        //
-        // if (state.getSelectedIds().size >= world.getManager(GroupManager.class)
-        // .getEntities(group).size()) {
-        // state.setCurrentState(GameState.PLAYER_FINISHED);
-        // } else {
-        state.setCurrentState(GameState.CHOOSING_CHARACTER);
-        // }
+        if (state.getSelectedCreature() > -1) {
+            final Entity creature = world.getEntity(state.getSelectedCreature());
+            if (null != creature) {
+                state.getSelectedIds().add(state.getSelectedCreature());
+                final MapPosition position = mm.get(creature);
+                final ActionSequence sequence = asm.get(creature);
+                sequence.onCastActions.add(new Action(state.getSelectedCreature(), state
+                        .getSelectedSkill(), position.getPosition(), state.getSelectedHex()));
+                creature.changedInWorld();
+                final Entity player = world.getManager(TagManager.class).getEntity(
+                        state.getActivePlayer().toString());
+                final Entity skill = world.getEntity(state.getSelectedSkill());
+                final Cost cost = com.getSafe(skill);
+                final EnergyBar bar = ebm.getSafe(player);
+                bar.modifyCurrentEnergyBy(-cost.getCostAfterModifiers());
+                player.changedInWorld();
+                final Cooldown cooldown = cdm.getSafe(skill);
+                cooldown.setCurrentCooldown(0);
+                skill.changedInWorld();
+                state.getSelectedIds().add(state.getSelectedCreature());
+                // TODO removed autoturns
+                String group;
+                if (state.getActivePlayer() == Players.ONE) {
+                    group = Groups.PLAYER_ONE_CREATURE;
+                } else {
+                    group = Groups.PLAYER_TWO_CREATURE;
+                }
+                if (state.getSelectedIds().size >= world.getManager(GroupManager.class)
+                        .getEntities(group).size()) {
+                    state.setCurrentState(GameState.PLAYER_FINISHED);
+                } else {
+                    state.setCurrentState(GameState.CHOOSING_CHARACTER);
+                }
+                return true;
+            }
+        }
         return false;
     }
 }

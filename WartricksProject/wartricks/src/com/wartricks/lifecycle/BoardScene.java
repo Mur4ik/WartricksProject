@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.wartricks.logic.GameMap;
 import com.wartricks.logic.VersusGame;
 import com.wartricks.systems.EnergyRenderSystem;
@@ -19,8 +18,6 @@ import com.wartricks.systems.PathRenderSystem;
 import com.wartricks.systems.SkillRenderSystem;
 import com.wartricks.systems.SpriteRenderSystem;
 import com.wartricks.utils.Constants;
-import com.wartricks.utils.Constants.Players;
-import com.wartricks.utils.EntityFactory;
 
 public class BoardScene extends AbstractScreen {
     private final StringBuilder output = new StringBuilder();
@@ -65,10 +62,10 @@ public class BoardScene extends AbstractScreen {
         fpsLogger = new FPSLogger();
         gameWorld = world;
         hudCamera = new OrthographicCamera();
-        versusGame = new VersusGame(gameMap, gameWorld, camera);
+        versusGame = new VersusGame(gameMap, gameWorld, camera, stage);
         movementSystem = gameWorld.setSystem(new MovementSystem(), true);
         spriteRenderSystem = gameWorld.setSystem(new SpriteRenderSystem(camera, spriteBatch,
-                gameMap), true);
+                versusGame), true);
         mapRenderSystem = gameWorld.setSystem(new MapRenderSystem(camera, gameMap, spriteBatch),
                 true);
         pathRenderSystem = gameWorld.setSystem(new PathRenderSystem(camera, spriteBatch, gameMap),
@@ -82,54 +79,13 @@ public class BoardScene extends AbstractScreen {
         skillRenderSystem = gameWorld.setSystem(new SkillRenderSystem(hudCamera, spriteBatch,
                 versusGame), true);
         gameWorld.initialize();
-        // TODO creating players
-        EntityFactory.createPlayer(world, gameMap, Players.ONE, 10);
-        EntityFactory.createPlayer(world, gameMap, Players.TWO, 10);
-        // TODO creating skills
-        // EntityFactory.createSkill(gameWorld, "move", 2, 1, 2, 700, 0);
-        // EntityFactory.createSkill(gameWorld, "attack", 2, 1, 1, 600, 2);
-        // EntityFactory.createSkill(gameWorld, "jump", 2, 1, 1, 500, 1);
-        // EntityFactory.createSkill(gameWorld, "impactrueno", 2, 1, 1, 400, 2);
-        // EntityFactory.createSkill(gameWorld, "gorro del amor", 2, 1, 1, 300, 1);
-        // EntityFactory.createSkill(gameWorld, "piruloNOjutsu", 2, 1, 1, 200, 0);
-        // TODO creating creatures
-        final Array<String> characters = new Array<String>(new String[] {
-            "apple"
-        });
-        final Array<Integer> creatures = versusGame.api.loadCreatures(characters);
-        versusGame.api.assignCreatureToPlayer(creatures.first(), Players.ONE, 0, 0);
-        // EntityFactory.createCreature(world, gameMap, "dash", Players.ONE,
-        // new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 5,
-        // 3, 100, 5, new Array<String>(new String[] {
-        // "piruloNOjutsu", "move"
-        // }));
-        // EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
-        // new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,
-        // 4, 100, 5, new Array<String>(new String[] {
-        // "jump", "move"
-        // }));
-        // EntityFactory.createCreature(world, gameMap, "apple", Players.ONE,
-        // new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 0,
-        // 1, 100, 5, new Array<String>(new String[] {
-        // "move", "impactrueno"
-        // }));
-        // EntityFactory.createCreature(world, gameMap, "pinkie", Players.ONE,
-        // new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 3,
-        // 6, 100, 5, new Array<String>(new String[] {
-        // "move", "gorro del amor", "error"
-        // }));
-        // EntityFactory.createCreature(world, gameMap, "kirby", Players.TWO,
-        // new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f), 9,
-        // 5, 100, 5, new Array<String>(new String[] {
-        // "move", "impactrueno", "gorro del amor", "piruloNOjutsu"
-        // }));
         versusGame.startLogic();
     }
 
     @Override
     public void render(final float delta) {
-        super.render(delta);
         // fpsLogger.log();
+        super.render(delta);
         spriteBatch.setProjectionMatrix(camera.combined);
         movementSystem.process();
         mapRenderSystem.process();
@@ -140,6 +96,8 @@ public class BoardScene extends AbstractScreen {
         skillRenderSystem.process();
         spriteBatch.setProjectionMatrix(hudCamera.combined);
         hudRenderSystem.process();
+        stage.act(delta);
+        stage.draw();
     }
 
     @Override

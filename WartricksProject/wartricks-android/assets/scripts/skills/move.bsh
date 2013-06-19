@@ -21,8 +21,8 @@ create() {
  
  execute() 
  {
-     game.skillActivateBeginTurn(skillId, caster, origin.x, origin.y, target.x, target.y);
-     game.skillActivateEndTurn(skillId, caster, origin.x, origin.y, target.x, target.y);
+     //game.skillActivateBeginTurn(skillId, caster, origin.x, origin.y, target.x, target.y);
+     //game.skillActivateEndTurn(skillId, caster, origin.x, origin.y, target.x, target.y);
      return game.creatureMoveTo(caster, target.x, target.y);
  }
  

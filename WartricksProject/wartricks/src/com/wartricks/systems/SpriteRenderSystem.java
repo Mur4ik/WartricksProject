@@ -23,7 +23,7 @@ import com.wartricks.components.MapPosition;
 import com.wartricks.components.Owner;
 import com.wartricks.components.Sprite;
 import com.wartricks.custom.FloatPair;
-import com.wartricks.logic.GameMap;
+import com.wartricks.logic.VersusGame;
 import com.wartricks.utils.Constants.Players;
 import com.wartricks.utils.PlatformUtils;
 
@@ -49,14 +49,14 @@ public class SpriteRenderSystem extends EntitySystem {
 
     private List<Entity> sortedEntities;
 
-    private GameMap gameMap;
+    private VersusGame game;
 
     @SuppressWarnings("unchecked")
-    public SpriteRenderSystem(OrthographicCamera camera, SpriteBatch batch, GameMap map) {
+    public SpriteRenderSystem(OrthographicCamera camera, SpriteBatch batch, VersusGame game) {
         super(Aspect.getAspectForAll(MapPosition.class, Sprite.class, Owner.class));
         this.camera = camera;
         spriteBatch = batch;
-        gameMap = map;
+        this.game = game;
     }
 
     @Override
@@ -93,15 +93,16 @@ public class SpriteRenderSystem extends EntitySystem {
     protected void process(Entity e) {
         if (pm.has(e)) {
             final MapPosition mapPosition = pm.getSafe(e);
-            final FloatPair position = gameMap.tools.world2window(mapPosition.getPosition().x,
+            final FloatPair position = game.map.tools.world2window(mapPosition.getPosition().x,
                     mapPosition.getPosition().y);
             final Sprite sprite = sm.get(e);
             final Owner owner = om.get(e);
             final AtlasRegion spriteRegion = regionsByEntity.get(e.getId());
+            final float alpha = game.state.getSelectedIds().contains(e.getId(), true) ? 0.5f : 1.0f;
             if (owner.getOwner() == Players.TWO) {
-                spriteBatch.setColor(sprite.r, sprite.g - 0.5f, sprite.b - 0.5f, sprite.a);
+                spriteBatch.setColor(sprite.r, sprite.g - 0.5f, sprite.b - 0.5f, alpha);
             } else {
-                spriteBatch.setColor(sprite.r - 0.5f, sprite.g - 0.5f, sprite.b, sprite.a);
+                spriteBatch.setColor(sprite.r - 0.5f, sprite.g - 0.5f, sprite.b, alpha);
             }
             final float posX = position.x - ((spriteRegion.getRegionWidth() / 2) * sprite.scaleX);
             final float posY = position.y - ((spriteRegion.getRegionHeight() / 2) * sprite.scaleX);

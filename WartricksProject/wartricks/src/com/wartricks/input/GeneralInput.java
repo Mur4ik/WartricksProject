@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.wartricks.logic.StateMachine.GameState;
 import com.wartricks.logic.VersusGame;
 
 public class GeneralInput implements InputProcessor {
@@ -26,12 +25,10 @@ public class GeneralInput implements InputProcessor {
                 Gdx.app.exit();
                 return true;
             case Input.Keys.ENTER:
-                game.state.setCurrentState(GameState.PLAYER_FINISHED);
-                return true;
+                break;
             case Input.Keys.BACKSPACE:
-                return game.undoLatestAction(game.state.getSelectedCreature());
+                break;
             case Input.Keys.SPACE:
-                game.state.setCurrentState(GameState.CHOOSING_CHARACTER);
                 break;
         }
         return false;
