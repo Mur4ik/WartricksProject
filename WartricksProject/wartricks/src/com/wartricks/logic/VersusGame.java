@@ -161,12 +161,13 @@ public class VersusGame implements Observer {
         EntityFactory.createPlayer(world, map, Players.ONE, 10);
         EntityFactory.createPlayer(world, map, Players.TWO, 10);
         final Array<String> characters = new Array<String>(new String[] {
-                "apple", "dash", "kirby"
+                "apple", "dash", "kirby", "pinkie"
         });
         final Array<Integer> creatures = api.loadCreatures(characters);
         api.assignCreatureToPlayer(creatures.get(0), Players.ONE, 0, 0);
         api.assignCreatureToPlayer(creatures.get(1), Players.ONE, 0, 2);
         api.assignCreatureToPlayer(creatures.get(2), Players.TWO, 9, 6);
+        api.assignCreatureToPlayer(creatures.get(3), Players.TWO, 9, 4);
         // //////////////////////////////////////////////////
         inputSystem.addProcessor(stage);
         inputSystem.addProcessor(creatureSelectInput);
