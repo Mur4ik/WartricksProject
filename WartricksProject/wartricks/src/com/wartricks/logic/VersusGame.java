@@ -218,6 +218,14 @@ public class VersusGame implements Observer {
         }
     }
 
+    private boolean onBeginTurn() {
+        this.checkForVictory();
+        this.restoreEnergy(Players.ONE);
+        this.restoreEnergy(Players.TWO);
+        this.refreshSkills();
+        return false;
+    }
+
     private void onChoosingCharacter() {
         map.clearHighlights();
         state.clearSelection();
@@ -278,29 +286,20 @@ public class VersusGame implements Observer {
         confirm.addToStage(stage, 30, stage.getHeight() - 400);
     }
 
-    private boolean onBeginTurn() {
-        this.checkForVictory();
-        this.restoreEnergy(Players.ONE);
-        this.restoreEnergy(Players.TWO);
-        this.refreshSkills();
+    private boolean onEndTurn() {
         return false;
     }
 
-    private void checkForVictory() {
-        String group = Groups.PLAYER_ONE_CREATURE;
-        final int creaturesP1 = world.getManager(GroupManager.class).getEntities(group).size();
-        group = Groups.PLAYER_TWO_CREATURE;
-        final int creaturesP2 = world.getManager(GroupManager.class).getEntities(group).size();
-        if ((creaturesP1 == 0) || (creaturesP2 == 0)) {
-            final FileHandle skinFile = Gdx.files.internal("resources/uiskin/uiskin.json");
-            final Skin skin = new Skin(skinFile);
-            final int winner = (creaturesP1 == 0) ? 2 : 1;
-            new FramedDialog(skin, "", "VICTORY FOR PLAYER " + winner, 300, 120).addToStage(stage,
-                    400, 250);
+    public boolean selectCreature(int creatureId) {
+        if ((creatureId > -1) && !state.getSelectedIds().contains(creatureId, false)) {
+            final Entity e = world.getEntity(creatureId);
+            final Owner owner = om.getSafe(e);
+            if (owner.getOwner() == state.getActivePlayer()) {
+                state.setSelectedCreature(creatureId);
+                state.setCurrentState(GameState.CHOOSING_SKILL);
+            }
+            return true;
         }
-    }
-
-    private boolean onEndTurn() {
         return false;
     }
 
@@ -328,40 +327,6 @@ public class VersusGame implements Observer {
         return false;
     }
 
-    public boolean selectCreature(int creatureId) {
-        if ((creatureId > -1) && !state.getSelectedIds().contains(creatureId, false)) {
-            final Entity e = world.getEntity(creatureId);
-            final Owner owner = om.getSafe(e);
-            if (owner.getOwner() == state.getActivePlayer()) {
-                state.setSelectedCreature(creatureId);
-                state.setCurrentState(GameState.CHOOSING_SKILL);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    // TODO unused ATM
-    // TODO remove player from state.selectedIds
-    public boolean undoLatestAction(int creatureId) {
-        if (creatureId > -1) {
-            try {
-                final Action removed = world.getEntity(state.getSelectedCreature()).getComponent(
-                        ActionSequence.class).onCastActions.removeLast();
-                final Entity player = world.getManager(TagManager.class).getEntity(
-                        state.getActivePlayer().toString());
-                final Entity skill = world.getEntity(removed.skillId);
-                final Cost cost = com.getSafe(skill);
-                final EnergyBar bar = ebm.getSafe(player);
-                bar.modifyCurrentEnergyBy(cost.getCostAfterModifiers());
-                player.changedInWorld();
-            } catch (final NoSuchElementException e) {
-                e.printStackTrace();
-            }
-        }
-        return false;
-    }
-
     public boolean selectHexagon(Pair coords) {
         if (map.highlighted.contains(coords, false)) {
             state.setSelectedHex(coords);
@@ -384,29 +349,6 @@ public class VersusGame implements Observer {
             return true;
         }
         return false;
-    }
-
-    private void restoreEnergy(Players player) {
-        final Entity playerEntity = world.getManager(TagManager.class).getEntity(player.toString());
-        final EnergyBar bar = ebm.getSafe(playerEntity);
-        final String creatureGroup = player.equals(Players.ONE) ? Groups.PLAYER_ONE_CREATURE
-                : Groups.PLAYER_TWO_CREATURE;
-        final ImmutableBag<Entity> creatures = world.getManager(GroupManager.class).getEntities(
-                creatureGroup);
-        for (int i = 0; i < creatures.size(); i++) {
-            final EnergyRegen regen = erm.getSafe(creatures.get(i));
-            bar.modifyCurrentEnergyBy(regen.getEnergyRegenAfterModifiers());
-        }
-        playerEntity.changedInWorld();
-    }
-
-    private void refreshSkills() {
-        final ImmutableBag<Entity> skills = world.getManager(GroupManager.class).getEntities(
-                Groups.PLAYER_SKILL);
-        for (int i = 0; i < skills.size(); i++) {
-            final Cooldown cooldown = cdm.getSafe(skills.get(i));
-            cooldown.refreshOnce();
-        }
     }
 
     public boolean confirmAction() {
@@ -447,5 +389,63 @@ public class VersusGame implements Observer {
             }
         }
         return false;
+    }
+
+    // TODO unused ATM
+    // TODO remove player from state.selectedIds
+    public boolean undoLatestAction(int creatureId) {
+        if (creatureId > -1) {
+            try {
+                final Action removed = world.getEntity(state.getSelectedCreature()).getComponent(
+                        ActionSequence.class).onCastActions.removeLast();
+                final Entity player = world.getManager(TagManager.class).getEntity(
+                        state.getActivePlayer().toString());
+                final Entity skill = world.getEntity(removed.skillId);
+                final Cost cost = com.getSafe(skill);
+                final EnergyBar bar = ebm.getSafe(player);
+                bar.modifyCurrentEnergyBy(cost.getCostAfterModifiers());
+                player.changedInWorld();
+            } catch (final NoSuchElementException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    private void restoreEnergy(Players player) {
+        final Entity playerEntity = world.getManager(TagManager.class).getEntity(player.toString());
+        final EnergyBar bar = ebm.getSafe(playerEntity);
+        final String creatureGroup = player.equals(Players.ONE) ? Groups.PLAYER_ONE_CREATURE
+                : Groups.PLAYER_TWO_CREATURE;
+        final ImmutableBag<Entity> creatures = world.getManager(GroupManager.class).getEntities(
+                creatureGroup);
+        for (int i = 0; i < creatures.size(); i++) {
+            final EnergyRegen regen = erm.getSafe(creatures.get(i));
+            bar.modifyCurrentEnergyBy(regen.getEnergyRegenAfterModifiers());
+        }
+        playerEntity.changedInWorld();
+    }
+
+    private void refreshSkills() {
+        final ImmutableBag<Entity> skills = world.getManager(GroupManager.class).getEntities(
+                Groups.PLAYER_SKILL);
+        for (int i = 0; i < skills.size(); i++) {
+            final Cooldown cooldown = cdm.getSafe(skills.get(i));
+            cooldown.refreshOnce();
+        }
+    }
+
+    private void checkForVictory() {
+        String group = Groups.PLAYER_ONE_CREATURE;
+        final int creaturesP1 = world.getManager(GroupManager.class).getEntities(group).size();
+        group = Groups.PLAYER_TWO_CREATURE;
+        final int creaturesP2 = world.getManager(GroupManager.class).getEntities(group).size();
+        if ((creaturesP1 == 0) || (creaturesP2 == 0)) {
+            final FileHandle skinFile = Gdx.files.internal("resources/uiskin/uiskin.json");
+            final Skin skin = new Skin(skinFile);
+            final int winner = (creaturesP1 == 0) ? 2 : 1;
+            new FramedDialog(skin, "", "VICTORY FOR PLAYER " + winner, 300, 120).addToStage(stage,
+                    400, 250);
+        }
     }
 }
