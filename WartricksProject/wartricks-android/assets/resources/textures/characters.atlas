@@ -17,37 +17,86 @@ troll
   orig: 50, 50
   offset: 0, 0
   index: -1
-apple
+DevilMale
   rotate: false
   xy: 258, 172
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-dash
+DevilMale2
   rotate: false
   xy: 258, 138
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-kirby
+Female
   rotate: false
   xy: 258, 104
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+FemaleHuman2
+  rotate: false
+  xy: 258, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+MaleFlame
+  rotate: false
+  xy: 258, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+MaleNinja
+  rotate: false
+  xy: 258, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+SkellyBone
+  rotate: false
+  xy: 292, 172
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+apple
+  rotate: false
+  xy: 292, 138
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+dash
+  rotate: false
+  xy: 292, 104
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+kirby
+  rotate: false
+  xy: 292, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 kirby2
   rotate: false
-  xy: 258, 104
+  xy: 292, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 pinkie
   rotate: false
-  xy: 258, 70
+  xy: 292, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
