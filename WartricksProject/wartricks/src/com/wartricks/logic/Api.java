@@ -130,7 +130,7 @@ public class Api {
     public boolean assignCreatureToPlayer(int creatureId, Players owner, int x, int y) {
         final Entity creature = game.world.getEntity(creatureId);
         if (null != creature) {
-            final Random rand = new Random((long)game.world.getDelta());
+            final Random rand = new Random();
             creature.addComponent(new ActionSequence(new Color(rand.nextFloat(), rand.nextFloat(),
                     rand.nextFloat(), 1)));
             creature.addComponent(new MapPosition(x, y));

@@ -100,7 +100,7 @@ public class SpriteRenderSystem extends EntitySystem {
             final AtlasRegion spriteRegion = regionsByEntity.get(e.getId());
             final float alpha = game.state.getSelectedIds().contains(e.getId(), true) ? 0.5f : 1.0f;
             if (owner.getOwner() == Players.TWO) {
-                spriteBatch.setColor(sprite.r, sprite.g - 0.5f, sprite.b - 0.5f, alpha);
+                spriteBatch.setColor(sprite.r - 0.5f, sprite.g, sprite.b - 0.5f, alpha);
             } else {
                 spriteBatch.setColor(sprite.r - 0.5f, sprite.g - 0.5f, sprite.b, alpha);
             }

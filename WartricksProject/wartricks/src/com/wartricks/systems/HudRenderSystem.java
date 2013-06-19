@@ -61,27 +61,29 @@ public class HudRenderSystem extends VoidEntitySystem {
     protected void processSystem() {
         spriteBatch.setColor(1, 1, 1, 1);
         final float screenHeight = BoardGame.WINDOW_HEIGHT;
-        font.draw(spriteBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, screenHeight - 20);
-        font.draw(spriteBatch, "Active entities: "
-                + world.getEntityManager().getActiveEntityCount(), 20, screenHeight - 40);
-        font.draw(spriteBatch, "Total created: " + world.getEntityManager().getTotalCreated(), 20,
-                screenHeight - 60);
-        font.draw(spriteBatch, "Total deleted: " + world.getEntityManager().getTotalDeleted(), 20,
-                screenHeight - 80);
-        font.draw(spriteBatch, "GameState: " + game.state.getCurrentState(), 20,
-                screenHeight - 120);
-        font.draw(spriteBatch, "ActivePlayer: " + game.state.getActivePlayer(), 20,
-                screenHeight - 140);
-        final int selectedCreature = game.state.getSelectedCreature();
-        final int selectedSkill = game.state.getSelectedSkill();
-        if (selectedCreature > -1) {
-            final Sprite sprite = sm.get(game.world.getEntity(selectedCreature));
-            font.draw(spriteBatch, "SelectedCreature: " + sprite.name, 20, screenHeight - 160);
-            if (selectedSkill > -1) {
-                final ScriptExecutable script = om.get(game.world.getEntity(selectedSkill));
-                font.draw(spriteBatch, "SelectedSkill: " + script.name, 20, screenHeight - 180);
-            }
-        }
+        // font.draw(spriteBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 20, screenHeight -
+        // 20);
+        // font.draw(spriteBatch, "Active entities: "
+        // + world.getEntityManager().getActiveEntityCount(), 20, screenHeight - 40);
+        // font.draw(spriteBatch, "Total created: " + world.getEntityManager().getTotalCreated(),
+        // 20,
+        // screenHeight - 60);
+        // font.draw(spriteBatch, "Total deleted: " + world.getEntityManager().getTotalDeleted(),
+        // 20,
+        // screenHeight - 80);
+        // font.draw(spriteBatch, "GameState: " + game.state.getCurrentState(), 20,
+        // screenHeight - 120);
+        font.draw(spriteBatch, "Active Player: " + game.state.getActivePlayer(), 20, 80);
+        // final int selectedCreature = game.state.getSelectedCreature();
+        // final int selectedSkill = game.state.getSelectedSkill();
+        // if (selectedCreature > -1) {
+        // final Sprite sprite = sm.get(game.world.getEntity(selectedCreature));
+        // font.draw(spriteBatch, "SelectedCreature: " + sprite.name, 20, screenHeight - 160);
+        // if (selectedSkill > -1) {
+        // final ScriptExecutable script = om.get(game.world.getEntity(selectedSkill));
+        // font.draw(spriteBatch, "SelectedSkill: " + script.name, 20, screenHeight - 180);
+        // }
+        // }
     }
 
     @Override
