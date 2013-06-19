@@ -101,9 +101,9 @@ public class SpriteRenderSystem extends EntitySystem {
             final float alpha = (game.state.getSelectedIds().contains(e.getId(), true) || (game.state
                     .getActivePlayer() != owner.getOwner())) ? 0.5f : 1.0f;
             if (owner.getOwner() == Players.TWO) {
-                spriteBatch.setColor(sprite.r - 0.5f, sprite.g, sprite.b - 0.5f, alpha);
+                spriteBatch.setColor(sprite.r - 0.2f, sprite.g, sprite.b - 0.2f, alpha);
             } else {
-                spriteBatch.setColor(sprite.r - 0.5f, sprite.g - 0.5f, sprite.b, alpha);
+                spriteBatch.setColor(sprite.r - 0.2f, sprite.g - 0.2f, sprite.b, alpha);
             }
             final float posX = position.x - ((spriteRegion.getRegionWidth() / 2) * sprite.scaleX);
             final float posY = position.y - ((spriteRegion.getRegionHeight() / 2) * sprite.scaleX);

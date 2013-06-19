@@ -2,7 +2,7 @@ int creatureId = -1;
 
 create()
 {
-    name = "pinkie";
+    name = "MaleNinja";
     health = 100;
     energyPerTurn = 3;
     skillSet = new Array();
