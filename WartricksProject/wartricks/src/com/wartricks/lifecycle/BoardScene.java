@@ -95,7 +95,7 @@ public class BoardScene extends AbstractScreen {
         energyRenderSystem.process();
         skillRenderSystem.process();
         spriteBatch.setProjectionMatrix(hudCamera.combined);
-        hudRenderSystem.process();
+        // hudRenderSystem.process();
         stage.act(delta);
         stage.draw();
     }

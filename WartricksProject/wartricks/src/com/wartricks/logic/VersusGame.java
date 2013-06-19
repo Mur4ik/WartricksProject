@@ -71,6 +71,8 @@ public class VersusGame implements Observer {
 
     private FramedMenu playerMenu;
 
+    private FramedMenu creatureMenu;
+
     private FramedDialog confirm;
 
     private TargetSelectInput targetSelectInput;
@@ -127,6 +129,7 @@ public class VersusGame implements Observer {
         final FileHandle skinFile = Gdx.files.internal("resources/uiskin/uiskin.json");
         skin = new Skin(skinFile);
         playerMenu = new FramedMenu(skin, 250, 800);
+        creatureMenu = new FramedMenu(skin, 250, 800);
         confirm = new FramedDialog(skin, "", "Are you sure?", 300, 120);
         api = new Api(this);
         executor = new ActionExecutor(this);
@@ -219,6 +222,7 @@ public class VersusGame implements Observer {
         map.clearHighlights();
         state.clearSelection();
         playerMenu.clear();
+        creatureMenu.clear();
         playerMenu.addButton("End Turn", new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -245,7 +249,7 @@ public class VersusGame implements Observer {
             final Cost cost = com.getSafe(skill);
             final String skillName = ocm.getSafe(skill).name;
             final boolean isActive = (bar.getCurrentEnergy() - cost.getCostAfterModifiers()) >= 0;
-            playerMenu.addButton(skillName, new ChangeListener() {
+            creatureMenu.addButton(skillName, new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     VersusGame.this.selectSkill(skillId);
@@ -253,10 +257,11 @@ public class VersusGame implements Observer {
             }, isActive);
         }
         playerMenu.addToStage(stage, 30, Gdx.graphics.getHeight() - 30);
+        creatureMenu.addToStage(stage, 30, Gdx.graphics.getHeight() - 90);
     }
 
     private void onConfirm() {
-        confirm = new FramedDialog(skin, "", "Are you sure?", 300, 150);
+        confirm = new FramedDialog(skin, "", "Are you sure?", 250, 100);
         confirm.addButton("Yes", new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

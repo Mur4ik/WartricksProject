@@ -1,8 +1,6 @@
 
 package com.wartricks.ui;
 
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -83,29 +81,30 @@ public class FramedMenu {
         frame = new Image(skin.getPatch("frame"));
         // If the user presses "ESC", close this menu and focus on the "parent"
         stage.setKeyboardFocus(scrollPane);
-        scrollPane.addListener(new InputListener() {
-            @Override
-            public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == 131) { // escape
-                    // If this menu is invisible, don't do anything
-                    if (!frame.isVisible()) {
-                        return false;
-                    }
-                    // If there is a parent, get rid of this
-                    // menu and focus on it
-                    if (parent != null) {
-                        stage.setKeyboardFocus(parent.scrollPane);
-                        parent.enable();
-                        FramedMenu.this.clear();
-                    }
-                    // Otherwise this must be the last one, so just clear it all
-                    else {
-                        stage.clear();
-                    }
-                }
-                return true;
-            }
-        });
+        // TODO exit on escape not happening
+        // scrollPane.addListener(new InputListener() {
+        // @Override
+        // public boolean keyDown(InputEvent event, int keycode) {
+        // if (keycode == 131) { // escape
+        // // If this menu is invisible, don't do anything
+        // if (!frame.isVisible()) {
+        // return false;
+        // }
+        // // If there is a parent, get rid of this
+        // // menu and focus on it
+        // if (parent != null) {
+        // stage.setKeyboardFocus(parent.scrollPane);
+        // parent.enable();
+        // FramedMenu.this.clear();
+        // }
+        // // Otherwise this must be the last one, so just clear it all
+        // else {
+        // stage.clear();
+        // }
+        // }
+        // return true;
+        // }
+        // });
         // Go ahead and add them to the stage
         stage.addActor(scrollPane);
         stage.addActor(frame);
