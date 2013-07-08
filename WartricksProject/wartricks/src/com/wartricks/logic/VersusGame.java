@@ -184,10 +184,7 @@ public class VersusGame implements Observer {
             final GameState gameState = (GameState)currentState;
             switch (gameState) {
                 case BEGIN_TURN:
-                    onBeginTurnSystem.process();
                     this.onBeginTurn();
-                    state.setActivePlayer(Players.ONE);
-                    state.setCurrentState(GameState.CHOOSING_CHARACTER);
                 case CHOOSING_CHARACTER:
                     this.onChoosingCharacter();
                     break;
@@ -204,18 +201,19 @@ public class VersusGame implements Observer {
                     break;
                 case END_TURN:
                     this.onEndTurn();
-                    onEndTurnSystem.process();
-                    state.setCurrentState(GameState.BEGIN_TURN);
                     break;
             }
         }
     }
 
     private boolean onBeginTurn() {
+        onBeginTurnSystem.process();
         this.checkForVictory();
         this.restoreEnergy(Players.ONE);
         this.restoreEnergy(Players.TWO);
         this.refreshSkills();
+        state.setActivePlayer(Players.ONE);
+        state.setCurrentState(GameState.CHOOSING_CHARACTER);
         return false;
     }
 
@@ -293,6 +291,8 @@ public class VersusGame implements Observer {
     }
 
     private boolean onEndTurn() {
+        onEndTurnSystem.process();
+        state.setCurrentState(GameState.BEGIN_TURN);
         return false;
     }
 
